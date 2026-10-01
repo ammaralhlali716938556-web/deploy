@@ -1,4 +1,4 @@
-name: Build Android APK with Super AI Voice Engine & 200 Levels
+name: Build Android APK with Super AI, 200 Levels & Daily Rewards
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Build Android APK with Super AI Referee
+    name: Build Android APK with AI, Hints & Daily Rewards
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Generate Complete Super AI Game with Automated Next Button
+      - name: Generate Complete Game with Hints & Daily Rewards
         run: |
           mkdir -p www
           cat << 'EOF' > www/index.html
@@ -41,7 +41,7 @@ jobs:
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-            <title>قول يا معلّم | الذكاء الخارق 🧠🎙️</title>
+            <title>قول يا معلّم | الذكاء الخارق والمكافآت 🎁🧠</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
@@ -77,18 +77,25 @@ jobs:
               .btn-next-ready {
                 animation: ready-pulse 1.2s infinite;
               }
+              @keyframes gift-bounce {
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                50% { transform: translateY(-8px) rotate(4deg); }
+              }
+              .gift-bounce { animation: gift-bounce 2s infinite ease-in-out; }
             </style>
           </head>
           <body class="flex justify-center items-center select-none min-h-screen">
 
             <div id="appContainer" class="w-full max-w-[440px] h-[100dvh] sm:h-[900px] bg-slate-950 sm:rounded-[40px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-indigo-500/30">
               
-              <!-- TOP GLOBAL HEADER -->
+              <!-- TOP GLOBAL HEADER WITH SPENDABLE STARS WALLET -->
               <header class="w-full px-4 pt-3 pb-2 flex justify-between items-center z-20 bg-slate-900/90 backdrop-blur-md border-b border-white/10">
                 <div class="flex items-center space-x-2 space-x-reverse">
-                  <div class="bg-amber-400 text-amber-950 font-black text-xs px-3 py-1 rounded-full flex items-center space-x-1 space-x-reverse shadow">
-                    <span>⭐</span>
-                    <span id="totalStarsBadge">0/600</span>
+                  <!-- STARS BALANCE WALLET -->
+                  <div class="bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 font-black text-xs px-3 py-1 rounded-full flex items-center space-x-1.5 space-x-reverse shadow-md border border-yellow-200">
+                    <span class="text-sm">⭐</span>
+                    <span id="starsBalanceDisplay">300</span>
+                    <span class="text-[10px] text-amber-900 font-bold">نجمة</span>
                   </div>
                   <span class="text-white text-xs font-bold">المرحلة: <span id="currentLevelNav" class="text-yellow-300 font-black">1</span></span>
                 </div>
@@ -112,22 +119,22 @@ jobs:
                   <p class="text-indigo-200 text-xs font-bold mt-1">تحدي الـ 200 مرحلة مع محلل الدلالات الصوتي الخارق 🎙️⚡</p>
                 </div>
 
-                <div class="w-full clay-card p-4 text-right space-y-2.5">
+                <div class="w-full clay-card p-4 text-right space-y-2">
                   <div class="flex items-center space-x-2 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1.5">
-                    <i class="fa-solid fa-microchip text-indigo-600"></i>
-                    <span>نظام التحكيم الآلي التلقائي:</span>
+                    <i class="fa-solid fa-gift text-amber-500 text-sm"></i>
+                    <span>المساعدات والمكافأة اليومية:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
-                    • <strong>لا داعي للضغط اليدوي:</strong> الذكاء الاصطناعي يحلل كلامك في الوقت الحقيقي.<br>
-                    • <strong>التحقق من الدلالات:</strong> بمجرد نطقك لأوصاف دقيقة تدل على الكلمة، يكتمل مقياس الذكاء.<br>
-                    • <strong>تفعيل زر التالي:</strong> يفتح زر التالي تلقائياً باللون الأخضر لتنتقل فوراً للجولة القادمة!
+                    • <strong>مكافأة يومية:</strong> استلم <strong>300 نجمة</strong> تلقائياً كل يوم عند فتح اللعبة 🎁.<br>
+                    • <strong>زر المساعدة:</strong> لو تعثرت، اكشف كلمة دلالية بـ <strong>30 نجمة</strong> ليدلك الحكم على الحل 💡.<br>
+                    • <strong>حكم فوري:</strong> ينشط زر التالي تلقائياً عند نطقك الدلالات الصحيحة!
                   </p>
                 </div>
 
                 <div class="w-full space-y-3 pb-3">
                   <button onclick="game.resumeGame()" class="btn-3d w-full py-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl border-b-[5px] border-emerald-800 text-white text-xl font-black flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-play"></i>
-                    <span>ابدأ الشرح (المرحلة <span id="homeResumeLvl">1</span>)</span>
+                    <span>ابدأ اللعب (المرحلة <span id="homeResumeLvl">1</span>)</span>
                   </button>
                   <button onclick="game.showScreen('screenMap')" class="btn-3d w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl border-b-[5px] border-indigo-900 text-white font-black text-sm flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-map"></i>
@@ -138,7 +145,6 @@ jobs:
 
               <!-- SCREEN 2: LEVEL MAP (200 STAGES) -->
               <div id="screenMap" class="hidden flex-1 flex flex-col z-10 overflow-hidden">
-                <!-- WORLD SELECTOR TABS -->
                 <div class="px-2 pt-2 pb-1 bg-slate-900/60 border-b border-white/10 flex overflow-x-auto no-scrollbar space-x-1.5 space-x-reverse text-center">
                   <button onclick="game.filterWorld(1)" id="tabWorld1" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-indigo-600 text-white shadow">
                     🏡 حارة المبتدئين (1-40)
@@ -165,7 +171,7 @@ jobs:
                 <div id="stagesScrollContainer" class="flex-1 overflow-y-auto px-4 py-4 grid grid-cols-4 gap-3 text-center content-start"></div>
               </div>
 
-              <!-- SCREEN 3: GAMEPLAY WITH REALTIME AI CONFIDENCE & AUTOMATIC NEXT BUTTON -->
+              <!-- SCREEN 3: GAMEPLAY WITH HINT BUTTON & AUTOMATIC NEXT BUTTON -->
               <div id="screenPlay" class="hidden flex-1 flex flex-col items-center justify-between px-4 py-2 z-10">
                 <!-- TOP STAGE INFO -->
                 <div class="w-full flex justify-between items-center bg-white/10 backdrop-blur-md rounded-2xl px-4 py-1.5 border border-white/20 text-white font-bold text-xs">
@@ -190,13 +196,25 @@ jobs:
                     <span id="playCategory" class="bg-indigo-100 text-indigo-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
                       أكلات شعبية
                     </span>
-                    <span id="playTabooCountLabel" class="bg-red-100 text-red-700 text-[10px] font-black px-2.5 py-0.5 rounded-full">
-                      ممنوع نطق كلمتين
-                    </span>
+
+                    <!-- HINT PURCHASE BUTTON (-30 STARS) -->
+                    <button onclick="game.buyHint()" class="btn-3d py-1 px-2.5 bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 font-black text-[11px] rounded-xl flex items-center space-x-1 space-x-reverse border border-amber-200 shadow active:scale-95 transition">
+                      <span>💡</span>
+                      <span>كشف دلالة (-30 ⭐)</span>
+                    </button>
                   </div>
 
-                  <div id="playWord" class="text-3xl font-black text-slate-900 my-1.5 font-tajawal">
+                  <div id="playWord" class="text-3xl font-black text-slate-900 my-1 font-tajawal">
                     كشري
+                  </div>
+
+                  <!-- REVEALED HINT BANNER (SHOWS WHEN PLAYER BUYS HINT) -->
+                  <div id="revealedHintBanner" class="hidden mb-2 p-1.5 bg-amber-50 border border-amber-300 rounded-xl text-right">
+                    <div class="text-[10px] font-black text-amber-900 flex items-center space-x-1 space-x-reverse mb-0.5">
+                      <span>💡</span>
+                      <span>دلالات تم كشفها بمساعدتك (اذكرها في شرحك):</span>
+                    </div>
+                    <div id="revealedHintsContainer" class="flex flex-wrap gap-1 text-xs font-bold text-amber-950"></div>
                   </div>
 
                   <!-- TABOOS -->
@@ -209,7 +227,7 @@ jobs:
                   </div>
 
                   <!-- AI CONFIDENCE RADAR BAR -->
-                  <div class="mt-2.5 pt-2 border-t border-slate-200 text-right">
+                  <div class="mt-2 pt-2 border-t border-slate-200 text-right">
                     <div class="flex justify-between items-center text-[10px] font-bold text-slate-600 mb-1">
                       <span><i class="fa-solid fa-brain text-indigo-600"></i> اقتناع الذكاء الاصطناعي بشرحك:</span>
                       <span id="aiConfidencePct" class="font-black font-mono text-xs text-indigo-700">0%</span>
@@ -217,7 +235,7 @@ jobs:
                     <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                       <div id="aiConfidenceBar" class="bg-gradient-to-r from-amber-400 to-emerald-500 h-2.5 rounded-full transition-all duration-300 w-0"></div>
                     </div>
-                    <div id="aiDetectedClues" class="flex flex-wrap gap-1 mt-1.5 min-h-[20px]"></div>
+                    <div id="aiDetectedClues" class="flex flex-wrap gap-1 mt-1.5 min-h-[18px]"></div>
                   </div>
                 </div>
 
@@ -228,18 +246,17 @@ jobs:
                     <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">مستمع بنشاط</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
-                    اشرح الكلمة بصوتك دون ذكر أي ممنوع وسيحكم الذكاء تلقائياً...
+                    اشرح الكلمة بصوتك أو اضغط مساعدة لكشف كلمة دلالية تدلك...
                   </div>
                 </div>
 
-                <!-- ACTION BUTTONS (REPLACED WITH AUTOMATED NEXT BUTTON) -->
+                <!-- ACTION BUTTONS -->
                 <div class="w-full grid grid-cols-2 gap-2.5 pb-2">
                   <button onclick="game.abandonStage()" class="btn-3d py-3.5 bg-slate-800 rounded-2xl border-b-[4px] border-slate-950 text-white font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     <span>انسحاب للخريطة</span>
                   </button>
 
-                  <!-- THE SMART "التالي" BUTTON (ACTIVATED AUTOMATICALLY BY AI) -->
                   <button id="btnNextStage" onclick="game.onNextClicked()" disabled class="btn-3d py-3.5 bg-slate-800 text-gray-500 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-60 transition-all duration-300">
                     <i id="btnNextIcon" class="fa-solid fa-hourglass-half"></i>
                     <span id="btnNextLabel">في انتظار الشرح... (0%)</span>
@@ -266,8 +283,8 @@ jobs:
                     <span id="nextLevelUnlockText" class="font-black text-indigo-700">مرحلة 2 (مفتوحة الآن 🔓)</span>
                   </div>
                   <div class="flex justify-between items-center text-xs font-bold">
-                    <span class="text-slate-600">تقييم النطق:</span>
-                    <span class="font-black text-emerald-600">تم التحقق من الدلالات بسرعة 🚀</span>
+                    <span class="text-slate-600">مكافأة الفوز:</span>
+                    <span class="font-black text-emerald-600">+25 نجمة ذهبية إلى محفظتك ⭐</span>
                   </div>
                 </div>
 
@@ -282,9 +299,28 @@ jobs:
                 </div>
               </div>
 
+              <!-- MODAL: DAILY REWARD (300 STARS) -->
+              <div id="modalDailyReward" class="hidden absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                <div class="w-full max-w-sm clay-card p-6 flex flex-col items-center text-center space-y-3 relative overflow-hidden border-4 border-amber-300">
+                  <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-5xl shadow-2xl gift-bounce border-2 border-white">
+                    🎁
+                  </div>
+                  <h3 class="text-2xl font-black text-slate-900 font-tajawal">مكافأة الدخول اليومي!</h3>
+                  <div class="bg-amber-100 text-amber-950 font-black text-lg px-5 py-2 rounded-full border border-amber-300 shadow">
+                    +300 نجمة ذهبية ⭐
+                  </div>
+                  <p class="text-xs text-slate-600 font-bold leading-relaxed">
+                    أهلاً بك مجدداً يا معلّم! تمت إضافة 300 نجمة إلى محفظتك. استخدمها في كشف الدلالات والمساعدات أثناء التحدي!
+                  </p>
+                  <button onclick="game.closeDailyRewardModal()" class="btn-3d w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black text-sm rounded-2xl border-b-[4px] border-emerald-800 shadow">
+                    استلام النجوم ومتابعة اللعب 🚀
+                  </button>
+                </div>
+              </div>
+
             </div>
 
-            <!-- JAVASCRIPT GAME ENGINE WITH SUPER AI NLP ANALYZER -->
+            <!-- JAVASCRIPT GAME ENGINE WITH HINTS & DAILY REWARDS -->
             <script>
               const RAW_STAGES = [
                 // WORLD 1: (1-40) Easy - 60s - 2 Taboos
@@ -517,7 +553,9 @@ jobs:
                   this.isPlaying = false;
                   this.isSuccessApproved = false;
                   this.detectedCluesSet = new Set();
+                  this.revealedHints = [];
                   this.loadProgress();
+                  this.checkDailyReward();
                   this.initVoice();
                   this.renderMap();
                   this.updateHeaderUI();
@@ -527,9 +565,12 @@ jobs:
                   const saved = localStorage.getItem('qool_map_prog_v1');
                   if (saved) {
                     try { this.progress = JSON.parse(saved); }
-                    catch(e) { this.progress = { maxUnlocked: 1, stars: {} }; }
+                    catch(e) { this.progress = { maxUnlocked: 1, stars: {}, starsBalance: 300, lastDailyDate: "" }; }
                   } else {
-                    this.progress = { maxUnlocked: 1, stars: {} };
+                    this.progress = { maxUnlocked: 1, stars: {}, starsBalance: 300, lastDailyDate: "" };
+                  }
+                  if (typeof this.progress.starsBalance !== 'number') {
+                    this.progress.starsBalance = 300;
                   }
                 }
 
@@ -538,14 +579,61 @@ jobs:
                   this.updateHeaderUI();
                 }
 
-                updateHeaderUI() {
-                  let totalStars = 0;
-                  for (let lvl in this.progress.stars) {
-                    totalStars += this.progress.stars[lvl] || 0;
+                checkDailyReward() {
+                  const todayStr = new Date().toISOString().split('T')[0];
+                  if (this.progress.lastDailyDate !== todayStr) {
+                    this.progress.starsBalance += 300;
+                    this.progress.lastDailyDate = todayStr;
+                    this.saveProgress();
+                    setTimeout(() => {
+                      document.getElementById('modalDailyReward').classList.remove('hidden');
+                      try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } }); } catch(e) {}
+                      this.speak("مرحباً بك مجدداً يا معلّم! تمت إضافة 300 نجمة مكافأة يومية لحسابك!");
+                    }, 500);
                   }
-                  document.getElementById('totalStarsBadge').innerText = `${totalStars}/600`;
+                }
+
+                closeDailyRewardModal() {
+                  document.getElementById('modalDailyReward').classList.add('hidden');
+                }
+
+                updateHeaderUI() {
+                  document.getElementById('starsBalanceDisplay').innerText = this.progress.starsBalance;
                   document.getElementById('currentLevelNav').innerText = this.progress.maxUnlocked;
                   document.getElementById('homeResumeLvl').innerText = this.progress.maxUnlocked;
+                }
+
+                buyHint() {
+                  if (!this.activeStage) return;
+
+                  if (this.progress.starsBalance < 30) {
+                    alert("❌ رصيد النجوم غير كافٍ! تحتاج 30 نجمة على الأقل.\nالعب مراحل جديدة أو انتظر المكافأة اليومية!");
+                    return;
+                  }
+
+                  const unrevealed = this.activeStage.h.filter(h => !this.revealedHints.includes(h));
+                  if (unrevealed.length === 0) {
+                    alert("💡 لقد تم كشف جميع الكلمات الدلالية لهذه المرحلة بالفعل!");
+                    return;
+                  }
+
+                  // خصم 30 نجمة
+                  this.progress.starsBalance -= 30;
+                  const newHint = unrevealed[0];
+                  this.revealedHints.push(newHint);
+                  this.saveProgress();
+
+                  // عرض الدلالة في بطاقة الكشف
+                  const banner = document.getElementById('revealedHintBanner');
+                  const container = document.getElementById('revealedHintsContainer');
+                  banner.classList.remove('hidden');
+
+                  const tag = document.createElement('span');
+                  tag.className = 'bg-amber-200 text-amber-950 px-2 py-0.5 rounded-md border border-amber-400 flex items-center space-x-1 space-x-reverse animate-pulse';
+                  tag.innerHTML = `<span>💡</span><span>${newHint}</span>`;
+                  container.appendChild(tag);
+
+                  this.speak(`تم كشف دلالة: ${newHint}! اذكرها في شرحك!`);
                 }
 
                 initVoice() {
@@ -620,8 +708,7 @@ jobs:
                     }
                   }
 
-                  // 2. تحليل الدلالات الذكية (Semantic Clues Matching)
-                  let clueHits = 0;
+                  // 2. تحليل الدلالات الذكية
                   const cluesBox = document.getElementById('aiDetectedClues');
 
                   this.activeStage.h.forEach(hint => {
@@ -630,11 +717,9 @@ jobs:
 
                     if (cleanedText.includes(cleanH) || stemmedWords.includes(stemH)) {
                       this.detectedCluesSet.add(hint);
-                      clueHits++;
                     }
                   });
 
-                  // رسم بطاقات الدلالات المكتشفة حياً
                   cluesBox.innerHTML = '';
                   this.detectedCluesSet.forEach(clue => {
                     const tag = document.createElement('span');
@@ -643,23 +728,19 @@ jobs:
                     cluesBox.appendChild(tag);
                   });
 
-                  // 3. حساب درجة اقتناع الذكاء الاصطناعي (Confidence Score)
+                  // 3. حساب درجة اقتناع الذكاء الاصطناعي
                   const cluesScore = Math.min(80, this.detectedCluesSet.size * 40);
                   const fluencyScore = Math.min(20, Math.floor(words.length * 2.5));
                   const totalConfidence = Math.min(100, cluesScore + fluencyScore);
 
-                  // تحديث مؤشر الذكاء الاصطناعي على الواجهة
                   document.getElementById('aiConfidencePct').innerText = `${totalConfidence}%`;
                   const bar = document.getElementById('aiConfidenceBar');
                   bar.style.width = `${totalConfidence}%`;
 
-                  // تحديث الزر الذكي المباشر بحسب النسبة
                   const nextBtn = document.getElementById('btnNextStage');
                   const nextLabel = document.getElementById('btnNextLabel');
-                  const nextIcon = document.getElementById('btnNextIcon');
 
                   if (totalConfidence >= 80) {
-                    // الحكم التلقائي بالنجاح وتفعيل زر التالي فوراً!
                     this.triggerAutoSuccess();
                   } else {
                     nextLabel.innerText = `دلالاتك: ${totalConfidence}% (واصل الشرح)`;
@@ -672,7 +753,6 @@ jobs:
                   this.isSuccessApproved = true;
                   clearInterval(this.timerInterval);
 
-                  // تفعيل وتحويل زر التالي كلياً إلى الأخضر المتوهج
                   const nextBtn = document.getElementById('btnNextStage');
                   const nextLabel = document.getElementById('btnNextLabel');
                   const nextIcon = document.getElementById('btnNextIcon');
@@ -689,7 +769,6 @@ jobs:
                   this.speak(`أحسنت الشرح! لقد عرفت أنك تقصد ${this.activeStage.w} بدقة تامة يا معلم!`);
                   try { confetti({ particleCount: 90, spread: 60, origin: { y: 0.7 } }); } catch(e) {}
 
-                  // انتقال تلقائي فائق السلاسة بعد ثانيتين إن لم يضغط اللاعب
                   this.autoTransitionTimer = setTimeout(() => {
                     if (this.isSuccessApproved) {
                       this.onNextClicked();
@@ -706,6 +785,9 @@ jobs:
                   let stars = 3;
                   if (this.busts === 1) stars = 2;
                   else if (this.busts >= 2) stars = 1;
+
+                  // إضافة 25 نجمة مكافأة فوز بالمرحلة إلى المحفظة
+                  this.progress.starsBalance += 25;
 
                   const prevStars = this.progress.stars[this.currentStageNum] || 0;
                   if (stars > prevStars) {
@@ -743,6 +825,7 @@ jobs:
                   this.isPlaying = true;
                   this.isSuccessApproved = false;
                   this.detectedCluesSet.clear();
+                  this.revealedHints = [];
 
                   document.getElementById('playStageNum').innerText = `#${lvl}`;
                   document.getElementById('playWorldTag').innerText = this.activeWorldCfg.title.split(':')[1];
@@ -751,20 +834,24 @@ jobs:
                   document.getElementById('playStarsDisplay').innerText = '⭐⭐⭐';
                   document.getElementById('playTabooCountLabel').innerText = `ممنوع نطق ${this.activeWorldCfg.taboos} كلمات`;
 
-                  // إعادة تهيئة شريط الذكاء الاصطناعي
+                  // تهيئة شريط الدلالات المكشوفة
+                  document.getElementById('revealedHintBanner').classList.add('hidden');
+                  document.getElementById('revealedHintsContainer').innerHTML = '';
+
+                  // تهيئة شريط الذكاء الاصطناعي
                   document.getElementById('aiConfidencePct').innerText = '0%';
                   document.getElementById('aiConfidenceBar').style.width = '0%';
                   document.getElementById('aiDetectedClues').innerHTML = '';
                   document.getElementById('aiStatusPill').innerText = 'يحلل الدلالات...';
 
-                  // إعادة تهيئة زر التالي الذكي إلى الحالة المعطلة
+                  // تهيئة زر التالي
                   const nextBtn = document.getElementById('btnNextStage');
                   nextBtn.disabled = true;
                   nextBtn.className = "btn-3d py-3.5 bg-slate-800 text-gray-500 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-60 transition-all duration-300";
                   document.getElementById('btnNextIcon').className = "fa-solid fa-hourglass-half";
                   document.getElementById('btnNextLabel').innerText = "في انتظار الشرح... (0%)";
 
-                  // عرض الممنوعات المحددة
+                  // عرض الممنوعات
                   const taboosBox = document.getElementById('playTaboosContainer');
                   taboosBox.innerHTML = '';
                   const activeTaboos = this.activeStage.t.slice(0, this.activeWorldCfg.taboos);
@@ -775,7 +862,7 @@ jobs:
                     taboosBox.appendChild(span);
                   });
 
-                  document.getElementById('playTranscript').innerText = 'الميكروفون يستمع.. تحدث بحرية ليحلل الذكاء كلماتك!';
+                  document.getElementById('playTranscript').innerText = 'الميكروفون يستمع.. تحدث بحرية أو اضغط مساعدة!';
                   this.showScreen('screenPlay');
 
                   if (this.recognition) {
@@ -795,8 +882,8 @@ jobs:
                     document.getElementById('playTimerText').innerText = `${this.timer}s`;
                     if (this.timer <= 0) {
                       clearInterval(this.timerInterval);
-                      this.speak("انتهى وقت المرحلة ولم تقدم شرحاً كافياً!");
-                      alert("⏳ انتهى الوقت! حاول مجدداً واذكر دلالات أقوى.");
+                      this.speak("انتهى وقت المرحلة!");
+                      alert("⏳ انتهى الوقت! حاول مجدداً واذكر دلالات أدق.");
                       this.showScreen('screenMap');
                     }
                   }, 1000);
@@ -923,7 +1010,7 @@ jobs:
         run: |
           npm init -y
           npm install @capacitor/core@6.0.0 @capacitor/cli@6.0.0 @capacitor/android@6.0.0
-          npx cap init "QoolYaM3alemAI200" "com.qoolyam3alem.ai200" --web-dir www
+          npx cap init "QoolYaM3alemRewards" "com.qoolyam3alem.rewards" --web-dir www
           npx cap add android
           npx cap sync android
 
@@ -939,9 +1026,9 @@ jobs:
           chmod +x ./gradlew
           ./gradlew assembleDebug
 
-      - name: Upload Super AI 200-Levels APK as Downloadable Artifact
+      - name: Upload APK with Hints & Rewards as Downloadable Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QoolYaM3alem-SuperAI-200Levels-APK
+          name: QoolYaM3alem-Rewards-VoiceAI-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
