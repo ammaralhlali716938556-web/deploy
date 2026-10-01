@@ -1,4 +1,4 @@
-name: Build Android Solo AI Casual Game
+name: Build Android APK with 200 Levels & Voice AI
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Build Android APK with Voice AI Referee
+    name: Build Android APK with 200 Stages Map
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Generate Solo Voice Game with AI Referee
+      - name: Generate Complete 200-Level Map & Voice AI Game
         run: |
           mkdir -p www
           cat << 'EOF' > www/index.html
@@ -41,7 +41,7 @@ jobs:
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-            <title>قول يا معلّم | ضد الحكم الآلي 🎙️🤖</title>
+            <title>قول يا معلّم | خريطة الـ 200 مرحلة 🗺️</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
@@ -52,217 +52,499 @@ jobs:
               * { -webkit-tap-highlight-color: transparent; user-select: none; }
               body {
                 font-family: 'Cairo', sans-serif;
-                background: linear-gradient(160deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+                background: linear-gradient(165deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
                 min-height: 100vh;
                 margin: 0;
                 overflow-x: hidden;
               }
               .btn-3d {
                 transition: all 0.1s ease;
-                box-shadow: 0 8px 0 rgba(0,0,0,0.25), 0 15px 20px rgba(0,0,0,0.2);
+                box-shadow: 0 6px 0 rgba(0,0,0,0.28), 0 10px 15px rgba(0,0,0,0.25);
               }
               .btn-3d:active {
-                transform: translateY(6px);
-                box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
-              }
-              .btn-gloss {
-                position: relative;
-                overflow: hidden;
-              }
-              .btn-gloss::before {
-                content: '';
-                position: absolute;
-                top: 0; left: 0; right: 0; height: 48%;
-                background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 100%);
-                border-radius: 9999px 9999px 0 0;
-                pointer-events: none;
+                transform: translateY(4px);
+                box-shadow: 0 2px 0 rgba(0,0,0,0.28), 0 4px 8px rgba(0,0,0,0.2);
               }
               .clay-card {
                 background: rgba(255, 255, 255, 0.96);
-                border-radius: 28px;
-                box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3), inset -4px -4px 8px rgba(0,0,0,0.05), inset 4px 4px 10px rgba(255, 255, 255, 0.9);
-                border: 3px solid #e0e7ff;
+                border-radius: 24px;
+                box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
               }
-              .gold-badge {
-                background: radial-gradient(circle, #FFF7A1 0%, #FFAA00 100%);
-                border: 3px solid #FFF885;
-                box-shadow: 0 4px 10px rgba(212, 122, 0, 0.4);
+              .stage-node {
+                transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
               }
-              @keyframes mic-wave {
-                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-                70% { transform: scale(1.08); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-                100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+              .stage-node:active { transform: scale(0.92); }
+              @keyframes current-pulse {
+                0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #10b981); }
+                50% { transform: scale(1.08); filter: drop-shadow(0 0 16px #34d399); }
               }
-              .mic-listening { animation: mic-wave 1.5s infinite; }
+              .current-stage { animation: current-pulse 1.8s infinite; }
             </style>
           </head>
           <body class="flex justify-center items-center select-none min-h-screen">
 
-            <div id="appContainer" class="w-full max-w-[430px] h-[100dvh] sm:h-[890px] bg-gradient-to-b from-[#1e1b4b] via-[#312e81] to-[#4338ca] sm:rounded-[45px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-indigo-400">
+            <div id="appContainer" class="w-full max-w-[440px] h-[100dvh] sm:h-[900px] bg-slate-900 sm:rounded-[40px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-indigo-500/40">
               
-              <!-- HEADER -->
-              <header class="w-full px-5 pt-4 pb-2 flex justify-between items-center z-10">
-                <div class="flex items-center space-x-2 space-x-reverse bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
-                  <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-white text-xs font-bold font-tajawal">الحكم: <span class="text-yellow-300 font-black">المعلّم الآلي 🤖</span></span>
-                </div>
+              <!-- TOP GLOBAL HEADER -->
+              <header class="w-full px-4 pt-3 pb-2 flex justify-between items-center z-20 bg-slate-950/80 backdrop-blur-md border-b border-white/10">
                 <div class="flex items-center space-x-2 space-x-reverse">
-                  <button onclick="game.showHome()" class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 active:scale-90 transition">
+                  <div class="bg-amber-400 text-amber-950 font-black text-xs px-3 py-1 rounded-full flex items-center space-x-1 space-x-reverse shadow">
+                    <span>⭐</span>
+                    <span id="totalStarsBadge">0/600</span>
+                  </div>
+                  <span class="text-white text-xs font-bold">المرحلة: <span id="currentLevelNav" class="text-yellow-300 font-black">1</span></span>
+                </div>
+                <div class="flex items-center space-x-1.5 space-x-reverse">
+                  <button onclick="game.showScreen('screenMap')" title="الخريطة" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                  </button>
+                  <button onclick="game.showHome()" title="الرئيسية" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition">
                     <i class="fa-solid fa-house"></i>
                   </button>
                 </div>
               </header>
 
-              <!-- SCREEN 1: HOME SOLO -->
+              <!-- SCREEN 1: HOME -->
               <div id="screenHome" class="flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 text-center">
-                <div class="pt-4">
-                  <div class="w-24 h-24 mx-auto gold-badge rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3">
-                    <span class="text-5xl">🎙️</span>
+                <div class="pt-2">
+                  <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 border-4 border-yellow-300">
+                    <span class="text-5xl">👑</span>
                   </div>
-                  <h1 class="text-4xl font-black text-white mt-4 font-tajawal drop-shadow-md">تحدي الحكم الآلي</h1>
-                  <p class="text-indigo-200 text-xs font-bold mt-1">العب بمفردك: اشرح بصوتك في الميكروفون والحكم يحكم عليك!</p>
+                  <h1 class="text-4xl font-black text-white mt-3 font-tajawal drop-shadow">قول يا معلّم!</h1>
+                  <p class="text-indigo-200 text-xs font-bold mt-1">تحدي الـ 200 مرحلة مع الحكم الآلي الذكي 🎙️🤖</p>
+                </div>
+
+                <div class="w-full clay-card p-4 text-right space-y-2.5">
+                  <div class="flex justify-between items-center border-b pb-1.5">
+                    <span class="text-xs font-black text-slate-800">إجمالي مراحل اللعبة:</span>
+                    <span class="text-sm font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">200 مرحلة</span>
+                  </div>
+                  <div class="flex justify-between items-center border-b pb-1.5">
+                    <span class="text-xs font-black text-slate-800">العوالم المتاحة:</span>
+                    <span class="text-xs font-black text-amber-700">5 عوالم متدرجة</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-black text-slate-800">نظام الحكم:</span>
+                    <span class="text-xs font-bold text-emerald-700">ميكروفون + مراقبة الممنوعات</span>
+                  </div>
+                </div>
+
+                <div class="w-full space-y-3 pb-3">
+                  <button onclick="game.resumeGame()" class="btn-3d w-full py-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl border-b-[5px] border-emerald-800 text-white text-xl font-black flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-play"></i>
+                    <span>مواصلة اللعب (المرحلة <span id="homeResumeLvl">1</span>)</span>
+                  </button>
+                  <button onclick="game.showScreen('screenMap')" class="btn-3d w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl border-b-[5px] border-indigo-900 text-white font-black text-sm flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-map"></i>
+                    <span>استعراض خريطة الـ 200 مرحلة 🗺️</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- SCREEN 2: LEVEL MAP (200 STAGES) -->
+              <div id="screenMap" class="hidden flex-1 flex flex-col z-10 overflow-hidden">
+                <!-- WORLD SELECTOR TABS -->
+                <div class="px-2 pt-2 pb-1 bg-slate-950/40 border-b border-white/10 flex overflow-x-auto no-scrollbar space-x-1.5 space-x-reverse text-center">
+                  <button onclick="game.filterWorld(1)" id="tabWorld1" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-indigo-600 text-white shadow">
+                    🏡 حارة المبتدئين (1-40)
+                  </button>
+                  <button onclick="game.filterWorld(2)" id="tabWorld2" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
+                    🎬 المشاهير والميمز (41-80)
+                  </button>
+                  <button onclick="game.filterWorld(3)" id="tabWorld3" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
+                    📜 سوق الحِرّيفة (81-120)
+                  </button>
+                  <button onclick="game.filterWorld(4)" id="tabWorld4" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
+                    🔬 برج الخبراء (121-160)
+                  </button>
+                  <button onclick="game.filterWorld(5)" id="tabWorld5" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
+                    👑 عرش الأساطير (161-200)
+                  </button>
+                </div>
+
+                <!-- WORLD INFO STRIP -->
+                <div id="worldInfoBanner" class="px-4 py-2 bg-indigo-950/60 text-right flex justify-between items-center text-xs text-indigo-200 border-b border-white/5">
+                  <span id="worldNameTitle" class="font-black text-yellow-300">عالم 1: حارة المبتدئين</span>
+                  <span id="worldRuleDesc" class="text-[11px] font-bold">الوقت: 60ث • 2 ممنوعات فقط</span>
+                </div>
+
+                <!-- SCROLLABLE STAGES GRID -->
+                <div id="stagesScrollContainer" class="flex-1 overflow-y-auto px-4 py-4 grid grid-cols-4 gap-3 text-center content-start">
+                  <!-- Generated dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- SCREEN 3: GAMEPLAY (STAGE QUESTION) -->
+              <div id="screenPlay" class="hidden flex-1 flex flex-col items-center justify-between px-4 py-2 z-10">
+                <!-- TOP STAGE INFO -->
+                <div class="w-full flex justify-between items-center bg-white/10 backdrop-blur-md rounded-2xl px-4 py-1.5 border border-white/20 text-white font-bold text-xs">
+                  <div>المرحلة: <span id="playStageNum" class="text-yellow-300 font-black">#1</span> (<span id="playWorldTag" class="text-indigo-200">حارة المبتدئين</span>)</div>
+                  <div>المحاولات السليمة: <span id="playStarsDisplay" class="text-amber-400 font-black">⭐⭐⭐</span></div>
+                </div>
+
+                <!-- TIMER & LIVE MIC ICON -->
+                <div class="flex items-center space-x-3 space-x-reverse my-1">
+                  <div id="micIndicator" class="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-red-400/40 animate-pulse">
+                    <i class="fa-solid fa-microphone"></i>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[11px] text-gray-300 font-bold">الوقت المتبقي:</div>
+                    <div id="playTimerText" class="text-3xl font-black text-yellow-300 font-tajawal">60s</div>
+                  </div>
+                </div>
+
+                <!-- CARD -->
+                <div class="w-full clay-card p-4 relative overflow-hidden text-center shadow-2xl border-4 border-indigo-200">
+                  <div class="flex justify-between items-center mb-1">
+                    <span id="playCategory" class="bg-indigo-100 text-indigo-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      أكلات شعبية
+                    </span>
+                    <span id="playTabooCountLabel" class="bg-red-100 text-red-700 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      ممنوع نطق كلمتين
+                    </span>
+                  </div>
+
+                  <div id="playWord" class="text-3xl font-black text-slate-900 my-2 font-tajawal">
+                    كشري
+                  </div>
+
+                  <div class="bg-red-50 border border-red-200 rounded-xl p-2 text-right">
+                    <div class="text-red-600 font-black text-xs flex items-center space-x-1 space-x-reverse mb-1">
+                      <i class="fa-solid fa-ban"></i>
+                      <span>الممنوعات على لسانك:</span>
+                    </div>
+                    <div id="playTaboosContainer" class="flex flex-wrap gap-1.5 text-xs font-bold text-slate-800"></div>
+                  </div>
+                </div>
+
+                <!-- REALTIME SPEECH MONITOR -->
+                <div class="w-full bg-black/50 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
+                  <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
+                    <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الميكروفون الآن:</span>
+                    <span id="playSpeechStatus" class="text-emerald-400 font-mono text-[10px]">مستمع بنشاط</span>
+                  </div>
+                  <div id="playTranscript" class="text-xs font-bold text-white min-h-[32px] max-h-[38px] overflow-hidden leading-tight">
+                    اشرح الكلمة بصوت واضح دون ذكر أي ممنوع...
+                  </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="w-full grid grid-cols-2 gap-2.5 pb-2">
+                  <button onclick="game.abandonStage()" class="btn-3d py-3 bg-slate-700 rounded-2xl border-b-[4px] border-slate-900 text-white font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>انسحاب للخريطة</span>
+                  </button>
+                  <button onclick="game.manualPassStage()" class="btn-3d py-3 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl border-b-[4px] border-emerald-800 text-white font-black text-sm flex items-center justify-center space-x-1.5 space-x-reverse">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>الحكم عرفها! 🎉</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- SCREEN 4: LEVEL VICTORY MODAL/SCREEN -->
+              <div id="screenWin" class="hidden flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 text-center">
+                <div class="pt-4">
+                  <div class="w-20 h-20 mx-auto bg-amber-400 rounded-full flex items-center justify-center text-4xl shadow-2xl animate-bounce">
+                    🌟
+                  </div>
+                  <h2 class="text-3xl font-black text-white mt-3 font-tajawal drop-shadow">
+                    أحسنت يا معلّم!
+                  </h2>
+                  <div id="winStarsAwarded" class="text-3xl text-amber-300 my-1">⭐⭐⭐</div>
+                  <p id="winStageLabel" class="text-indigo-200 text-xs font-bold">تم اجتياز المرحلة بنجاح!</p>
                 </div>
 
                 <div class="w-full clay-card p-4 text-right space-y-2">
-                  <div class="text-indigo-950 font-black text-sm border-b pb-1.5 flex items-center space-x-1.5 space-x-reverse">
-                    <span>⚡</span>
-                    <span>كيف تلعب مع الهاتف؟</span>
+                  <div class="flex justify-between items-center border-b pb-1.5 text-xs font-bold">
+                    <span class="text-slate-600">المرحلة القادمة:</span>
+                    <span id="nextLevelUnlockText" class="font-black text-indigo-700">مرحلة 2 (مفتوحة الآن 🔓)</span>
                   </div>
-                  <p class="text-xs text-gray-700 leading-relaxed font-bold">
-                    1. اضغط <strong>ابدأ التحدي</strong> وسيعمل ميكروفون الهاتف فوراً.<br>
-                    2. <strong>اشرح الكلمة</strong> بصوتك المسموع دون ذكر أي كلمة ممنوعة.<br>
-                    3. الهاتف يستمع إليك في الوقت الحقيقي؛ إذا نطقت أي ممنوعات سيصرخ الحكم <strong>"قفشتك!"</strong> ويخصم نقاطك!
-                  </p>
+                  <div class="flex justify-between items-center text-xs font-bold">
+                    <span class="text-slate-600">تقييم النطق:</span>
+                    <span class="font-black text-emerald-600">شرح بليغ دون مخالفات</span>
+                  </div>
                 </div>
 
-                <div class="w-full space-y-3 pb-4">
-                  <button onclick="game.startSoloGame()" class="btn-3d btn-gloss w-full py-4 bg-gradient-to-r from-emerald-400 to-green-600 rounded-3xl border-b-[6px] border-emerald-800 text-white text-xl font-black flex items-center justify-center space-x-3 space-x-reverse">
-                    <i class="fa-solid fa-microphone-lines text-2xl"></i>
-                    <span>ابدأ التحدي الصوتي 🎙️</span>
+                <div class="w-full space-y-2.5 pb-2">
+                  <button onclick="game.playNextStage()" class="btn-3d w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl border-b-[5px] border-emerald-800 text-white font-black text-base flex items-center justify-center space-x-2 space-x-reverse">
+                    <span>المرحلة التالية</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                  </button>
+                  <button onclick="game.showScreen('screenMap')" class="btn-3d w-full py-3 bg-white text-slate-800 rounded-2xl border-b-[4px] border-slate-300 font-black text-xs">
+                    العودة لخريطة المراحل 🗺️
                   </button>
                 </div>
-              </div>
-
-              <!-- SCREEN 2: ACTIVE GAMEPLAY (VOICE) -->
-              <div id="screenPlay" class="hidden flex-1 flex flex-col items-center justify-between px-5 py-2 z-10">
-                
-                <!-- TOP BAR -->
-                <div class="w-full flex justify-between items-center bg-white/10 backdrop-blur-md rounded-2xl px-4 py-2 border border-white/20 text-white font-bold text-xs">
-                  <div>الجولة: <span id="roundCounter" class="text-yellow-300 font-black">1/5</span></div>
-                  <div>النقاط: <span id="scoreCounter" class="text-emerald-300 font-black text-sm">0</span></div>
-                </div>
-
-                <!-- TIMER & LIVE MIC STATUS -->
-                <div class="flex items-center space-x-4 space-x-reverse my-2">
-                  <div class="relative flex items-center justify-center">
-                    <div id="micIndicator" class="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center text-2xl shadow-lg mic-listening">
-                      <i class="fa-solid fa-microphone"></i>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-xs font-bold text-indigo-200">العداد التنازلي:</div>
-                    <div id="timerText" class="text-3xl font-black text-yellow-300">45s</div>
-                  </div>
-                </div>
-
-                <!-- THE CARD -->
-                <div class="w-full clay-card p-4 relative overflow-hidden text-center shadow-2xl">
-                  <span class="bg-indigo-100 text-indigo-900 border border-indigo-200 text-[11px] font-black px-3 py-0.5 rounded-full inline-block mb-1">
-                    اشرح الكلمة التالية للحكم الآلي 🗣️
-                  </span>
-
-                  <div id="cardWord" class="text-3xl font-black text-indigo-950 my-2 font-tajawal">
-                    كشري بالكبّة
-                  </div>
-
-                  <div class="bg-red-50 border border-red-200 rounded-xl p-2.5 text-right">
-                    <div class="text-red-600 font-black text-xs flex items-center space-x-1 space-x-reverse mb-1">
-                      <i class="fa-solid fa-ban"></i>
-                      <span>إياك أن تنطق هذه الممنوعات (الحكم يراقبك):</span>
-                    </div>
-                    <div id="tabooWords" class="flex flex-wrap gap-1.5 text-xs font-bold text-gray-800"></div>
-                  </div>
-                </div>
-
-                <!-- LIVE SPEECH DETECTOR DISPLAY -->
-                <div class="w-full bg-black/40 backdrop-blur-md rounded-2xl p-3 border border-white/20 text-right">
-                  <div class="flex justify-between items-center text-xs text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الحكم منك الآن:</span>
-                    <span id="speechState" class="text-[10px] text-emerald-300">جاري الاستماع...</span>
-                  </div>
-                  <div id="liveSpeechTranscript" class="text-sm font-bold text-white min-h-[38px] max-h-[48px] overflow-hidden leading-snug">
-                    تحدّث واشرح دون نطق الممنوعات...
-                  </div>
-                </div>
-
-                <!-- ACTION BUTTONS -->
-                <div class="w-full grid grid-cols-2 gap-3 pb-3">
-                  <button onclick="game.passCard()" class="btn-3d btn-gloss py-3 bg-gradient-to-b from-gray-500 to-gray-700 rounded-2xl border-b-[5px] border-gray-900 text-white font-black text-sm flex items-center justify-center space-x-2 space-x-reverse">
-                    <i class="fa-solid fa-forward"></i>
-                    <span>تخطي (-5)</span>
-                  </button>
-                  <button onclick="game.botGuessedRightManually()" class="btn-3d btn-gloss py-3 bg-gradient-to-b from-emerald-400 to-green-600 rounded-2xl border-b-[5px] border-emerald-800 text-white font-black text-sm flex items-center justify-center space-x-2 space-x-reverse">
-                    <i class="fa-solid fa-brain"></i>
-                    <span>الحكم فهمها! (+30)</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- SCREEN 3: RESULTS -->
-              <div id="screenWinner" class="hidden flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 text-center">
-                <div class="pt-3">
-                  <div class="w-24 h-24 mx-auto gold-badge rounded-full flex items-center justify-center text-5xl shadow-2xl">
-                    🤖
-                  </div>
-                  <h2 class="text-3xl font-black text-white mt-3 font-tajawal drop-shadow-md">
-                    انتهى التحدي مع الحكم!
-                  </h2>
-                  <div id="finalJudgment" class="text-xl font-bold text-yellow-300 mt-1">حريف ولسانك فصيح!</div>
-                </div>
-
-                <div class="w-full clay-card p-5 space-y-3 text-right">
-                  <div class="flex justify-between items-center border-b pb-2">
-                    <span class="text-gray-500 font-bold text-sm">مجموع نقاطك:</span>
-                    <span id="finalScore" class="text-3xl font-black text-emerald-600">0</span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span class="text-gray-500 font-bold text-sm">مخالفات قفشتك:</span>
-                    <span id="totalBusts" class="text-lg font-black text-red-600">0 مرات</span>
-                  </div>
-                </div>
-
-                <button onclick="game.showHome()" class="btn-3d btn-gloss w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl border-b-[5px] border-indigo-800 text-white font-black text-lg">
-                  تحدي جديد 🔄
-                </button>
               </div>
 
             </div>
 
-            <!-- JAVASCRIPT GAME ENGINE -->
+            <!-- JAVASCRIPT GAME ENGINE WITH 200 STAGES -->
             <script>
-              const CARDS = [
-                { word: "كشري", taboo: ["صلصة", "مكرونة", "دقة", "عدس", "حمص"], hints: ["مصر", "أكلة", "شطة", "حلة", "بصل"] },
-                { word: "توك توك", taboo: ["عجل", "سواق", "صوت", "شارع", "أجرة"], hints: ["مواصلة", "صغير", "زحمة", "ثلاثة"] },
-                { word: "بطيخ", taboo: ["أحمر", "صيف", "بذر", "سكينة", "شريحة"], hints: ["فاكهة", "ساقع", "مدور", "جبنة"] },
-                { word: "شاحن", taboo: ["سلك", "كهرباء", "فيشة", "بطارية", "موبايل"], hints: ["طاقة", "جهاز", "مية بالمية", "تلفون"] },
-                { word: "طيارة", taboo: ["مطار", "سفر", "جناح", "سحاب", "تذكرة"], hints: ["جو", "سماء", "ركاب", "طيران"] },
-                { word: "حواوشي", taboo: ["عيش", "لحمة", "فرن", "سخن", "بلدي"], hints: ["رغيف", "أكلة", "جزار", "طحينة"] }
+              // COMPLETE 200 STAGES DATABASE DIVIDED ACROSS 5 WORLDS
+              const RAW_STAGES = [
+                // WORLD 1: (1-40) Easy - 60s - 2 Taboos
+                {w:"كشري", t:["صلصة", "عدس"], c:"أكلات شعبية"},
+                {w:"شاي بلبن", t:["شاي", "حليب"], c:"مشروبات"},
+                {w:"بطيخ", t:["أحمر", "بزر"], c:"فواكه"},
+                {w:"فلافل", t:["طعمية", "زيت"], c:"أكلات"},
+                {w:"شاحن", t:["سلك", "كهرباء"], c:"أجهزة"},
+                {w:"مروحة", t:["هواء", "صيف"], c:"منزل"},
+                {w:"نظارة", t:["عين", "عدسات"], c:"أدوات"},
+                {w:"ساعة يد", t:["وقت", "عقارب"], c:"إكسسوارات"},
+                {w:"ثلاجة", t:["مطبخ", "ساقع"], c:"منزل"},
+                {w:"شمسية", t:["مطر", "شمس"], c:"أدوات"},
+                {w:"قطة", t:["مواء", "حيوان"], c:"حيوانات"},
+                {w:"عصفور", t:["ريش", "يطير"], c:"حيوانات"},
+                {w:"كرسي", t:["جلوس", "طاولة"], c:"منزل"},
+                {w:"قلم رصاص", t:["كتابة", "ممحاة"], c:"مكتبة"},
+                {w:"صابونة", t:["رغوة", "غسيل"], c:"نظافة"},
+                {w:"سرير", t:["نوم", "مخدة"], c:"منزل"},
+                {w:"مفتاح", t:["قفل", "باب"], c:"أدوات"},
+                {w:"تفاحة", t:["أحمر", "شجرة"], c:"فواكه"},
+                {w:"حذاء رياضي", t:["مشي", "رجل"], c:"ملابس"},
+                {w:"مرآة", t:["وجه", "زجاج"], c:"منزل"},
+                {w:"فرشاة أسنان", t:["معجون", "فم"], c:"نظافة"},
+                {w:"كوب ماء", t:["عطش", "شرب"], c:"منزل"},
+                {w:"كتاب", t:["صفحات", "قراءة"], c:"معرفة"},
+                {w:"ليمون", t:["حامض", "عصير"], c:"فواكه"},
+                {w:"موز", t:["قشر", "أصفر"], c:"فواكه"},
+                {w:"مظلة شاطئ", t:["بحر", "رمل"], c:"صيف"},
+                {w:"حقيبة مدرسية", t:["كتب", "ظهر"], c:"مدرسة"},
+                {w:"سجادة صلاة", t:["جامع", "قبلة"], c:"عبادة"},
+                {w:"بطارية", t:["طاقة", "شحن"], c:"كهرباء"},
+                {w:"مقص", t:["ورق", "قص"], c:"أدوات"},
+                {w:"منبه", t:["رنين", "صحوة"], c:"أجهزة"},
+                {w:"فنجان قهوة", t:["بن", "صباح"], c:"مشروبات"},
+                {w:"دراجة", t:["بدال", "عجلتين"], c:"رياضة"},
+                {w:"عسل نحل", t:["نحلة", "حلو"], c:"طبيعة"},
+                {w:"كرة قدم", t:["ملعب", "هدف"], c:"رياضة"},
+                {w:"سماعات أذن", t:["صوت", "أغاني"], c:"أجهزة"},
+                {w:"منديل ورق", t:["مسح", "علبة"], c:"نظافة"},
+                {w:"طاقية صوف", t:["برد", "رأس"], c:"ملابس"},
+                {w:"قفل حديد", t:["سلسلة", "أمان"], c:"أدوات"},
+                {w:"فانوس رمضان", t:["شمعة", "نور"], c:"مناسبات"},
+
+                // WORLD 2: (41-80) Medium - 45s - 3 Taboos
+                {w:"توك توك", t:["عجل", "سواق", "مهرجانات"], c:"شارع ومواصلات"},
+                {w:"اللمبي", t:["محمد سعد", "كوميديا", "فيلم"], c:"أفلام وميمز"},
+                {w:"كمسري", t:["تذكرة", "أتوبيس", "فلوس"], c:"شارع وحياة"},
+                {w:"بياع غزل بنات", t:["سكر", "وردي", "عصاية"], c:"ذكريات وشارع"},
+                {w:"فرح بلدي", t:["طبلة", "فراشة", "معازيم"], c:"مناسبات"},
+                {w:"عربة فول", t:["طحينة", "ليمون", "قدرة"], c:"شارع وأكل"},
+                {w:"طشت غسيل", t:["زمان", "رغوة", "هدوم"], c:"أنتيكات"},
+                {w:"كلاكس عربية", t:["صوت", "زحمة", "إشارة"], c:"شارع"},
+                {w:"شاي خمسينة", t:["نعناع", "قهوة", "سكر زيادة"], c:"مزاج شعبي"},
+                {w:"طعمية محشية", t:["شطة", "فول", "سمسم"], c:"أكلات"},
+                {w:"سيلفي عائلي", t:["كاميرا", "ابتسامة", "موبايل"], c:"حياة يومية"},
+                {w:"جرامافون", t:["أسطوانة", "مزيكا", "زمان"], c:"أنتيكات"},
+                {w:"ميكروباص", t:["أجرة", "سواق", "موقف"], c:"مواصلات"},
+                {w:"وابور جاز", t:["نار", "زمان", "طبخ"], c:"تراث"},
+                {w:"سخان مياه", t:["دش", "حمام", "كهرباء"], c:"منزل"},
+                {w:"عوامة بحر", t:["سباحة", "صيف", "شاطئ"], c:"صيف"},
+                {w:"فشار", t:["ذرة", "سينما", "كراميل"], c:"تسالي"},
+                {w:"ترمس العيد", t:["ملح", "كمون", "تسالي"], c:"مناسبات"},
+                {w:"خناقة على الركنة", t:["عربية", "شارع", "سايس"], c:"مواقف مضحكة"},
+                {w:"حمام محشي", t:["رز", "فريك", "شوربة"], c:"أكلات فاخرة"},
+                {w:"ماتش ديربي", t:["أهلي", "زمالك", "كورة"], c:"رياضة"},
+                {w:"راديو قديم", t:["موجة", "أم كلثوم", "صوت"], c:"أنتيكات"},
+                {w:"شيشة قهوة", t:["معسل", "فحم", "نار"], c:"مقاهي"},
+                {w:"كنافة بالمانجو", t:["شربات", "صينية", "رمضان"], c:"حلويات"},
+                {w:"نبطشي الأفراح", t:["مايك", "تحية", "مسرح"], c:"مناسبات"},
+                {w:"سايس الجراج", t:["عربية", "مفتاح", "ركنة"], c:"شارع"},
+                {w:"مكواة رجل", t:["بخار", "هدوم", "مغسلة"], c:"تراث"},
+                {w:"فطير مشلتت", t:["عسل", "جبنة قديمة", "سمنة"], c:"أكلات ريفية"},
+                {w:"كرتونة رمضان", t:["زيت", "سكر", "توزيع"], c:"خير ومناسبات"},
+                {w:"شبشب زنوبة", t:["بلاستيك", "بيت", "حمام"], c:"طرافة"},
+                {w:"عصير قصب", t:["ثلج", "عصارة", "أخضر"], c:"مشروبات شارع"},
+                {w:"طبق مخلل", t:["جزر", "لفت", "حامض"], c:"مقبلات"},
+                {w:"حلاق الصحة", t:["موس", "زمان", "شعر"], c:"تراث ومهن"},
+                {w:"طاولة زهر", t:["نرد", "قواشيط", "قهوة"], c:"ألعاب مقهى"},
+                {w:"دومينو", t:["بلاطة", "تسعة", "قفل"], c:"ألعاب مقهى"},
+                {w:"صينية بطاطس", t:["فرن", "طماطم", "لحمة"], c:"أكلات بيت"},
+                {w:"بسطرمة بالبيض", t:["ريحة", "فطار", "طاسة"], c:"أكلات"},
+                {w:"ليمون بالنعناع", t:["خلاط", "انتعاش", "صيف"], c:"مشروبات"},
+                {w:"كشك سجائر", t:["رصيف", "جريدة", "بانك"], c:"شارع"},
+                {w:"طابور العيش", t:["فرن", "رغيف", "زحمة"], c:"شارع"},
+
+                // WORLD 3: (81-120) Advanced - 35s - 4 Taboos
+                {w:"باب النجار مخلع", t:["مثل", "خشب", "مسمار", "إصلاح"], c:"أمثال شعبية"},
+                {w:"طباخ السم بيدوقه", t:["سم", "أكل", "مثل", "مطبخ"], c:"أمثال شعبية"},
+                {w:"حبل الكذب قصير", t:["صدق", "حقيقة", "خداع", "مثل"], c:"حكم وأمثال"},
+                {w:"القرش الأبيض", t:["يوم أسود", "فلوس", "توفير", "مثل"], c:"حكم وأمثال"},
+                {w:"اللي اختشوا ماتوا", t:["حمام", "كسوف", "مثل", "حياء"], c:"أمثال شعبية"},
+                {w:"عصفور في اليد", t:["عشرة", "شجرة", "صيد", "طائر"], c:"حكم وأمثال"},
+                {w:"ابن الوز عوام", t:["وراثة", "سباحة", "أب", "طائر"], c:"أمثال شعبية"},
+                {w:"طشت النداهة", t:["خرافة", "ترعة", "ليل", "صوت"], c:"أساطير شعبية"},
+                {w:"السقا", t:["قربة", "مية", "شارع", "مهنة زمان"], c:"مهن قديمة"},
+                {w:"المسحراتي", t:["طبلة", "سحور", "رمضان", "اصحى"], c:"تراث رمضاني"},
+                {w:"بياع العرقسوس", t:["صاجات", "إبريق", "مشروب", "حزام"], c:"تراث شعبي"},
+                {w:"المكوجي البلدي", t:["رجل", "بخار", "سخن", "حديد"], c:"مهن قديمة"},
+                {w:"الغربال", t:["نخالة", "دقيق", "سبوع", "طحين"], c:"تراث ريفي"},
+                {w:"الساقية", t:["بقر", "مية", "غيط", "ترعة"], c:"تراث زراعي"},
+                {w:"الشادوف", t:["نيل", "ري", "طين", "خشب"], c:"تاريخ الري"},
+                {w:"المنجد البلدي", t:["قطن", "قوس", "مرتبة", "إبرة"], c:"مهن قديمة"},
+                {w:"طاحونة الهواء", t:["دقيق", "رياح", "أجنحة", "طحن"], c:"تراث وعلم"},
+                {w:"المركب الشراعي", t:["بحر", "قماش", "رياح", "دفة"], c:"ملاحة قديمة"},
+                {w:"الحداد البلدي", t:["كير", "مطرقة", "نار", "سندان"], c:"مهن وصناعات"},
+                {w:"الخزاف", t:["طين", "عجلة", "فخار", "فرن"], c:"فنون وتراث"},
+                {w:"حفلة أم كلثوم", t:["مسرح", "ست", "خميس", "منديل"], c:"فن أصيل"},
+                {w:"فيلم الأرض", t:["محمود المليجي", "أرض", "فلاح", "عمدة"], c:"سينما كلاسيكية"},
+                {w:"مدرسة المشاغبين", t:["عادل إمام", "سعيد صالح", "مدرسة", "ضحك"], c:"مسرحيات خالدة"},
+                {w:"خان الخليلي", t:["سياحة", "آثار", "قهوة الفيشاوي", "فضة"], c:"أماكن تراثية"},
+                {w:"سور الأزبكية", t:["كتب قديمة", "قراءة", "وسط البلد", "ثقافة"], c:"معالم ثقافية"},
+                {w:"برج القاهرة", t:["زهرة اللوتس", "جزيرة", "مطعم دوار", "ارتفاع"], c:"معالم مصرية"},
+                {w:"قلعة صلاح الدين", t:["محمد علي", "جامع", "مقطم", "حصن"], c:"تاريخ وآثار"},
+                {w:"طريق الكباش", t:["أقصر", "فراعنة", "تماثيل", "معبد"], c:"آثار فرعونية"},
+                {w:"متحف الحضارة", t:["مومياوات", "ملوك", "فسطاط", "عرض"], c:"تاريخ وسياحة"},
+                {w:"السد العالي", t:["أسوان", "فيضان", "كهرباء", "بحيرة ناصر"], c:"مشاريع عملاقة"},
+                {w:"قناة السويس", t:["ملاحة", "سفن", "بحر أحمر", "تجارة"], c:"ممرات عالمية"},
+                {w:"حجر رشيد", t:["شامبليون", "هيروغليفي", "فك الرموز", "فرنسا"], c:"تاريخ وكشوفات"},
+                {w:"توت عنخ آمون", t:["ذهب", "مقبرة", "فرعون", "أقصر"], c:"كنوز تاريخية"},
+                {w:"أبو الهول", t:["رأس إنسان", "جسم أسد", "أهرامات", "أنف"], c:"عجائب التاريخ"},
+                {w:"سوق الحميدية", t:["دمشق", "تراث", "سقف حديد", "بهارات"], c:"أسواق عربية"},
+                {w:"جامع الأزهر", t:["فاطميون", "دراسة", "منبر", "قاهرة"], c:"تاريخ إسلامي"},
+                {w:"البتراء بالأردن", t:["مدينة وردية", "صخر", "خزنة", "أنباط"], c:"عجائب العالم"},
+                {w:"سفينة تيتانيك", t:["جبل جليد", "غرق", "محيط", "ركاب"], c:"حوادث تاريخية"},
+                {w:"برج إيفل", t:["باريس", "حديد", "فرنسا", "سياحة"], c:"معالم عالمية"},
+                {w:"سور الصين العظيم", t:["طول", "حجارة", "دفاع", "فضاء"], c:"عجائب الدنيا"},
+
+                // WORLD 4: (121-160) Expert - 25s - 5 Taboos
+                {w:"الجاذبية الأرضية", t:["نيوتن", "تفاحة", "سقوط", "فيزياء", "أرض"], c:"علوم وفيزياء"},
+                {w:"الثقب الأسود", t:["فضاء", "ضوء", "نجوم", "بلع", "كتلة"], c:"علم الفلك"},
+                {w:"الذكاء الاصطناعي", t:["كمبيوتر", "خوارزمية", "روبوت", "تفكير", "بيانات"], c:"تكنولوجيا"},
+                {w:"مثلث برمودا", t:["محيط", "اختفاء", "سفن", "طائرات", "لغز"], c:"ألغاز كوكبية"},
+                {w:"طبقة الأوزون", t:["شمس", "أشعة ضارة", "غلاف جوي", "حماية", "تلوث"], c:"بيئة ومناخ"},
+                {w:"الاحتباس الحراري", t:["حرارة", "جليد", "كربون", "ذوبان", "مناخ"], c:"علوم بيئية"},
+                {w:"المجهر الإلكتروني", t:["تكبير", "بكتيريا", "خلايا", "مختبر", "عدسة"], c:"أجهزة علمية"},
+                {w:"الحمض النووي DNA", t:["جينات", "وراثة", "حلزوني", "شفرة", "خلية"], c:"أحياء وبيولوجيا"},
+                {w:"محطة الفضاء الدولية", t:["رواد", "انعدام وزن", "مدار", "صاروخ", "أبحاث"], c:"علوم الفضاء"},
+                {w:"الألياف البصرية", t:["إنترنت", "ضوء", "سرعة", "كيبل", "زجاج"], c:"اتصالات"},
+                {w:"الانشطار النووي", t:["ذرة", "يورانيوم", "مفاعل", "طاقة", "قنبلة"], c:"فيزياء نووية"},
+                {w:"الصفائح التكتونية", t:["زلزال", "قشرة الأرض", "براكين", "حركة", "قارات"], c:"جيولوجيا"},
+                {w:"الجدول الدوري", t:["عناصر", "كيمياء", "مندليف", "فلزات", "ذرات"], c:"كيمياء"},
+                {w:"الموجات الكهرومغناطيسية", t:["تردد", "راديو", "إشعاع", "طيف", "ضوء"], c:"فيزياء"},
+                {w:"البكتيريا النافعة", t:["أمعاء", "جراثيم", "زبادي", "هضم", "ميكروب"], c:"طب وأحياء"},
+                {w:"النانو تكنولوجي", t:["صغير", "مقياس", "ذرات", "تطبيقات", "تكنولوجيا"], c:"علوم المستقبل"},
+                {w:"الموصلات الفائقة", t:["حرارة", "مقاومة صفر", "مغناطيس", "كهرباء", "قطار"], c:"فيزياء حديثة"},
+                {w:"الانفجار العظيم", t:["كون", "نشأة", "توسع", "مجرات", "بداية"], c:"كونيات"},
+                {w:"تلسكوب جيمس ويب", t:["صور", "فضاء عميق", "مرايا", "أشعة", "نجوم"], c:"فلك حديث"},
+                {w:"السبات الشتوي", t:["دب", "نوم", "برد", "طاقة", "حيوانات"], c:"عالم الحيوان"},
+                {w:"التمثيل الضوئي", t:["نبات", "شمس", "أكسجين", "ورقة", "كلوروفيل"], c:"نبات وعلم"},
+                {w:"الضغط الجوي", t:["باروميتر", "طقس", "ارتفاع", "هواء", "نيوتن"], c:"أرصاد جوية"},
+                {w:"شفق قطبي", t:["ألوان", "سماء", "قطب شمالي", "مغناطيس", "ليل"], c:"ظواهر طبيعية"},
+                {w:"حزام الكويكبات", t:["مريخ", "مشتري", "صخور", "فضاء", "مدار"], c:"فلك"},
+                {w:"خندق ماريانا", t:["عمق", "محيط", "ظلام", "ضغط", "غواصة"], c:"عجائب البحار"},
+                {w:"البركان الثائر", t:["حمم", "ماجما", "رماد", "فوهة", "انفجار"], c:"ظواهر أرضية"},
+                {w:"التسونامي", t:["موجة", "زلزال", "بحر", "شاطئ", "دمار"], c:"كوارث طبيعية"},
+                {w:"الأعاصير القمعية", t:["رياح", "دوران", "عاصفة", "دمار", "سرعة"], c:"أرصاد"},
+                {w:"غابات الأمازون", t:["أشجار", "رئة الأرض", "برازيل", "مطر", "حيوانات"], c:"جغرافيا حيوية"},
+                {w:"صحراء الربع الخالي", t:["رمال", "حرارة", "كثبان", "جزيرة عربية", "جفاف"], c:"تضاريس عملاقة"},
+                {w:"شلالات نياجرا", t:["مياه", "سقوط", "كندا", "أمريكا", "قوة"], c:"طبيعة ساحرة"},
+                {w:"قمة إفرست", t:["جبل", "هيمالايا", "ارتفاع", "ثلج", "تسلق"], c:"تضاريس"},
+                {w:"طريق الحرير", t:["تجارة", "صين", "قوافل", "توابل", "تاريخ"], c:"تاريخ العالم"},
+                {w:"مكتبة الإسكندرية", t:["حريق", "مخطوطات", "بطالمة", "فلسفة", "علم"], c:"تاريخ وحضارة"},
+                {w:"حدائق بابل", t:["عراق", "عجائب", "نبوخذ نصر", "شجر", "بناء"], c:"عجائب قديمة"},
+                {w:"منارة الإسكندرية", t:["بحر", "إرشاد سفن", "زلزال", "نور", "عجائب"], c:"تاريخ وبحار"},
+                {w:"تمثال الحرية", t:["نيويورك", "شعلة", "فرنسا", "استقلال", "جزيرة"], c:"رموز عالمية"},
+                {w:"ساعة بيج بن", t:["لندن", "برج", "بريطانيا", "دقات", "وقت"], c:"معالم شهيرة"},
+                {w:"مدرج الكولوسيوم", t:["روما", "إيطاليا", "حلبة", "مصارعة", "تاريخ"], c:"آثار رومانية"},
+                {w:"تاج محل", t:["هند", "رخام أبيض", "حب", "قبر", "شاه جهان"], c:"عجائب البناء"},
+
+                // WORLD 5: (161-200) Legendary - 18s - 5 Taboos
+                {w:"الديناصورات المنقرضة", t:["نيزك", "عظام", "متحجرات", "تي ريكس", "ملايين السنين"], c:"عصور قديمة"},
+                {w:"السفر عبر الزمن", t:["ماضي", "مستقبل", "آلة", "نسبية", "أينشتاين"], c:"خيال وفيزياء"},
+                {w:"المجرات الحلزونية", t:["درب التبانة", "نجوم", "مركز", "أذرع", "كون"], c:"أعماق الفضاء"},
+                {w:"طائر الفينيق", t:["رماد", "ولادة جديدة", "أسطورة", "نار", "طائر خيالي"], c:"أساطير"},
+                {w:"التخاطر عن بعد", t:["عقل", "تفكير", "أفكار", "إرسال", "حاسة سادسة"], c:"خوارق"},
+                {w:"أطلانتس الغارقة", t:["قارة", "محيط", "حضارة مفقودة", "أفلاطون", "غرق"], c:"أساطير جغرافية"},
+                {w:"مفارقة الجد", t:["تناقض", "زمن", "ماضي", "أينشتاين", "نسبية"], c:"فلسفة وفيزياء"},
+                {w:"تأثير الفراشة", t:["فوضى", "أجنحة", "إعصار", "سبب ونتيجة", "تغيير"], c:"نظرية الفوضى"},
+                {w:"قطة شرودنجر", t:["ميكانيكا كم", "حية وميتة", "صندوق", "احتمالات", "فيزياء"], c:"فيزياء الكم"},
+                {w:"الحوسبة الكمومية", t:["كيوبت", "سوبر كمبيوتر", "تراكب", "تشفير", "سرعة خارقة"], c:"تكنولوجيا المستقبل"},
+                {w:"المادة المظلمة", t:["غير مرئية", "كتلة", "جاذبية", "كون", "لغز"], c:"كونيات غامضة"},
+                {w:"الطاقة المظلمة", t:["تسارع", "تمدد الكون", "فضاء", "قوة طاردة", "نسبة مئوية"], c:"فيزياء فلكية"},
+                {w:"المصفوفة Matrix", t:["وهم", "واقع", "محاكاة", "كمبيوتر", "حبة زرقاء"], c:"فلسفة وخيال"},
+                {w:"الوعي الذاتي للآلة", t:["روبوت", "مشاعر", "تفكير مستقل", "ثورة", "خيال علمي"], c:"فلسفة الذكاء"},
+                {w:"مستعمرة المريخ", t:["كوكب أحمر", "سفر", "إيلون ماسك", "أكسجين", "رواد"], c:"مستقبل البشرية"},
+                {w:"كوكب الزهرة الجهنمي", t:["حمض كبريتي", "حرارة قاتلة", "غلاف كثيف", "بركان", "كوكب"], c:"علوم الكواكب"},
+                {w:"حلقات زحل", t:["كوكب", "جليد", "صخور", "دوران", "جاذبية"], c:"النظام الشمسي"},
+                {w:"سديم عين القط", t:["غاز", "انفجار نجمي", "ألوان", "موت نجم", "تلسكوب"], c:"سدم فلكية"},
+                {w:"النجم النيوتروني", t:["كثافة مرعبة", "دوران", "مغناطيس", "إشعاع", "انهيار"], c:"فيزياء النجوم"},
+                {w:"العدسة التثاقلية", t:["انحناء الضوء", "كتلة عملاقة", "نسبية", "مجرات", "تشويه"], c:"بصريات كونية"},
+                {w:"الفلسفة الترانسكندنتالية", t:["كانط", "عقل", "حقيقة مجردة", "معرفة", "طبيعة"], c:"فلسفة عليا"},
+                {w:"مبدأ الشك الديكارتي", t:["أنا أفكر", "أنا موجود", "حقيقة", "تفكير", "فلسفة"], c:"فلسفة الوجود"},
+                {w:"المدينة الفاضلة", t:["أفلاطون", "مجتمع مثالي", "عدالة", "حلم", "خيال"], c:"فلسفة سياسية"},
+                {w:"النسبية العامة", t:["أينشتاين", "زمكان", "انحناء", "سرعة الضوء", "جاذبية"], c:"نظريات كبرى"},
+                {w:"أوتار الكون الفائقة", t:["نظرية الأوتار", "أبعاد إضافية", "اهتزاز", "جسيمات", "كل شيء"], c:"فيزياء نظرية"},
+                {w:"المستعر الأعظم سديم", t:["سوبر نوفا", "انفجار نجم", "نور هائل", "حديد", "فضاء"], c:"أحداث كونية"},
+                {w:"الانعكاس الزمني التناظري", t:["فيزياء جسيمات", "تناظر CPT", "مادة مضادة", "سهم الزمن", "انتروبيا"], c:"فيزياء متقدمة"},
+                {w:"انتروبيا القانون الثاني", t:["فوضى حرارية", "طاقة", "تدهور", "ديناميكا", "كون"], c:"ديناميكا حرارية"},
+                {w:"انقلاب الأقطاب المغناطيسية", t:["أرض", "شمال وجنوب", "انقلاب", "حقل", "جيولوجيا"], c:"جيوفيزياء"},
+                {w:"حالة البلازما الرابعة", t:["غاز متأين", "حرارة خارقة", "برق", "شمس", "إلكترونات"], c:"حالات المادة"},
+                {w:"مصادم الهادرونات LHC", t:["سيرن", "تسريع جسيمات", "بوزون هيجز", "نفق سويسرا", "فيزياء"], c:"أضخم تجربة"},
+                {w:"بوزون هيجز جسيم الكتلة", t:["سيرن", "كتلة الجسيمات", "حقل هيجز", "فيزياء", "ذرة"], c:"اكتشافات القرن"},
+                {w:"الاندماج النووي الصناعي", t:["شمس صناعية", "طاقة نظيفة", "توكاماك", "هيدروجين", "حرارة"], c:"طاقة المستقبل"},
+                {w:"جسيمات النيوترينو الشبحية", t:["اختراق المادة", "كتلة شبه صفر", "تفاعلات ضعيفة", "شمس", "كواشف"], c:"جسيمات أولية"},
+                {w:"الاستنساخ البيولوجي", t:["نعجة دولي", "حمض نووي", "خلية", "نسخة مطابقة", "أخلاقيات"], c:"ثورة بيولوجية"},
+                {w:"طباعة الأعضاء 3D", t:["قلب صناعي", "خلايا حية", "أنسجة", "طب", "مستقبل"], c:"طب تجديدي"},
+                {w:"المصعد الفضائي", t:["كيبل كربون", "محطة مدارية", "صعود بدون صاروخ", "فضاء", "هندسة"], c:"مشاريع مستقبلية"},
+                {w:"مقص كريسبر الجيني", t:["علاج أمراض", "تعديل DNA", "وراثة", "جينات", "بكتيريا"], c:"ثورة جينية"},
+                {w:"الخلود الرقمي", t:["دماغ", "سيرفر", "تحميل العقل", "ذكاء اصطناعي", "وعي"], c:"ما بعد الإنسانية"},
+                {w:"عرش أسطورة المعلمين", t:["المركز الأول", "تاج الشرف", "200 مرحلة", "ختم اللعبة", "المعلم الأعظم"], c:"المرحلة 200 الأخيرة 🏆"}
               ];
 
-              class SoloVoiceGame {
+              const WORLDS_CONFIG = {
+                1: { title: "عالم 1: حارة المبتدئين", time: 60, taboos: 2, range: [1, 40], desc: "الوقت: 60ث • كلمتان ممنوعتان فقط" },
+                2: { title: "عالم 2: المشاهير والميمز", time: 45, taboos: 3, range: [41, 80], desc: "الوقت: 45ث • 3 كلمات ممنوعة" },
+                3: { title: "عالم 3: سوق الحِرّيفة", time: 35, taboos: 4, range: [81, 120], desc: "الوقت: 35ث • 4 كلمات ممنوعة" },
+                4: { title: "عالم 4: برج الخبراء", time: 25, taboos: 5, range: [121, 160], desc: "الوقت: 25ث • 5 كلمات ممنوعة" },
+                5: { title: "عالم 5: عرش الأساطير", time: 18, taboos: 5, range: [161, 200], desc: "الوقت: 18ث • 5 كلمات ممنوعة حاسمة 🔥" }
+              };
+
+              class MapGameEngine {
                 constructor() {
-                  this.score = 0;
-                  this.round = 1;
-                  this.maxRounds = 5;
-                  this.timer = 45;
+                  this.currentStageNum = 1;
+                  this.selectedWorld = 1;
+                  this.timer = 60;
                   this.timerInterval = null;
-                  this.currentCard = null;
-                  this.bustsCount = 0;
-                  this.validClueWordsSpoken = 0;
-                  this.setupSpeechRecognition();
+                  this.busts = 0;
+                  this.recognition = null;
+                  this.isPlaying = false;
+                  this.loadProgress();
+                  this.initVoice();
+                  this.renderMap();
+                  this.updateHeaderUI();
                 }
 
-                setupSpeechRecognition() {
+                loadProgress() {
+                  const saved = localStorage.getItem('qool_map_prog_v1');
+                  if (saved) {
+                    try {
+                      this.progress = JSON.parse(saved);
+                    } catch(e) {
+                      this.progress = { maxUnlocked: 1, stars: {} };
+                    }
+                  } else {
+                    this.progress = { maxUnlocked: 1, stars: {} };
+                  }
+                }
+
+                saveProgress() {
+                  localStorage.setItem('qool_map_prog_v1', JSON.stringify(this.progress));
+                  this.updateHeaderUI();
+                }
+
+                updateHeaderUI() {
+                  let totalStars = 0;
+                  for (let lvl in this.progress.stars) {
+                    totalStars += this.progress.stars[lvl] || 0;
+                  }
+                  document.getElementById('totalStarsBadge').innerText = `${totalStars}/600`;
+                  document.getElementById('currentLevelNav').innerText = this.progress.maxUnlocked;
+                  document.getElementById('homeResumeLvl').innerText = this.progress.maxUnlocked;
+                }
+
+                initVoice() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (Speech) {
                     this.recognition = new Speech();
@@ -270,16 +552,12 @@ jobs:
                     this.recognition.interimResults = true;
                     this.recognition.lang = 'ar-EG';
 
-                    this.recognition.onresult = (event) => {
-                      let transcript = '';
-                      for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        transcript += event.results[i][0].transcript;
+                    this.recognition.onresult = (ev) => {
+                      let text = '';
+                      for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+                        text += ev.results[i][0].transcript;
                       }
-                      this.processSpokenText(transcript);
-                    };
-
-                    this.recognition.onerror = (e) => {
-                      console.log('Voice error:', e);
+                      this.onSpokenText(text);
                     };
 
                     this.recognition.onend = () => {
@@ -287,168 +565,254 @@ jobs:
                         try { this.recognition.start(); } catch(e) {}
                       }
                     };
-                  } else {
-                    document.getElementById('speechState').innerText = 'المتصفح لا يدعم الميكروفون المباشر';
                   }
                 }
 
                 speak(text) {
                   if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
-                    const msg = new SpeechSynthesisUtterance(text);
-                    msg.lang = 'ar-SA';
-                    msg.rate = 1.1;
-                    window.speechSynthesis.speak(msg);
+                    const ut = new SpeechSynthesisUtterance(text);
+                    ut.lang = 'ar-SA';
+                    ut.rate = 1.05;
+                    window.speechSynthesis.speak(ut);
                   }
                 }
 
-                cleanArabic(text) {
-                  return text.replace(/[ً-ْ]/g, '')
-                             .replace(/[إأآا]/g, 'ا')
-                             .replace(/ة/g, 'ه')
-                             .replace(/ى/g, 'ي')
-                             .toLowerCase();
+                clean(t) {
+                  return t.replace(/[ً-ْ]/g, '')
+                          .replace(/[إأآا]/g, 'ا')
+                          .replace(/ة/g, 'ه')
+                          .replace(/ى/g, 'ي')
+                          .toLowerCase();
                 }
 
-                processSpokenText(transcript) {
-                  document.getElementById('liveSpeechTranscript').innerText = `"${transcript}"`;
-                  if (!this.currentCard) return;
+                onSpokenText(text) {
+                  document.getElementById('playTranscript').innerText = `"${text}"`;
+                  if (!this.activeStage) return;
 
-                  const cleanedTranscript = this.cleanArabic(transcript);
+                  const cleanedSpoken = this.clean(text);
 
-                  // 1. فحص الكلمة الأصلية
-                  const cleanTarget = this.cleanArabic(this.currentCard.word);
-                  if (cleanedTranscript.includes(cleanTarget)) {
-                    this.triggerBust(`ذكرت الكلمة نفسها: (${this.currentCard.word})`);
+                  // 1. فحص الكلمة المستهدفة نفسها
+                  if (cleanedSpoken.includes(this.clean(this.activeStage.w))) {
+                    this.onBust(`نطقت الكلمة نفسها (${this.activeStage.w})!`);
                     return;
                   }
 
                   // 2. فحص الكلمات الممنوعة
-                  for (let taboo of this.currentCard.taboo) {
-                    const cleanTaboo = this.cleanArabic(taboo);
-                    if (cleanedTranscript.includes(cleanTaboo)) {
-                      this.triggerBust(`نطقت كلمة ممنوعة: (${taboo})`);
+                  const maxTaboos = this.activeWorldCfg.taboos;
+                  const activeTaboos = this.activeStage.t.slice(0, maxTaboos);
+                  for (let taboo of activeTaboos) {
+                    if (cleanedSpoken.includes(this.clean(taboo))) {
+                      this.onBust(`نطقت كلمة ممنوعة (${taboo})!`);
                       return;
                     }
                   }
 
-                  // 3. الحكم الذكي يستنتج تلقائياً عند الشرح الكافي
-                  const words = cleanedTranscript.split(/\s+/).filter(w => w.length > 2);
-                  if (words.length >= 8 && !this.guessedThisTurn) {
-                    this.guessedThisTurn = true;
-                    this.onBotGuessedCorrectly();
+                  // 3. الحكم الآلي يستنتج الحل إذا كان الشرح كافياً دون أخطاء
+                  const words = cleanedSpoken.split(/\s+/).filter(w => w.length > 2);
+                  if (words.length >= 7 && !this.solved) {
+                    this.solved = true;
+                    this.manualPassStage();
                   }
                 }
 
-                triggerBust(reason) {
-                  this.bustsCount++;
-                  this.score = Math.max(0, this.score - 10);
-                  document.getElementById('scoreCounter').innerText = this.score;
+                onBust(reason) {
+                  this.busts++;
                   this.speak("قفشتك يا معلم! كلمة ممنوعة!");
-                  alert(`🚨 قفشتك الحكم الآلي!\n${reason}\nتم خصم 10 نقاط!`);
-                  this.nextCard();
+                  alert(`🚨 قفشتك الحكم الآلي!\n${reason}\nاحتسبت مخالفة ونقصت نجمة!`);
+                  document.getElementById('playStarsDisplay').innerText = this.busts >= 2 ? '⭐' : (this.busts === 1 ? '⭐⭐' : '⭐⭐⭐');
                 }
 
-                onBotGuessedCorrectly() {
-                  this.score += 35;
-                  document.getElementById('scoreCounter').innerText = this.score;
-                  this.speak(`عرفتها! أنت تقصد ${this.currentCard.word}! برافو عليك يا معلم!`);
-                  try { confetti({ particleCount: 80, spread: 60 }); } catch (e) {}
-                  setTimeout(() => { this.nextCard(); }, 1200);
+                filterWorld(wNum) {
+                  this.selectedWorld = wNum;
+                  for (let i = 1; i <= 5; i++) {
+                    const btn = document.getElementById(`tabWorld${i}`);
+                    if (i === wNum) {
+                      btn.className = 'px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-indigo-600 text-white shadow';
+                    } else {
+                      btn.className = 'px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300';
+                    }
+                  }
+                  const cfg = WORLDS_CONFIG[wNum];
+                  document.getElementById('worldNameTitle').innerText = cfg.title;
+                  document.getElementById('worldRuleDesc').innerText = cfg.desc;
+                  this.renderMap();
                 }
 
-                botGuessedRightManually() {
-                  this.onBotGuessedCorrectly();
+                renderMap() {
+                  const container = document.getElementById('stagesScrollContainer');
+                  container.innerHTML = '';
+                  const cfg = WORLDS_CONFIG[this.selectedWorld];
+                  const [startLvl, endLvl] = cfg.range;
+
+                  for (let i = startLvl; i <= endLvl; i++) {
+                    const isUnlocked = i <= this.progress.maxUnlocked;
+                    const isCurrent = i === this.progress.maxUnlocked;
+                    const stars = this.progress.stars[i] || 0;
+
+                    const btn = document.createElement('div');
+                    btn.className = 'stage-node flex flex-col items-center justify-center p-2 rounded-2xl cursor-pointer relative';
+
+                    if (isCurrent) {
+                      btn.classList.add('bg-emerald-500/20', 'border-2', 'border-emerald-400', 'current-stage');
+                    } else if (isUnlocked) {
+                      btn.classList.add('bg-indigo-950/60', 'border', 'border-indigo-400/40', 'hover:bg-indigo-900/60');
+                    } else {
+                      btn.classList.add('bg-slate-800/40', 'border', 'border-white/5', 'opacity-50', 'cursor-not-allowed');
+                    }
+
+                    let starsHtml = '';
+                    if (stars > 0) {
+                      starsHtml = `<div class="text-[9px] text-amber-300 -mt-0.5">${'⭐'.repeat(stars)}</div>`;
+                    } else if (isUnlocked) {
+                      starsHtml = `<div class="text-[9px] text-emerald-300 font-bold -mt-0.5">${isCurrent ? 'العب!' : 'جاهز'}</div>`;
+                    } else {
+                      starsHtml = `<div class="text-[9px] text-gray-400 -mt-0.5">🔒</div>`;
+                    }
+
+                    btn.innerHTML = `
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm ${isCurrent ? 'bg-emerald-500 text-white shadow-lg' : (isUnlocked ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-gray-400')}">
+                        ${i}
+                      </div>
+                      ${starsHtml}
+                    `;
+
+                    if (isUnlocked) {
+                      btn.onclick = () => this.startStage(i);
+                    }
+                    container.appendChild(btn);
+                  }
                 }
 
-                startSoloGame() {
-                  this.score = 0;
-                  this.round = 1;
-                  this.bustsCount = 0;
+                getWorldForStage(lvl) {
+                  if (lvl <= 40) return 1;
+                  if (lvl <= 80) return 2;
+                  if (lvl <= 120) return 3;
+                  if (lvl <= 160) return 4;
+                  return 5;
+                }
+
+                startStage(lvl) {
+                  this.currentStageNum = lvl;
+                  this.activeStage = RAW_STAGES[lvl - 1];
+                  this.activeWorldNum = this.getWorldForStage(lvl);
+                  this.activeWorldCfg = WORLDS_CONFIG[this.activeWorldNum];
+                  this.busts = 0;
+                  this.solved = false;
                   this.isPlaying = true;
+
+                  document.getElementById('playStageNum').innerText = `#${lvl}`;
+                  document.getElementById('playWorldTag').innerText = this.activeWorldCfg.title.split(':')[1];
+                  document.getElementById('playCategory').innerText = this.activeStage.c;
+                  document.getElementById('playWord').innerText = this.activeStage.w;
+                  document.getElementById('playStarsDisplay').innerText = '⭐⭐⭐';
+                  document.getElementById('playTabooCountLabel').innerText = `ممنوع نطق ${this.activeWorldCfg.taboos} كلمات`;
+
+                  // عرض الممنوعات المحددة بحسب صعوبة العالم
+                  const taboosBox = document.getElementById('playTaboosContainer');
+                  taboosBox.innerHTML = '';
+                  const activeTaboos = this.activeStage.t.slice(0, this.activeWorldCfg.taboos);
+                  activeTaboos.forEach(w => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-white text-red-700 px-2 py-0.5 rounded-md border border-red-200 text-xs';
+                    span.innerText = w;
+                    taboosBox.appendChild(span);
+                  });
+
+                  document.getElementById('playTranscript').innerText = 'الميكروفون يستمع.. اشرح الكلمة الآن!';
                   this.showScreen('screenPlay');
 
                   if (this.recognition) {
                     try { this.recognition.start(); } catch(e) {}
                   }
 
-                  this.nextCard();
-                }
-
-                nextCard() {
-                  if (this.round > this.maxRounds) {
-                    this.finishGame();
-                    return;
-                  }
-
-                  this.guessedThisTurn = false;
-                  document.getElementById('roundCounter').innerText = `${this.round}/${this.maxRounds}`;
-                  document.getElementById('scoreCounter').innerText = this.score;
-                  document.getElementById('liveSpeechTranscript').innerText = 'الحكم يستمع... ابدأ الشرح فوراً!';
-
-                  this.currentCard = CARDS[Math.floor(Math.random() * CARDS.length)];
-                  document.getElementById('cardWord').innerText = this.currentCard.word;
-
-                  const tabooBox = document.getElementById('tabooWords');
-                  tabooBox.innerHTML = '';
-                  this.currentCard.taboo.forEach(w => {
-                    const span = document.createElement('span');
-                    span.className = 'bg-white text-red-700 px-2 py-0.5 rounded-md border border-red-200';
-                    span.innerText = w;
-                    tabooBox.appendChild(span);
-                  });
-
                   this.startTimer();
-                  this.round++;
                 }
 
                 startTimer() {
                   clearInterval(this.timerInterval);
-                  this.timer = 45;
-                  document.getElementById('timerText').innerText = `${this.timer}s`;
+                  this.timer = this.activeWorldCfg.time;
+                  document.getElementById('playTimerText').innerText = `${this.timer}s`;
 
                   this.timerInterval = setInterval(() => {
                     this.timer--;
-                    document.getElementById('timerText').innerText = `${this.timer}s`;
+                    document.getElementById('playTimerText').innerText = `${this.timer}s`;
                     if (this.timer <= 0) {
                       clearInterval(this.timerInterval);
-                      this.speak("انتهى الوقت!");
-                      this.nextCard();
+                      this.speak("انتهى وقت المرحلة!");
+                      alert("⏳ انتهى الوقت ولم تنجح في إيصال الكلمة! حاول مرة أخرى.");
+                      this.showScreen('screenMap');
                     }
                   }, 1000);
                 }
 
-                passCard() {
-                  this.score = Math.max(0, this.score - 5);
-                  document.getElementById('scoreCounter').innerText = this.score;
-                  this.nextCard();
-                }
-
-                finishGame() {
-                  this.isPlaying = false;
+                manualPassStage() {
                   clearInterval(this.timerInterval);
+                  this.isPlaying = false;
                   if (this.recognition) {
                     try { this.recognition.stop(); } catch(e) {}
                   }
 
-                  this.showScreen('screenWinner');
-                  document.getElementById('finalScore').innerText = `${this.score} نقطة`;
-                  document.getElementById('totalBusts').innerText = `${this.bustsCount} مرات`;
-                  
-                  let verdict = "معلم كبير وفصيح اللسان! 👑";
-                  if (this.score < 50) verdict = "تحتاج لتمرين لسانك أكثر! 😅";
-                  document.getElementById('finalJudgment').innerText = verdict;
-                  this.speak(`انتهى التحدي! مجموعك ${this.score} نقطة. ${verdict}`);
+                  // احتساب النجوم
+                  let stars = 3;
+                  if (this.busts === 1) stars = 2;
+                  else if (this.busts >= 2) stars = 1;
+
+                  // حفظ أفضل نجوم
+                  const prevStars = this.progress.stars[this.currentStageNum] || 0;
+                  if (stars > prevStars) {
+                    this.progress.stars[this.currentStageNum] = stars;
+                  }
+
+                  // فتح المرحلة التالية
+                  if (this.currentStageNum === this.progress.maxUnlocked && this.currentStageNum < 200) {
+                    this.progress.maxUnlocked++;
+                  }
+                  this.saveProgress();
+
+                  this.speak(`برافو عليك يا معلم! عرفتها: ${this.activeStage.w}!`);
+                  try { confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } }); } catch(e) {}
+
+                  document.getElementById('winStarsAwarded').innerText = '⭐'.repeat(stars);
+                  document.getElementById('winStageLabel').innerText = `تم اجتياز المرحلة ${this.currentStageNum} ببراعة!`;
+                  document.getElementById('nextLevelUnlockText').innerText = `مرحلة ${Math.min(200, this.currentStageNum + 1)} مفتوحة الآن 🔓`;
+
+                  this.showScreen('screenWin');
+                }
+
+                playNextStage() {
+                  if (this.currentStageNum < 200) {
+                    this.startStage(this.currentStageNum + 1);
+                  } else {
+                    alert("🏆 مبروك! لقد ختمت جميع الـ 200 مرحلة وتوّجت أسطورة المعلمين!");
+                    this.showScreen('screenMap');
+                  }
+                }
+
+                abandonStage() {
+                  clearInterval(this.timerInterval);
+                  this.isPlaying = false;
+                  if (this.recognition) {
+                    try { this.recognition.stop(); } catch(e) {}
+                  }
+                  this.showScreen('screenMap');
+                }
+
+                resumeGame() {
+                  this.startStage(this.progress.maxUnlocked);
                 }
 
                 showScreen(id) {
-                  ['screenHome', 'screenPlay', 'screenWinner'].forEach(s => document.getElementById(s).classList.add('hidden'));
+                  ['screenHome', 'screenMap', 'screenPlay', 'screenWin'].forEach(s => document.getElementById(s).classList.add('hidden'));
                   document.getElementById(id).classList.remove('hidden');
+                  if (id === 'screenMap') {
+                    this.renderMap();
+                  }
                 }
 
                 showHome() {
-                  this.isPlaying = false;
                   clearInterval(this.timerInterval);
+                  this.isPlaying = false;
                   if (this.recognition) {
                     try { this.recognition.stop(); } catch(e) {}
                   }
@@ -456,7 +820,7 @@ jobs:
                 }
               }
 
-              const game = new SoloVoiceGame();
+              const game = new MapGameEngine();
             </script>
           </body>
           </html>
@@ -466,16 +830,15 @@ jobs:
         run: |
           npm init -y
           npm install @capacitor/core@6.0.0 @capacitor/cli@6.0.0 @capacitor/android@6.0.0
-          npx cap init "QoolYaM3alemAI" "com.qoolyam3alem.ai" --web-dir www
+          npx cap init "QoolYaM3alem200" "com.qoolyam3alem.map" --web-dir www
           npx cap add android
           npx cap sync android
 
-      # إضافة أذونات الميكروفون والصوت في AndroidManifest.xml
       - name: Grant Microphone & Audio Permissions to Android Manifest
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.INTERNET" />' $MANIFEST
-          echo "Updated AndroidManifest with Microphone Permissions successfully."
+          echo "Microphone permissions added successfully to AndroidManifest.xml"
 
       - name: Build Android Debug APK with Gradle
         run: |
@@ -483,9 +846,9 @@ jobs:
           chmod +x ./gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK File as Downloadable Artifact
+      - name: Upload 200-Levels Game APK as Downloadable Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QoolYaM3alem-Voice-AI-APK
+          name: QoolYaM3alem-200Levels-VoiceAI-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
