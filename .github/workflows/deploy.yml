@@ -120,18 +120,18 @@ jobs:
                     <span class="text-5xl">👑</span>
                   </div>
                   <h1 class="text-3xl font-black text-white mt-3 font-tajawal drop-shadow">قول يا معلّم!</h1>
-                  <p class="text-indigo-200 text-xs font-bold mt-1">تحدي الـ 200 مرحلة مع محلل الدلالات الصوتي الفائق 🎙️⚡</p>
+                  <p class="text-indigo-200 text-xs font-bold mt-1">تحدي الـ 200 مرحلة مع محلل الدلالات الصوتي فائق الحساسية 🎙️⚡</p>
                 </div>
 
                 <div class="w-full clay-card p-4 text-right space-y-2">
                   <div class="flex items-center space-x-2 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1.5">
-                    <i class="fa-solid fa-gift text-amber-500 text-sm"></i>
-                    <span>مميزات محرك الذكاء الجديد:</span>
+                    <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
+                    <span>مميزات محرك المايك فائق الحساسية:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
-                    • <strong>فهم دلالي مرن:</strong> الذكاء يفهم الكلمات والتشبيهات والكلمات المقاربة ويحتسبها فوراً.<br>
-                    • <strong>كشف دائم ومباشر للدلالات:</strong> أي دلالة تفتحها تُفعل شريط الذكاء الاصطناعي وتبقى محفوظة للأبد!<br>
-                    • <strong>تشغيل تلقائي للمايك:</strong> المايك يبدأ بالاستماع والتحليل فور دخولك المرحلة.
+                    • <strong>استماع تلقائي وفوري:</strong> المايك يعمل تلقائياً بمجرد فتح المرحلة دون الحاجة لأي نقر.<br>
+                    • <strong>حساسية فائقة للصوت الضعيف:</strong> يحلل الكلمات والهمسات وتلميحاتك حتى لو كان الصوت منخفضاً.<br>
+                    • <strong>كشف سريع للدلالات:</strong> يكتشف الكلمات المطلوبة وشبيهاتها بسرعة خاطفة ويرفع شريط الذكاء مباشرة!
                   </p>
                 </div>
 
@@ -183,9 +183,9 @@ jobs:
                   <div>المحاولات السليمة: <span id="playStarsDisplay" class="text-amber-400 font-black">⭐⭐⭐</span></div>
                 </div>
 
-                <!-- TIMER & LIVE MIC ICON -->
+                <!-- TIMER & LIVE MIC ICON (SUPER RESPONSIVE) -->
                 <div class="flex items-center space-x-3 space-x-reverse my-1">
-                  <div id="micIndicator" onclick="window.game.toggleMicManual()" title="انقر لتشغيل/إيقاف الميكروفون" class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95">
+                  <div id="micIndicator" onclick="window.game.toggleMicManual()" title="انقر لتشغيل/إيقاف الميكروفون يدوياً" class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95">
                     <i class="fa-solid fa-microphone"></i>
                   </div>
                   <div class="text-right">
@@ -207,7 +207,7 @@ jobs:
                         <i class="fa-solid fa-keyboard"></i>
                       </button>
 
-                      <!-- HINT PURCHASE BUTTON (-30 STARS OR PERMANENTLY FREE) -->
+                      <!-- HINT PURCHASE BUTTON -->
                       <button id="btnBuyHint" onclick="window.game.buyHint()" class="btn-3d py-1 px-2.5 bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 font-black text-[11px] rounded-xl flex items-center space-x-1 space-x-reverse border border-amber-200 shadow active:scale-95 transition">
                         <span>💡</span>
                         <span id="hintBtnLabel">كشف دلالة (-30 ⭐)</span>
@@ -253,14 +253,14 @@ jobs:
                   </div>
                 </div>
 
-                <!-- REALTIME SPEECH MONITOR -->
+                <!-- REALTIME SPEECH MONITOR (LIVE STREAMING) -->
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الميكروفون الآن:</span>
-                    <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">الميكروفون يستمع بنشاط... 🎙️</span>
+                    <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الميكروفون الآن (مباشر):</span>
+                    <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">المايك جاهز ويستمع بنشاط... 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
-                    الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...
+                    المايك يستمع بتركيز فائق.. تحدث بحرية ليحلل الذكاء كلماتك لحظة بلحظة...
                   </div>
                 </div>
 
@@ -441,20 +441,20 @@ jobs:
 
               const soundFx = new SoundFxManager();
 
-              // COMPREHENSIVE CATEGORY LEXICONS FOR INTELLIGENT SEMANTIC MATCHING
+              // COMPREHENSIVE CATEGORY LEXICONS
               const CATEGORY_LEXICONS = {
-                "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "شعب", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه"],
-                "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش"],
-                "فواكه": ["فاكهه", "حلو", "شجر", "طبيعي", "قشر", "صيف", "موسم", "لذيذ", "طازج", "بستان", "فيتامين", "عصير"],
-                "أجهزة": ["جهاز", "شاشه", "كهرباء", "زرار", "بطاريه", "نشغل", "طاقه", "تقنيه", "بيت", "سلك", "فيشه", "صوت", "الكتروني"],
-                "شارع ومواصلات": ["شارع", "طريق", "عربيه", "سواق", "ركاب", "مواصلات", "زحمه", "اجره", "عجل", "سفر", "موقف", "مرور", "سير"],
-                "حيوانات": ["حيوان", "اليف", "فرو", "صوت", "رجلين", "يمشي", "غابه", "بيت", "يطير", "ريش", "ذيل", "كائن"],
-                "منزل": ["بيت", "شقه", "اوضه", "غرفه", "صالون", "مطبخ", "حمام", "نستخدم", "عفش", "اساس", "حاجه"],
-                "أدوات": ["اداه", "نستخدمها", "حديد", "نمسكها", "نصلح", "شغل", "صنعه", "ورشه", "يدويه", "اله"],
-                "أمثال شعبية": ["مثل", "مقوله", "حكمه", "كلام", "قديم", "اجدادنا", "معنى", "حكايه", "قصه", "عبره"],
-                "علوم وفيزياء": ["علم", "فيزياء", "قانون", "طبيعه", "كون", "ارض", "حركه", "سرعه", "ماده", "طاقه", "تجربه", "علماء"],
-                "علم الفلك": ["فضاء", "سماء", "نجوم", "كواكب", "مجره", "تلسكوب", "فلك", "كون", "شمس", "قمر", "مدار"],
-                "تكنولوجيا": ["كمبيوتر", "انترنت", "برمجه", "رقمي", "ذكاء", "اله", "مستقبل", "بيانات", "شبكه", "تقنيه"]
+                "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه", "طماطم", "رز", "عيش", "لحمه"],
+                "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش", "كوباية", "ميه", "مايه"],
+                "فواكه": ["فاكهه", "حلو", "شجر", "طبيعي", "قشر", "صيف", "موسم", "لذيذ", "طازج", "بستان", "فيتامين", "عصير", "طعم"],
+                "أجهزة": ["جهاز", "شاشه", "كهرباء", "زرار", "بطاريه", "نشغل", "طاقه", "تقنيه", "بيت", "سلك", "فيشه", "صوت", "الكتروني", "تلفون", "موبايل"],
+                "شارع ومواصلات": ["شارع", "طريق", "عربيه", "سواق", "ركاب", "مواصلات", "زحمه", "اجره", "عجل", "سفر", "موقف", "مرور", "سير", "سياره", "محطه"],
+                "حيوانات": ["حيوان", "اليف", "فرو", "صوت", "رجلين", "يمشي", "غابه", "بيت", "يطير", "ريش", "ذيل", "كائن", "بري"],
+                "منزل": ["بيت", "شقه", "اوضه", "غرفه", "صالون", "مطبخ", "حمام", "نستخدم", "عفش", "اساس", "حاجه", "مكان"],
+                "أدوات": ["اداه", "نستخدمها", "حديد", "نمسكها", "نصلح", "شغل", "صنعه", "ورشه", "يدويه", "اله", "نمسك", "نقطع"],
+                "أمثال شعبية": ["مثل", "مقوله", "حكمه", "كلام", "قديم", "اجدادنا", "معنى", "حكايه", "قصه", "عبره", "شعب", "مصر"],
+                "علوم وفيزياء": ["علم", "فيزياء", "قانون", "طبيعه", "كون", "ارض", "حركه", "سرعه", "ماده", "طاقه", "تجربه", "علماء", "حراره"],
+                "علم الفلك": ["فضاء", "سماء", "نجوم", "كواكب", "مجره", "تلسكوب", "فلك", "كون", "شمس", "قمر", "مدار", "كوكب"],
+                "تكنولوجيا": ["كمبيوتر", "انترنت", "برمجه", "رقمي", "ذكاء", "اله", "مستقبل", "بيانات", "شبكه", "تقنيه", "برنامج", "روبوت"]
               };
 
               const RAW_STAGES = [
@@ -692,12 +692,13 @@ jobs:
                   this.detectedCluesSet = new Set();
                   this.detectedDomainSet = new Set();
                   this.accumulatedTranscript = '';
+                  this.sessionFinalTranscript = '';
                   this.accumulatedWordsCount = 0;
+                  this.hasPrimedMic = false;
 
                   this.loadProgress();
                   this.initSoundState();
-                  this.requestSystemMicPermission();
-                  this.initVoice();
+                  this.primeMicrophoneHardware();
                   this.setupHardwareBackButton();
                   this.renderMap();
                   this.updateHeaderUI();
@@ -758,12 +759,21 @@ jobs:
                   }
                 }
 
-                requestSystemMicPermission() {
+                // HARDWARE AUDIO AGC & NOISE CANCELLATION FOR WEAK MICROPHONES
+                primeMicrophoneHardware() {
+                  if (this.hasPrimedMic) return;
                   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
-                      console.log("Mic permission granted via getUserMedia");
+                    navigator.mediaDevices.getUserMedia({
+                      audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true, // Amplifies low speech volume
+                        channelCount: 1
+                      }
+                    }).then(() => {
+                      this.hasPrimedMic = true;
                     }).catch(e => {
-                      console.warn("Mic permission prompt notice:", e);
+                      console.warn("Hardware mic prime notice:", e);
                     });
                   }
                 }
@@ -813,7 +823,6 @@ jobs:
                   document.getElementById('homeResumeLvl').innerText = this.progress.maxUnlocked;
                 }
 
-                // PERMANENT HINT PURCHASE SYSTEM & IMMEDIATE CONFIDENCE UPDATE
                 buyHint() {
                   soundFx.playClick();
                   if (!this.activeStage) return;
@@ -843,7 +852,6 @@ jobs:
                   this.saveProgress();
                   soundFx.playHintReveal();
 
-                  // Activate clue directly in AI Detector & update confidence immediately!
                   this.detectedCluesSet.add(newHint);
                   this.renderRevealedHintsUI();
                   this.renderDetectedCluesUI();
@@ -887,26 +895,28 @@ jobs:
                   cluesBox.innerHTML = '';
                   this.detectedCluesSet.forEach(clue => {
                     const tag = document.createElement('span');
-                    tag.className = 'bg-emerald-500/20 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-400/40 flex items-center space-x-1 space-x-reverse';
+                    tag.className = 'bg-emerald-500/20 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-400/40 flex items-center space-x-1 space-x-reverse animate-pulse';
                     tag.innerHTML = `<span>✓</span><span>${clue}</span>`;
                     cluesBox.appendChild(tag);
                   });
                 }
 
+                // INSTANT PROGRESS REWARD (1 Clue = 40%, 2 Clues = 80%+ SUCCESS!)
                 updateConfidence(wordsCount = 0) {
                   if (!this.activeStage) return;
                   const totalClues = Math.max(1, this.activeStage.h.length);
-                  const cluePoints = Math.round((this.detectedCluesSet.size / totalClues) * 75);
-                  const directCluePoints = this.detectedCluesSet.size * 35;
-                  const effectiveCluePoints = Math.max(cluePoints, directCluePoints);
+                  
+                  const directCluePoints = this.detectedCluesSet.size * 40;
+                  const proportionalCluePoints = Math.round((this.detectedCluesSet.size / totalClues) * 80);
+                  const effectiveCluePoints = Math.max(directCluePoints, proportionalCluePoints);
 
                   const domainPoints = Math.min(25, this.detectedDomainSet.size * 10);
-                  const fluencyPoints = Math.min(20, Math.floor(wordsCount * 2));
+                  const fluencyPoints = Math.min(20, Math.floor(wordsCount * 3));
 
                   let totalConfidence = Math.min(100, Math.round(effectiveCluePoints + domainPoints + fluencyPoints));
 
-                  if (this.detectedCluesSet.size >= totalClues) {
-                    totalConfidence = 100;
+                  if (this.detectedCluesSet.size >= totalClues || this.detectedCluesSet.size >= 2) {
+                    totalConfidence = Math.max(totalConfidence, 85);
                   }
 
                   const pctEl = document.getElementById('aiConfidencePct');
@@ -928,7 +938,6 @@ jobs:
                   }
                 }
 
-                // HARDWARE BACK BUTTON NAVIGATION
                 setupHardwareBackButton() {
                   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
                     window.Capacitor.Plugins.App.addListener('backButton', () => {
@@ -990,73 +999,103 @@ jobs:
                   }
                 }
 
-                // SPEECH ENGINE INITIALIZATION & CONTINUOUS LISTENING
-                initVoice() {
+                // ULTRA HIGH-SENSITIVITY SPEECH RECOGNITION WITH ZERO-LAG STREAMING
+                createRecognitionInstance() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-                  if (Speech) {
-                    try {
-                      this.recognition = new Speech();
-                      this.recognition.continuous = true;
-                      this.recognition.interimResults = true;
-                      this.recognition.lang = 'ar-EG';
+                  if (!Speech) return;
 
-                      this.recognition.onstart = () => {
-                        this.isVoiceActive = true;
-                        this.updateMicUI(true);
-                      };
+                  const rec = new Speech();
+                  rec.continuous = true;
+                  rec.interimResults = true;
+                  rec.maxAlternatives = 3; // Analyzes alternative guesses for weak speech
+                  rec.lang = 'ar-EG';
 
-                      this.recognition.onresult = (ev) => {
-                        let currentFinal = '';
-                        let currentInterim = '';
-                        for (let i = ev.resultIndex; i < ev.results.length; ++i) {
-                          const res = ev.results[i];
-                          if (res.isFinal) {
-                            currentFinal += res[0].transcript + ' ';
-                          } else {
-                            currentInterim += res[0].transcript + ' ';
-                          }
-                        }
-                        if (currentFinal) {
-                          this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + currentFinal).trim();
-                        }
-                        const fullCurrentText = (this.accumulatedTranscript + ' ' + currentInterim).trim();
-                        this.processRealtimeSpeech(fullCurrentText);
-                      };
+                  rec.onstart = () => {
+                    this.isVoiceActive = true;
+                    this.updateMicUI(true);
+                  };
 
-                      this.recognition.onend = () => {
-                        this.isVoiceActive = false;
-                        if (this.isPlaying && !this.isSuccessApproved) {
-                          setTimeout(() => {
-                            if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
-                              this.safeStartVoice();
-                            }
-                          }, 200);
-                        } else {
-                          this.updateMicUI(false);
-                        }
-                      };
-
-                      this.recognition.onerror = (e) => {
-                        console.warn("Speech recognition notice:", e.error);
-                        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-                          this.isVoiceActive = false;
-                          this.updateMicUI(false);
-                          const pill = document.getElementById('aiStatusPill');
-                          if (pill) pill.innerText = "صلاحية المايك مرفوضة (اكتب بالكيبورد)";
-                          return;
-                        }
-                        if (this.isPlaying && !this.isSuccessApproved) {
-                          setTimeout(() => {
-                            if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
-                              this.safeStartVoice();
-                            }
-                          }, 350);
-                        }
-                      };
-                    } catch(err) {
-                      console.warn("Voice init skipped:", err);
+                  rec.onaudiostart = () => {
+                    this.updateMicUI(true);
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) {
+                      pill.innerText = "يلتقط صوتك بنشاط عالي 🎙️⚡";
+                      pill.className = "text-emerald-300 font-mono text-[10px] animate-pulse";
                     }
-                  }
+                  };
+
+                  rec.onspeechstart = () => {
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) {
+                      pill.innerText = "يحلل الكلمات المنطوقة فوراً... 🧠";
+                      pill.className = "text-cyan-300 font-mono text-[10px]";
+                    }
+                  };
+
+                  rec.onresult = (ev) => {
+                    if (!this.isPlaying || this.isSuccessApproved) return;
+
+                    let interimChunk = '';
+                    let finalChunk = '';
+                    let altWords = [];
+
+                    for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+                      const res = ev.results[i];
+                      if (res.isFinal) {
+                        finalChunk += res[0].transcript + ' ';
+                      } else {
+                        interimChunk += res[0].transcript + ' ';
+                      }
+
+                      // Check alternatives for low-volume / weak hearing
+                      for (let a = 1; a < res.length; a++) {
+                        if (res[a] && res[a].transcript) {
+                          altWords.push(res[a].transcript);
+                        }
+                      }
+                    }
+
+                    if (finalChunk) {
+                      this.sessionFinalTranscript = (this.sessionFinalTranscript + ' ' + finalChunk).trim();
+                    }
+
+                    const currentLiveSpeech = (this.sessionFinalTranscript + ' ' + interimChunk).trim();
+                    this.processRealtimeSpeech(currentLiveSpeech, altWords);
+                  };
+
+                  rec.onerror = (e) => {
+                    console.warn("Speech error notice:", e.error);
+                    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                      this.isVoiceActive = false;
+                      this.updateMicUI(false);
+                      const pill = document.getElementById('aiStatusPill');
+                      if (pill) pill.innerText = "صلاحية المايك مرفوضة (استخدم الكيبورد)";
+                      return;
+                    }
+                    if (this.isPlaying && !this.isSuccessApproved) {
+                      setTimeout(() => {
+                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                          this.safeStartVoice();
+                        }
+                      }, 100);
+                    }
+                  };
+
+                  rec.onend = () => {
+                    this.isVoiceActive = false;
+                    // Auto-reconnect in 80ms to provide continuous listening
+                    if (this.isPlaying && !this.isSuccessApproved) {
+                      setTimeout(() => {
+                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                          this.safeStartVoice();
+                        }
+                      }, 80);
+                    } else {
+                      this.updateMicUI(false);
+                    }
+                  };
+
+                  this.recognition = rec;
                 }
 
                 safeStartVoice() {
@@ -1065,29 +1104,38 @@ jobs:
                     if (pill) pill.innerText = "اكتب الشرح بالكيبورد ⌨️";
                     return;
                   }
-                  if (!this.recognition) {
-                    this.initVoice();
+
+                  this.primeMicrophoneHardware();
+
+                  if (this.recognition) {
+                    try { this.recognition.abort(); } catch(e) {}
+                    this.recognition = null;
                   }
-                  if (!this.recognition) return;
+
+                  this.createRecognitionInstance();
 
                   try {
-                    if (this.isVoiceActive) {
-                      this.updateMicUI(true);
-                      return;
-                    }
                     this.recognition.start();
                     this.isVoiceActive = true;
                     this.updateMicUI(true);
-                  } catch(e) {
-                    this.isVoiceActive = true;
-                    this.updateMicUI(true);
+                  } catch(err) {
+                    console.warn("safeStartVoice notice:", err);
+                    setTimeout(() => {
+                      if (this.isPlaying && !this.isSuccessApproved) {
+                        try {
+                          if (this.recognition) this.recognition.start();
+                          this.isVoiceActive = true;
+                          this.updateMicUI(true);
+                        } catch(e) {}
+                      }
+                    }, 150);
                   }
                 }
 
                 safeStopVoice() {
                   if (!this.recognition) return;
                   try {
-                    this.recognition.stop();
+                    this.recognition.abort();
                     this.isVoiceActive = false;
                     this.updateMicUI(false);
                   } catch(e) {}
@@ -1114,7 +1162,7 @@ jobs:
                   }
                   if (pill) {
                     if (active) {
-                      pill.innerText = "الميكروفون يستمع بنشاط... 🎙️";
+                      pill.innerText = "المايك جاهز ويستمع بنشاط... 🎙️";
                       pill.className = "text-emerald-400 font-mono text-[10px]";
                     } else {
                       pill.innerText = "انقر المايك للتحدث 🎙️";
@@ -1137,15 +1185,16 @@ jobs:
                 }
 
                 clean(t) {
-                  return (t || '').replace(/[\u064B-\u065F\u0670]/g, '')
-                          .replace(/[ـ]/g, '')
-                          .replace(/[إأآٱ]/g, 'ا')
-                          .replace(/ة/g, 'ه')
-                          .replace(/ى/g, 'ي')
-                          .replace(/[ءئؤ]/g, 'ا')
-                          .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()؟"']/g, ' ')
-                          .toLowerCase()
-                          .trim();
+                  return (t || '')
+                    .replace(/[\u064B-\u065F\u0670]/g, '')
+                    .replace(/[ـ]/g, '')
+                    .replace(/[إأآٱ]/g, 'ا')
+                    .replace(/ة/g, 'ه')
+                    .replace(/ى/g, 'ي')
+                    .replace(/[ءئؤ]/g, 'ا')
+                    .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()؟"']/g, ' ')
+                    .toLowerCase()
+                    .trim();
                 }
 
                 stem(w) {
@@ -1156,10 +1205,10 @@ jobs:
                     s = s.substring(1);
                     if (s.startsWith('ال') && s.length > 4) s = s.substring(2);
                   }
-                  if ((s.startsWith('بي') || s.startsWith('بت') || s.startsWith('بن') || s.startsWith('ها')) && s.length > 4) {
+                  if ((s.startsWith('بي') || s.startsWith('بت') || s.startsWith('بن') || s.startsWith('ها') || s.startsWith('مي') || s.startsWith('مت')) && s.length > 4) {
                     s = s.substring(2);
                   }
-                  const suffixes = ['ات', 'ين', 'ون', 'ية', 'يه', 'ها', 'هم', 'كم', 'نا', 'ي', 'ه', 'ك', 'ان'];
+                  const suffixes = ['ات', 'ين', 'ون', 'ية', 'يه', 'ها', 'هم', 'كم', 'نا', 'وا', 'ي', 'ه', 'ك', 'ان'];
                   for (let suf of suffixes) {
                     if (s.endsWith(suf) && s.length > suf.length + 2) {
                       s = s.substring(0, s.length - suf.length);
@@ -1176,7 +1225,8 @@ jobs:
                           .replace(/[ط]/g, 'ت')
                           .replace(/[ة]/g, 'ه')
                           .replace(/[ى]/g, 'ي')
-                          .replace(/[إأآءئؤ]/g, 'ا');
+                          .replace(/[إأآءئؤ]/g, 'ا')
+                          .replace(/[ث]/g, 'س');
                 }
 
                 levenshtein(a, b) {
@@ -1197,15 +1247,6 @@ jobs:
                     }
                   }
                   return d[a.length][b.length];
-                }
-
-                similarityScore(s1, s2) {
-                  if (!s1 || !s2) return 0;
-                  if (s1 === s2) return 1;
-                  const maxLen = Math.max(s1.length, s2.length);
-                  if (maxLen === 0) return 1;
-                  const dist = this.levenshtein(s1, s2);
-                  return (maxLen - dist) / maxLen;
                 }
 
                 isSimilarWord(spoken, target) {
@@ -1233,7 +1274,7 @@ jobs:
                     const dist = this.levenshtein(sSpoken, sTarget);
                     if (maxL <= 4 && dist <= 1) return true;
                     if (maxL >= 5 && dist <= 2) return true;
-                    if (this.similarityScore(sSpoken, sTarget) >= 0.70) return true;
+                    if ((maxL - dist) / maxL >= 0.65) return true;
                   }
 
                   const pMaxL = Math.max(pSpoken.length, pTarget.length);
@@ -1241,7 +1282,7 @@ jobs:
                     const pDist = this.levenshtein(pSpoken, pTarget);
                     if (pMaxL <= 4 && pDist <= 1) return true;
                     if (pMaxL >= 5 && pDist <= 2) return true;
-                    if (this.similarityScore(pSpoken, pTarget) >= 0.70) return true;
+                    if ((pMaxL - pDist) / pMaxL >= 0.65) return true;
                   }
 
                   return false;
@@ -1288,25 +1329,35 @@ jobs:
                 promptTextInput() {
                   const input = prompt("💬 اكتب شرحك أو وصفك للكلمة هنا ليحلله الذكاء الاصطناعي:");
                   if (input && input.trim()) {
-                    this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + input.trim()).trim();
-                    this.processRealtimeSpeech(this.accumulatedTranscript);
+                    this.sessionFinalTranscript = (this.sessionFinalTranscript + ' ' + input.trim()).trim();
+                    this.processRealtimeSpeech(this.sessionFinalTranscript, []);
                   }
                 }
 
-                // SUPER AI SEMANTIC PROCESSOR WITH FUZZY & SIMILAR WORD DETECTION
-                processRealtimeSpeech(rawText) {
+                // ULTRA-FAST REALTIME SPEECH ANALYSIS WITH WEAK-AUDIO TOLERANCE
+                processRealtimeSpeech(rawText, alternativeTranscripts = []) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
 
                   const transcriptBox = document.getElementById('playTranscript');
-                  if (transcriptBox) {
-                    transcriptBox.innerText = rawText.trim() ? `"${rawText.trim()}"` : 'الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...';
+                  if (transcriptBox && rawText.trim()) {
+                    transcriptBox.innerText = `"${rawText.trim()}"`;
                   }
 
                   const cleanedText = this.clean(rawText);
-                  const words = cleanedText.split(/\s+/).filter(w => w.length > 1);
+                  let words = cleanedText.split(/\s+/).filter(w => w.length > 1);
+
+                  // Include alternative hearing candidates if mic sound is soft/muffled
+                  if (alternativeTranscripts && alternativeTranscripts.length > 0) {
+                    for (let alt of alternativeTranscripts) {
+                      const cAlt = this.clean(alt);
+                      const altW = cAlt.split(/\s+/).filter(w => w.length > 1);
+                      words = words.concat(altW);
+                    }
+                  }
+
                   this.accumulatedWordsCount = Math.max(this.accumulatedWordsCount || 0, words.length);
 
-                  // 1. فحص فوري للكلمة الأصلية والممنوعات
+                  // 1. Strict taboo verification on primary spoken text
                   if (this.isWordInText(cleanedText, this.activeStage.w)) {
                     this.onBust(`نطقت الكلمة نفسها (${this.activeStage.w})!`);
                     return;
@@ -1320,7 +1371,7 @@ jobs:
                     }
                   }
 
-                  // 2. تحليل الدلالات المحددة للبطاقة حتى عند النطق بكلمات مقاربة أو شبيهة
+                  // 2. High-speed target clues match
                   this.activeStage.h.forEach(hint => {
                     if (!this.detectedCluesSet.has(hint)) {
                       if (this.matchesClue(cleanedText, words, hint)) {
@@ -1330,7 +1381,7 @@ jobs:
                     }
                   });
 
-                  // 3. تحليل مفردات التصنيف العام
+                  // 3. Category domain vocabulary match
                   const categoryTerms = CATEGORY_LEXICONS[this.activeStage.c] || [];
                   categoryTerms.forEach(term => {
                     if (!this.detectedDomainSet.has(term)) {
@@ -1343,7 +1394,7 @@ jobs:
                     }
                   });
 
-                  // 4. تحديث بطاقات الدلالات وشريط الاقتناع
+                  // 4. Instant UI update
                   this.renderDetectedCluesUI();
                   this.updateConfidence(this.accumulatedWordsCount);
                 }
@@ -1415,6 +1466,7 @@ jobs:
                   this.detectedCluesSet.clear();
                   this.detectedDomainSet.clear();
                   this.accumulatedTranscript = '';
+                  this.sessionFinalTranscript = '';
                   this.accumulatedWordsCount = 0;
                   document.getElementById('aiConfidencePct').innerText = '0%';
                   document.getElementById('aiConfidenceBar').style.width = '0%';
@@ -1435,6 +1487,7 @@ jobs:
                     this.detectedCluesSet.clear();
                     this.detectedDomainSet.clear();
                     this.accumulatedTranscript = '';
+                    this.sessionFinalTranscript = '';
                     this.accumulatedWordsCount = 0;
 
                     document.getElementById('playStageNum').innerText = `#${validLvl}`;
@@ -1448,7 +1501,7 @@ jobs:
                       tabooCountLabel.innerText = `${this.activeWorldCfg.taboos} كلمات ممنوعة`;
                     }
 
-                    // عرض الممنوعات بوضوح في البطاقة
+                    // Populate Taboos
                     const taboosBox = document.getElementById('playTaboosContainer');
                     if (taboosBox) {
                       taboosBox.innerHTML = '';
@@ -1461,7 +1514,7 @@ jobs:
                       });
                     }
 
-                    // ربط الدلالات المحفوظة مسبقاً وتفعيلها في شريط الذكاء الاصطناعي
+                    // Sync previously saved hints with AI Confidence Bar
                     const lvlKey = String(validLvl);
                     const savedRevealed = this.progress.revealedCluesMap[lvlKey] || [];
                     savedRevealed.forEach(h => this.detectedCluesSet.add(h));
@@ -1471,7 +1524,7 @@ jobs:
 
                     document.getElementById('aiConfidencePct').innerText = '0%';
                     document.getElementById('aiConfidenceBar').style.width = '0%';
-                    document.getElementById('aiStatusPill').innerText = 'الميكروفون يستمع بنشاط... 🎙️';
+                    document.getElementById('aiStatusPill').innerText = 'المايك جاهز ويستمع بنشاط... 🎙️';
 
                     const nextBtn = document.getElementById('btnNextStage');
                     if (nextBtn) {
@@ -1485,16 +1538,15 @@ jobs:
 
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox) {
-                      transcriptBox.innerText = 'الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...';
+                      transcriptBox.innerText = 'المايك يستمع بتركيز فائق.. تحدث بحرية ليحلل الذكاء كلماتك لحظة بلحظة...';
                     }
 
                     this.showScreen('screenPlay');
                     soundFx.playStageStart();
 
-                    // احتساب الاقتناع الأولي إذا كانت هناك دلالات مفتوحة مسبقاً
                     this.updateConfidence(0);
 
-                    // تشغيل المايك تلقائياً وبدء التحليل
+                    // AUTO-START MICROPHONE IMMEDIATELY UPON STAGE ENTRY
                     this.safeStartVoice();
                     this.startTimer();
                   } catch(err) {
@@ -1662,11 +1714,35 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Grant Microphone & Audio Permissions to Android Manifest
+      - name: Grant Microphone & Audio Permissions to Android Manifest & Native Bridge
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.INTERNET" />' $MANIFEST
-          echo "Microphone permissions added successfully to AndroidManifest.xml"
+          sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' $MANIFEST
+
+          # Inject Native Runtime Permission Request into MainActivity.java
+          MAIN_ACTIVITY="android/app/src/main/java/com/qoolyam3alem/pro/MainActivity.java"
+          cat << 'EOF' > $MAIN_ACTIVITY
+          package com.qoolyam3alem.pro;
+
+          import android.Manifest;
+          import android.content.pm.PackageManager;
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                      requestPermissions(new String[]{
+                          Manifest.permission.RECORD_AUDIO,
+                          Manifest.permission.MODIFY_AUDIO_SETTINGS
+                      }, 1001);
+                  }
+              }
+          }
+          EOF
+          echo "Native microphone permissions and auto-prompt configured successfully!"
 
       - name: Build Android Debug APK with Gradle
         run: |
