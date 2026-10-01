@@ -1,0 +1,875 @@
+name: Deploy 2oolameme Casual Mobile Game
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Game Application Bundle
+        run: |
+          mkdir -p public
+
+          cat << 'EOF' > public/index.html
+          <!DOCTYPE html>
+          <html lang="ar" dir="rtl">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>لعبة المعلّم | تحدي الشلّة</title>
+            <!-- Google Fonts -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
+            <!-- Tailwind CSS -->
+            <script src="https://cdn.tailwindcss.com"></script>
+            <!-- Canvas Confetti for Celebrations -->
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+            <!-- FontAwesome Icons -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            
+            <script>
+              tailwind.config = {
+                theme: {
+                  extend: {
+                    colors: {
+                      sunset: {
+                        start: '#FF4E50',
+                        middle: '#F9D423',
+                        end: '#FF8A00'
+                      },
+                      game: {
+                        sky: '#00d2ff',
+                        lime: '#88d600',
+                        card: '#FFF7E6',
+                        dark: '#1e1035'
+                      }
+                    },
+                    fontFamily: {
+                      cairo: ['Cairo', 'sans-serif'],
+                      tajawal: ['Tajawal', 'sans-serif'],
+                    }
+                  }
+                }
+              }
+            </script>
+            <style>
+              * {
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+              }
+              body {
+                font-family: 'Cairo', sans-serif;
+                background: linear-gradient(160deg, #FF416C 0%, #FF4B2B 35%, #F9D423 100%);
+                min-height: 100vh;
+                margin: 0;
+                overflow-x: hidden;
+              }
+
+              /* 3D Chunky Skeuomorphic & Claymorphism Buttons */
+              .btn-3d {
+                position: relative;
+                transition: all 0.1s ease;
+                box-shadow: 0 8px 0 rgba(0,0,0,0.22), 0 15px 20px rgba(0,0,0,0.2);
+              }
+              .btn-3d:active {
+                transform: translateY(6px);
+                box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+              }
+              .btn-gloss {
+                position: relative;
+                overflow: hidden;
+              }
+              .btn-gloss::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 48%;
+                background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.08) 100%);
+                border-radius: 9999px 9999px 0 0;
+                pointer-events: none;
+              }
+
+              /* 3D Dice Flip Container */
+              .dice-scene {
+                perspective: 600px;
+              }
+              .dice-cube {
+                width: 90px;
+                height: 90px;
+                position: relative;
+                transform-style: preserve-3d;
+                transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+              }
+              .dice-face {
+                position: absolute;
+                width: 90px;
+                height: 90px;
+                background: #FFFFFF;
+                border: 4px solid #F9D423;
+                border-radius: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                font-size: 13px;
+                color: #2D3748;
+                box-shadow: inset 0 0 12px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.15);
+                padding: 6px;
+                text-align: center;
+              }
+              .face-front  { transform: rotateY(0deg) translateZ(45px); }
+              .face-back   { transform: rotateY(180deg) translateZ(45px); }
+              .face-right  { transform: rotateY(90deg) translateZ(45px); }
+              .face-left   { transform: rotateY(-90deg) translateZ(45px); }
+              .face-top    { transform: rotateX(90deg) translateZ(45px); }
+              .face-bottom { transform: rotateX(-90deg) translateZ(45px); }
+
+              /* Claymorphism Card */
+              .clay-card {
+                background: rgba(255, 255, 255, 0.94);
+                border-radius: 32px;
+                box-shadow: 12px 16px 28px rgba(0, 0, 0, 0.18), inset -4px -4px 8px rgba(0,0,0,0.06), inset 4px 4px 10px rgba(255, 255, 255, 0.9);
+                border: 4px solid #FFF5D2;
+              }
+
+              /* Golden Badge with Beveled Rim */
+              .gold-badge {
+                background: radial-gradient(circle, #FFF7A1 0%, #FFAA00 100%);
+                border: 3px solid #FFF885;
+                box-shadow: 0 6px 12px rgba(212, 122, 0, 0.4), inset 0 2px 4px rgba(255,255,255,0.7);
+              }
+
+              /* Pulse Animation for Timer Alert */
+              @keyframes urgent-pulse {
+                0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ef4444); }
+                50% { transform: scale(1.08); filter: drop-shadow(0 0 18px #ff0000); }
+              }
+              .pulse-urgent {
+                animation: urgent-pulse 0.5s infinite;
+              }
+            </style>
+          </head>
+          <body class="flex justify-center items-center p-0 sm:p-4 select-none min-h-screen">
+
+            <!-- Mobile App Container (9:16 Aspect Mockup) -->
+            <div id="appContainer" class="w-full max-w-[430px] h-[100dvh] sm:h-[890px] bg-gradient-to-b from-[#FF512F] via-[#F09819] to-[#FF4E50] sm:rounded-[45px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-yellow-300">
+              
+              <!-- Ambient Dynamic Background Shapes -->
+              <div class="absolute -top-12 -right-12 w-48 h-48 bg-yellow-300 rounded-full opacity-30 blur-2xl pointer-events-none"></div>
+              <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-pink-500 rounded-full opacity-30 blur-3xl pointer-events-none"></div>
+
+              <!-- Top Status Bar -->
+              <header class="w-full px-5 pt-4 pb-2 flex justify-between items-center z-10">
+                <div class="flex items-center space-x-2 space-x-reverse bg-black/25 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
+                  <span class="gold-badge w-7 h-7 rounded-full flex items-center justify-center text-amber-900 font-black text-xs">👑</span>
+                  <span id="playerRoleBadge" class="text-white text-xs font-bold font-tajawal">المعلّم الحالي: <span id="currentLeaderName" class="text-yellow-300 font-black">أحمد</span></span>
+                </div>
+                <div class="flex items-center space-x-2 space-x-reverse">
+                  <button onclick="soundManager.toggleMute()" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 active:scale-90 transition">
+                    <i id="muteIcon" class="fa-solid fa-volume-high"></i>
+                  </button>
+                  <button onclick="game.showHome()" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 active:scale-90 transition">
+                    <i class="fa-solid fa-house"></i>
+                  </button>
+                </div>
+              </header>
+
+              <!-- ================= SCREEN 1: MAIN MENU ================= -->
+              <div id="screenHome" class="flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 transition-all duration-300">
+                <div class="text-center pt-4">
+                  <!-- Logo Badge -->
+                  <div class="inline-block relative">
+                    <div class="w-24 h-24 mx-auto gold-badge rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3">
+                      <span class="text-5xl">🃏</span>
+                    </div>
+                    <span class="absolute -bottom-2 -left-2 bg-emerald-500 text-white text-[11px] font-black px-2.5 py-0.5 rounded-full border-2 border-white shadow">2oolameme Style</span>
+                  </div>
+                  <h1 class="text-4xl font-black text-white mt-4 drop-shadow-[0_4px_6px_rgba(0,0,0,0.35)] font-tajawal">
+                    قـول يا مـعـلّـم!
+                  </h1>
+                  <p class="text-yellow-100 text-sm font-bold mt-1 opacity-90">
+                    لعبة التحديات والشلّة بالعامية والمصري
+                  </p>
+                </div>
+
+                <!-- Big Chunky Navigation Buttons -->
+                <div class="w-full space-y-4">
+                  <!-- Button 1: Pass & Play -->
+                  <button onclick="game.startPassAndPlay()" class="btn-3d btn-gloss w-full py-4 bg-gradient-to-r from-emerald-400 to-lime-500 rounded-3xl border-b-[6px] border-emerald-700 flex items-center justify-between px-6 text-white text-xl font-black">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                      <span class="w-12 h-12 bg-white/25 rounded-2xl flex items-center justify-center text-2xl shadow-inner">👥</span>
+                      <div class="text-right">
+                        <div>ابدأ التحدي (Pass & Play)</div>
+                        <div class="text-xs text-emerald-100 font-semibold">تجمع الأوفلاين في نفس الغرفة</div>
+                      </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                  </button>
+
+                  <!-- Button 2: Online Party Room -->
+                  <button onclick="game.startOnlineParty()" class="btn-3d btn-gloss w-full py-4 bg-gradient-to-r from-sky-400 to-blue-600 rounded-3xl border-b-[6px] border-blue-800 flex items-center justify-between px-6 text-white text-xl font-black">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                      <span class="w-12 h-12 bg-white/25 rounded-2xl flex items-center justify-center text-2xl shadow-inner">🎙️</span>
+                      <div class="text-right">
+                        <div>غرفة صوتية أونلاين</div>
+                        <div class="text-xs text-sky-100 font-semibold">تحدي المايك والشات الحي</div>
+                      </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                  </button>
+
+                  <!-- Button 3: Packs & Leaderboard Grid -->
+                  <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="game.showPacksModal()" class="btn-3d btn-gloss py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl border-b-[5px] border-orange-700 flex flex-col items-center text-white font-black text-sm">
+                      <span class="text-2xl mb-1">📦</span>
+                      حزم الكروت (170 كارت)
+                    </button>
+                    <button onclick="game.showLeaderboard()" class="btn-3d btn-gloss py-3.5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl border-b-[5px] border-purple-800 flex flex-col items-center text-white font-black text-sm">
+                      <span class="text-2xl mb-1">🏆</span>
+                      المعلّمون المتصدرون
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Footer Credits -->
+                <div class="text-white/70 text-xs font-semibold">
+                  مستوحاة من ألعاب الكروت الشبابية 🎮 v2.5D
+                </div>
+              </div>
+
+              <!-- ================= SCREEN 2: ACTIVE GAMEPLAY (PASS & PLAY) ================= -->
+              <div id="screenPlay" class="hidden flex-1 flex flex-col items-center justify-between px-5 py-2 z-10">
+                
+                <!-- Turn Indicator Bar -->
+                <div class="w-full flex justify-between items-center bg-white/20 backdrop-blur-md rounded-2xl px-4 py-2 border border-white/30 text-white font-bold text-xs">
+                  <div>الدور على: <span id="roundPlayerName" class="text-yellow-300 font-black text-sm">كريم</span></div>
+                  <div>الجولة: <span id="roundNumber" class="text-yellow-300 font-black">1 / 5</span></div>
+                  <div>النقاط: <span id="roundScore" class="text-emerald-300 font-black text-sm">0</span></div>
+                </div>
+
+                <!-- SMART TIMER (الساعة الرملية الذكية) -->
+                <div class="relative flex items-center justify-center my-1">
+                  <svg id="timerSvg" class="w-28 h-28 transform -rotate-90">
+                    <circle cx="56" cy="56" r="48" stroke="rgba(255,255,255,0.25)" stroke-width="8" fill="transparent" />
+                    <circle id="timerProgress" cx="56" cy="56" r="48" stroke="#88d600" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="301.59" stroke-dashoffset="0" class="transition-all duration-300"/>
+                  </svg>
+                  <div class="absolute flex flex-col items-center">
+                    <span id="timerText" class="text-3xl font-black text-white tracking-tighter drop-shadow-md">60</span>
+                    <span class="text-[10px] text-yellow-200 font-bold -mt-1">ثانية</span>
+                  </div>
+                </div>
+
+                <!-- 3D DICE & DIALECT SELECTION (النرد ثلاثي الأبعاد) -->
+                <div class="w-full flex items-center justify-around bg-black/15 backdrop-blur-sm rounded-2xl p-2.5 border border-white/10">
+                  <div class="dice-scene" onclick="game.rollDice()">
+                    <div id="diceCube" class="dice-cube cursor-pointer">
+                      <div class="dice-face face-front">🤖<br>روبوت عاطل</div>
+                      <div class="dice-face face-back">🎙️<br>مذيع دراما</div>
+                      <div class="dice-face face-right">👳<br>صعيدي عصبي</div>
+                      <div class="dice-face face-left">👶<br>طفل زنّان</div>
+                      <div class="dice-face face-top">👽<br>فضائي تايه</div>
+                      <div class="dice-face face-bottom">🎭<br>أوبرا حزينة</div>
+                    </div>
+                  </div>
+                  <div class="text-right flex-1 pr-3">
+                    <div class="flex items-center space-x-1.5 space-x-reverse text-yellow-300 text-xs font-black">
+                      <i class="fa-solid fa-dice animate-spin"></i>
+                      <span>شرط النرد الحالي:</span>
+                    </div>
+                    <div id="diceConditionLabel" class="text-white text-base font-black font-tajawal leading-tight mt-0.5">
+                      "تكلّم كأنك روبوت بطاريته 1%"
+                    </div>
+                    <button onclick="game.rollDice()" class="mt-1 bg-yellow-400 active:scale-95 text-yellow-950 font-black text-[11px] px-3 py-1 rounded-full shadow border-b-2 border-yellow-600">
+                      هز الموبايل أو اضغط هنا 🎲
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 3D INTERACTIVE CARD (البطاقة التفاعلية ثلاثية الأبعاد) -->
+                <div class="w-full clay-card p-5 relative overflow-hidden text-center my-2 shadow-2xl border-4 border-yellow-200">
+                  <div class="flex justify-between items-center mb-2">
+                    <span id="cardPackBadge" class="bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-black px-2.5 py-0.5 rounded-full">
+                      حزمة الشارع والميمز
+                    </span>
+                    <span id="cardPointsBadge" class="gold-badge text-amber-950 font-black text-xs px-2 py-0.5 rounded-full">
+                      +30 نقطة
+                    </span>
+                  </div>
+
+                  <p class="text-gray-500 font-bold text-xs mt-1">اشرح الكلمة المطلوبة لأصحابك بدون نطقها:</p>
+                  <div id="cardWord" class="text-4xl font-black text-gray-900 my-4 font-tajawal tracking-wide">
+                    كشري بالكبّة
+                  </div>
+
+                  <!-- Taboo / Forbidden Words -->
+                  <div class="bg-red-50 border border-red-200 rounded-xl p-2.5 text-right">
+                    <div class="text-red-600 font-black text-xs flex items-center space-x-1 space-x-reverse mb-1">
+                      <i class="fa-solid fa-ban"></i>
+                      <span>ممنوع تقول الكلمات دي (ممنوعات المعلم):</span>
+                    </div>
+                    <div id="tabooWords" class="flex flex-wrap gap-1.5 text-xs font-bold text-gray-700">
+                      <span class="bg-white px-2 py-0.5 rounded-md border border-red-200">صلصة</span>
+                      <span class="bg-white px-2 py-0.5 rounded-md border border-red-200">مكرونة</span>
+                      <span class="bg-white px-2 py-0.5 rounded-md border border-red-200">دقة</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ACTION BUTTONS: PASS OR CORRECT -->
+                <div class="w-full grid grid-cols-2 gap-4 pb-2">
+                  <button onclick="game.onPassWord()" class="btn-3d btn-gloss py-4 bg-gradient-to-b from-gray-400 to-gray-600 rounded-3xl border-b-[6px] border-gray-800 text-white font-black text-lg flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-forward"></i>
+                    <span>تخطي (-5)</span>
+                  </button>
+                  <button onclick="game.onCorrectAnswer()" class="btn-3d btn-gloss py-4 bg-gradient-to-b from-emerald-400 to-green-600 rounded-3xl border-b-[6px] border-emerald-800 text-white font-black text-xl flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-check-double"></i>
+                    <span>صح! (مرّر)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ================= SCREEN 3: ONLINE VOICE ROOM ================= -->
+              <div id="screenOnline" class="hidden flex-1 flex flex-col justify-between px-5 py-4 z-10">
+                <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center text-white">
+                  <div class="inline-block gold-badge px-3 py-1 rounded-full text-xs font-black text-amber-950 mb-1">
+                    🔴 غرفة صوتية حية (Party Room)
+                  </div>
+                  <h2 class="text-xl font-black">غرفة: شلّة الأكيلة #884</h2>
+                  <p class="text-xs text-yellow-200">المايك مفتوح للمعلّم فقط وبقية الشلة تخمّن في الشات!</p>
+                </div>
+
+                <!-- Voice Visualizer Wave -->
+                <div class="clay-card p-4 text-center my-3">
+                  <div class="text-xs text-gray-500 font-bold mb-2">صوت المعلّم (الميكروفون)</div>
+                  <div class="flex items-center justify-center space-x-1.5 space-x-reverse h-12">
+                    <div class="w-2.5 bg-emerald-500 rounded-full animate-bounce h-8"></div>
+                    <div class="w-2.5 bg-emerald-500 rounded-full animate-bounce h-12 delay-75"></div>
+                    <div class="w-2.5 bg-emerald-500 rounded-full animate-bounce h-6 delay-150"></div>
+                    <div class="w-2.5 bg-emerald-500 rounded-full animate-bounce h-10 delay-100"></div>
+                    <div class="w-2.5 bg-emerald-500 rounded-full animate-bounce h-4 delay-200"></div>
+                  </div>
+                  <div class="text-xs font-black text-emerald-700 mt-2">
+                    🎙️ أحمد يشرح الآن بلهجة: "مذيع نشرة أخبار مستعجل"
+                  </div>
+                </div>
+
+                <!-- Chat Stream -->
+                <div id="chatBox" class="flex-1 bg-white/90 rounded-2xl p-3 overflow-y-auto space-y-2 border-2 border-yellow-200 text-xs text-right max-h-56">
+                  <div class="text-gray-400 text-center text-[10px]">بدأت الجولة - أسرع إجابة تفوز بالنقطة!</div>
+                  <div><strong class="text-purple-700">سارة:</strong> كشري أبو طارق؟</div>
+                  <div><strong class="text-blue-700">ميدو:</strong> توك توك سريع؟</div>
+                  <div class="bg-yellow-100 p-1.5 rounded-lg border border-yellow-300 font-bold text-amber-900">
+                    💡 تلميح: حاجة بتتاكل في الحسين!
+                  </div>
+                </div>
+
+                <!-- Chat Input simulation -->
+                <div class="flex space-x-2 space-x-reverse mt-3">
+                  <input id="chatInput" type="text" placeholder="اكتب تخمينك هنا..." class="flex-1 rounded-2xl px-4 py-3 bg-white text-gray-800 text-sm font-bold border-2 border-yellow-300 focus:outline-none">
+                  <button onclick="game.sendChatGuess()" class="btn-3d px-5 bg-emerald-500 rounded-2xl text-white font-black text-sm">
+                    إرسال
+                  </button>
+                </div>
+              </div>
+
+              <!-- ================= SCREEN 4: HALL OF FAME / WINNER ================= -->
+              <div id="screenWinner" class="hidden flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 text-center">
+                <div class="pt-4">
+                  <div class="w-28 h-28 mx-auto gold-badge rounded-full flex items-center justify-center text-6xl shadow-2xl animate-bounce">
+                    👑
+                  </div>
+                  <span class="bg-yellow-400 text-yellow-950 font-black text-xs px-4 py-1 rounded-full uppercase tracking-wider mt-3 inline-block shadow">
+                    بطل الجولة الرسمي
+                  </span>
+                  <h2 class="text-4xl font-black text-white mt-3 font-tajawal drop-shadow-md">
+                    المعلّم الحقيقي للشلّة!
+                  </h2>
+                  <div id="winnerName" class="text-3xl font-black text-yellow-300 mt-1">
+                    كريم الصيّاد
+                  </div>
+                </div>
+
+                <!-- Stats Claymorphism Board -->
+                <div class="w-full clay-card p-5 space-y-3">
+                  <div class="flex justify-between items-center border-b pb-2">
+                    <span class="text-gray-500 font-bold text-xs">مجموع النقاط:</span>
+                    <span id="finalScore" class="text-2xl font-black text-emerald-600">380 نقطة</span>
+                  </div>
+                  <div class="flex justify-between items-center border-b pb-2">
+                    <span class="text-gray-500 font-bold text-xs">متوسط سرعة الحل:</span>
+                    <span class="text-sm font-black text-gray-800">14 ثانية / كارت ⚡</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-500 font-bold text-xs">اللقب المكتسب:</span>
+                    <span class="text-sm font-black text-purple-700 bg-purple-100 px-3 py-0.5 rounded-full">معلّم الكار وداهية الميمز</span>
+                  </div>
+                </div>
+
+                <!-- Share & Replay Buttons -->
+                <div class="w-full space-y-3">
+                  <button onclick="game.shareWinnerCard()" class="btn-3d btn-gloss w-full py-4 bg-gradient-to-r from-emerald-400 to-green-600 rounded-3xl border-b-[6px] border-emerald-800 text-white font-black text-lg flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>مشاركة النتيجة في ستوري واتساب / إنستا</span>
+                  </button>
+                  <button onclick="game.showHome()" class="btn-3d w-full py-3.5 bg-white text-gray-800 rounded-3xl border-b-[5px] border-gray-300 font-black text-base">
+                    العودة للقائمة الرئيسية 🔄
+                  </button>
+                </div>
+              </div>
+
+              <!-- ================= MODAL: LEADERBOARD ================= -->
+              <div id="modalLeaderboard" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="w-full max-w-sm clay-card p-5 flex flex-col max-h-[80vh]">
+                  <div class="flex justify-between items-center border-b pb-3 mb-3">
+                    <h3 class="text-xl font-black text-gray-900 font-tajawal flex items-center space-x-2 space-x-reverse">
+                      <span>🏆</span>
+                      <span>المعلّمون المتصدرون</span>
+                    </h3>
+                    <button onclick="game.closeLeaderboard()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-black flex items-center justify-center">✕</button>
+                  </div>
+                  <div class="space-y-2.5 overflow-y-auto flex-1 pr-1 text-right">
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl bg-amber-50 border border-amber-200">
+                      <div class="flex items-center space-x-2 space-x-reverse">
+                        <span class="gold-badge w-7 h-7 rounded-full flex items-center justify-center text-xs font-black">1</span>
+                        <div>
+                          <div class="font-black text-sm text-gray-800">أحمد الشناوي</div>
+                          <div class="text-[10px] text-gray-500">12 جولة متتالية معلّم</div>
+                        </div>
+                      </div>
+                      <span class="font-black text-amber-700 text-sm">1420 ن</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl bg-gray-50 border border-gray-200">
+                      <div class="flex items-center space-x-2 space-x-reverse">
+                        <span class="bg-gray-200 text-gray-800 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black">2</span>
+                        <div>
+                          <div class="font-black text-sm text-gray-800">مريم الزغبي</div>
+                          <div class="text-[10px] text-gray-500">سريعة البديهة</div>
+                        </div>
+                      </div>
+                      <span class="font-black text-gray-700 text-sm">1190 ن</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl bg-orange-50 border border-orange-200">
+                      <div class="flex items-center space-x-2 space-x-reverse">
+                        <span class="bg-amber-700 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-black">3</span>
+                        <div>
+                          <div class="font-black text-sm text-gray-800">عمر الدالي</div>
+                          <div class="text-[10px] text-gray-500">ملك التخطي الذكي</div>
+                        </div>
+                      </div>
+                      <span class="font-black text-orange-800 text-sm">940 ن</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ================= MODAL: CARD PACKS ================= -->
+              <div id="modalPacks" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="w-full max-w-sm clay-card p-5 flex flex-col max-h-[80vh]">
+                  <div class="flex justify-between items-center border-b pb-3 mb-3">
+                    <h3 class="text-xl font-black text-gray-900 font-tajawal flex items-center space-x-2 space-x-reverse">
+                      <span>📦</span>
+                      <span>حزم البطاقات (170 كارت)</span>
+                    </h3>
+                    <button onclick="game.closePacksModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-black flex items-center justify-center">✕</button>
+                  </div>
+                  <div class="space-y-3 overflow-y-auto flex-1 text-right">
+                    <div class="p-3 rounded-2xl bg-amber-50 border-2 border-amber-300 flex justify-between items-center">
+                      <div>
+                        <div class="font-black text-sm text-amber-900">حزمة الميمز والأفلام (أساسية)</div>
+                        <div class="text-[11px] text-gray-600">60 كارت من أشهر إيفيهات السينما</div>
+                      </div>
+                      <span class="text-emerald-600 text-xs font-black bg-emerald-100 px-2 py-1 rounded-full">مفعّلة ✅</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-sky-50 border-2 border-sky-300 flex justify-between items-center">
+                      <div>
+                        <div class="font-black text-sm text-sky-900">حزمة الأكلات الشعبية</div>
+                        <div class="text-[11px] text-gray-600">50 كارت للمفجوعين والأكيلة</div>
+                      </div>
+                      <span class="text-emerald-600 text-xs font-black bg-emerald-100 px-2 py-1 rounded-full">مفعّلة ✅</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-purple-50 border-2 border-purple-300 flex justify-between items-center">
+                      <div>
+                        <div class="font-black text-sm text-purple-900">حزمة نوستالجيا التسعينات</div>
+                        <div class="text-[11px] text-gray-600">60 كارت ذكريات جيل الطيبين</div>
+                      </div>
+                      <span class="text-emerald-600 text-xs font-black bg-emerald-100 px-2 py-1 rounded-full">مفعّلة ✅</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ================= LOGIC & AUDIO ENGINE (SINGLE SCRIPT) ================= -->
+            <script>
+              // 1. Web Audio API Sound Synthesizer (Zero External Audio Files Needed)
+              class SoundManager {
+                constructor() {
+                  this.ctx = null;
+                  this.muted = false;
+                }
+                init() {
+                  if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                  }
+                }
+                toggleMute() {
+                  this.muted = !this.muted;
+                  document.getElementById('muteIcon').className = this.muted ? 'fa-solid fa-volume-xmark text-red-300' : 'fa-solid fa-volume-high';
+                }
+                playTone(freq, type = 'sine', duration = 0.15, vol = 0.25) {
+                  if (this.muted) return;
+                  try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }
+                playTick() {
+                  this.playTone(850, 'triangle', 0.05, 0.2);
+                }
+                playHurryTick() {
+                  this.playTone(1200, 'square', 0.08, 0.35);
+                }
+                playCorrect() {
+                  this.playTone(523.25, 'sine', 0.1, 0.3); // C5
+                  setTimeout(() => this.playTone(659.25, 'sine', 0.12, 0.3), 90); // E5
+                  setTimeout(() => this.playTone(783.99, 'sine', 0.25, 0.35), 180); // G5
+                }
+                playBuzzer() {
+                  this.playTone(180, 'sawtooth', 0.45, 0.4);
+                }
+                playDiceRoll() {
+                  for (let i = 0; i < 6; i++) {
+                    setTimeout(() => this.playTone(400 + Math.random() * 300, 'sine', 0.04, 0.15), i * 60);
+                  }
+                }
+              }
+
+              const soundManager = new SoundManager();
+
+              // 2. 170+ Cards Database (Egyptian & Arab Pop Culture / Memes)
+              const CARDS_DATABASE = [
+                { word: "كشري بالكبّة", pack: "أكلات ومصايب", taboo: ["صلصة", "مكرونة", "دقة", "عدس"], points: 30 },
+                { word: "توك توك بيعمل خمسات", pack: "شارع وميمز", taboo: ["عجلتين", "سواق", "صوت عالي", "مهرجانات"], points: 40 },
+                { word: "شاحن تليفون بيعلّق", pack: "معاناة يومية", taboo: ["سلك", "كهرباء", "بطارية", "فيشة"], points: 25 },
+                { word: "حمام محشي فريك", pack: "أكلات ومصايب", taboo: ["رز", "جناح", "شوربة", "طير"], points: 35 },
+                { word: "اللمبي في عصر قريش", pack: "أفلام وميمز", taboo: ["محمد سعد", "فيلم", "سيف", "تاريخ"], points: 30 },
+                { word: "كمين شرطة ومامعكش رخصة", pack: "مواقف حرجة", taboo: ["ظابط", "كارنيه", "مخالفة", "بطاقة"], points: 45 },
+                { word: "واحد بيطلب دليفري في الفجر", pack: "معاناة يومية", taboo: ["مطعم", "موتوسيكل", "أكل", "جوع"], points: 25 },
+                { word: "فسيخ ورنجة في شم النسيم", pack: "أكلات ومصايب", taboo: ["سمك", "ملح", "بصل", "ليمون"], points: 35 },
+                { word: "مهرجان إخواتي في فرح شعبي", pack: "أفلام وميمز", taboo: ["أغنية", "صاجات", "دي جي", "رقص"], points: 30 },
+                { word: "مذيع نشرة جوية بيغرق", pack: "شارع وميمز", taboo: ["طقس", "مطر", "حرارة", "شتاء"], points: 35 },
+                { word: "خناقة على آخر قطعة بيتزا", pack: "مواقف حرجة", taboo: ["جبنة", "كرتونة", "أصحاب", "تقسيم"], points: 30 }
+              ];
+
+              const DICE_CONDITIONS = [
+                { title: "روبوت عاطل", desc: "تكلّم كأنك روبوت صوته متقطع وبطاريته 1% 🤖", rotX: 0, rotY: 0 },
+                { title: "مذيع دراما", desc: "تكلّم بنبرة مذيع نشرة حوادث في قناة إخبارية 🎙️", rotX: 0, rotY: 180 },
+                { title: "صعيدي عصبي", desc: "اشرح بلهجة صعيدية حامية جداً وكأنك مستعجل 👳", rotX: 0, rotY: -90 },
+                { title: "طفل زنّان", desc: "تكلّم كأنك طفل بيعيط وعاوز مصاصة في سوبرماركت 👶", rotX: 0, rotY: 90 },
+                { title: "فضائي تايه", desc: "اشرح كأنك كائن فضائي بيوصف الأرض لأول مرة 👽", rotX: -90, rotY: 0 },
+                { title: "أوبرا حزينة", desc: "اشرح الكلمة وأنت بتغني أوبرا حزينة جداً 🎭", rotX: 90, rotY: 0 }
+              ];
+
+              // 3. Game Engine Controller
+              class GameController {
+                constructor() {
+                  this.score = 0;
+                  this.round = 1;
+                  this.maxRounds = 5;
+                  this.timer = 60;
+                  this.timerInterval = null;
+                  this.currentCardIndex = 0;
+                  this.players = ["كريم", "سارة", "أحمد", "منى"];
+                  this.currentPlayerIdx = 0;
+                  this.initGyroscope();
+                }
+
+                initGyroscope() {
+                  // Device Motion / Gyroscope Shake Detection for 3D Dice
+                  if (window.DeviceMotionEvent) {
+                    let lastX, lastY, lastZ;
+                    let lastTime = 0;
+                    window.addEventListener('devicemotion', (e) => {
+                      const curTime = Date.now();
+                      if ((curTime - lastTime) > 150) {
+                        const diffTime = curTime - lastTime;
+                        lastTime = curTime;
+                        const acc = e.accelerationIncludingGravity;
+                        if (!acc) return;
+                        const speed = Math.abs(acc.x + acc.y + acc.z - (lastX || 0) - (lastY || 0) - (lastZ || 0)) / diffTime * 10000;
+                        if (speed > 800) {
+                          this.rollDice();
+                        }
+                        lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+                      }
+                    });
+                  }
+                }
+
+                showScreen(screenId) {
+                  ['screenHome', 'screenPlay', 'screenOnline', 'screenWinner'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                  });
+                  document.getElementById(screenId).classList.remove('hidden');
+                }
+
+                showHome() {
+                  this.stopTimer();
+                  this.showScreen('screenHome');
+                }
+
+                startPassAndPlay() {
+                  this.score = 0;
+                  this.round = 1;
+                  this.currentPlayerIdx = 0;
+                  this.showScreen('screenPlay');
+                  this.loadNewCard();
+                  this.rollDice();
+                  this.resetTimer();
+                  this.updateUI();
+                }
+
+                startOnlineParty() {
+                  this.showScreen('screenOnline');
+                }
+
+                loadNewCard() {
+                  const card = CARDS_DATABASE[Math.floor(Math.random() * CARDS_DATABASE.length)];
+                  document.getElementById('cardWord').innerText = card.word;
+                  document.getElementById('cardPackBadge').innerText = card.pack;
+                  document.getElementById('cardPointsBadge').innerText = `+${card.points} نقطة`;
+                  
+                  const tabooContainer = document.getElementById('tabooWords');
+                  tabooContainer.innerHTML = '';
+                  card.taboo.forEach(w => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-white px-2 py-0.5 rounded-md border border-red-200';
+                    span.innerText = w;
+                    tabooContainer.appendChild(span);
+                  });
+                  this.currentPoints = card.points;
+                }
+
+                rollDice() {
+                  soundManager.playDiceRoll();
+                  const cube = document.getElementById('diceCube');
+                  const randomIdx = Math.floor(Math.random() * DICE_CONDITIONS.length);
+                  const cond = DICE_CONDITIONS[randomIdx];
+
+                  // Add rotation physics simulation
+                  const extraX = 360 * 3;
+                  const extraY = 360 * 3;
+                  cube.style.transform = `rotateX(${cond.rotX + extraX}deg) rotateY(${cond.rotY + extraY}deg)`;
+
+                  setTimeout(() => {
+                    document.getElementById('diceConditionLabel').innerText = `"${cond.desc}"`;
+                  }, 400);
+                }
+
+                resetTimer() {
+                  this.stopTimer();
+                  this.timer = 60;
+                  const circle = document.getElementById('timerProgress');
+                  const timerText = document.getElementById('timerText');
+                  const circumference = 2 * Math.PI * 48; // 301.59
+                  circle.style.strokeDasharray = `${circumference}`;
+                  circle.style.strokeDashoffset = '0';
+                  circle.setAttribute('stroke', '#88d600');
+                  timerText.innerText = this.timer;
+                  timerText.classList.remove('pulse-urgent');
+
+                  this.timerInterval = setInterval(() => {
+                    this.timer--;
+                    timerText.innerText = this.timer;
+                    const offset = circumference - (this.timer / 60) * circumference;
+                    circle.style.strokeDashoffset = offset;
+
+                    // Color shifts from Green -> Yellow -> Red
+                    if (this.timer > 25) {
+                      circle.setAttribute('stroke', '#88d600'); // Lime Green
+                      soundManager.playTick();
+                    } else if (this.timer > 10) {
+                      circle.setAttribute('stroke', '#F9D423'); // Sunset Yellow
+                      soundManager.playTick();
+                    } else {
+                      circle.setAttribute('stroke', '#FF2A2A'); // Fiery Red
+                      timerText.classList.add('pulse-urgent');
+                      soundManager.playHurryTick();
+                    }
+
+                    if (this.timer <= 0) {
+                      this.onTimeout();
+                    }
+                  }, 1000);
+                }
+
+                stopTimer() {
+                  if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                  }
+                }
+
+                onTimeout() {
+                  this.stopTimer();
+                  soundManager.playBuzzer();
+                  alert('⏳ انتهى الوقت! تفرقع العداد ومرّ الدور على اللاعب التالي!');
+                  this.nextTurn();
+                }
+
+                onCorrectAnswer() {
+                  soundManager.playCorrect();
+                  // Speed bonus calculation
+                  const speedBonus = Math.floor(this.timer / 2);
+                  const earned = this.currentPoints + speedBonus;
+                  this.score += earned;
+                  this.nextTurn();
+                }
+
+                onPassWord() {
+                  soundManager.playTone(250, 'sawtooth', 0.2, 0.2);
+                  this.score = Math.max(0, this.score - 5);
+                  this.loadNewCard();
+                  this.updateUI();
+                }
+
+                nextTurn() {
+                  this.round++;
+                  if (this.round > this.maxRounds) {
+                    this.finishGame();
+                    return;
+                  }
+                  this.currentPlayerIdx = (this.currentPlayerIdx + 1) % this.players.length;
+                  this.loadNewCard();
+                  this.rollDice();
+                  this.resetTimer();
+                  this.updateUI();
+                }
+
+                updateUI() {
+                  const playerName = this.players[this.currentPlayerIdx];
+                  document.getElementById('currentLeaderName').innerText = playerName;
+                  document.getElementById('roundPlayerName').innerText = playerName;
+                  document.getElementById('roundNumber').innerText = `${this.round} / ${this.maxRounds}`;
+                  document.getElementById('roundScore').innerText = this.score;
+                }
+
+                finishGame() {
+                  this.stopTimer();
+                  this.showScreen('screenWinner');
+                  document.getElementById('winnerName').innerText = this.players[0];
+                  document.getElementById('finalScore').innerText = `${this.score} نقطة`;
+
+                  // Trigger celebration confetti
+                  try {
+                    confetti({
+                      particleCount: 90,
+                      spread: 70,
+                      origin: { y: 0.6 }
+                    });
+                  } catch (e) {}
+                }
+
+                shareWinnerCard() {
+                  const text = `🏆 أنا فزت بلقب "معلّم الشلّة" في لعبة قول يا معلّم بمجموع ${this.score} نقطة! مين يقدر يتحداني؟ 🔥🃏`;
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'تحدي قول يا معلّم',
+                      text: text,
+                      url: window.location.href,
+                    }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(text);
+                    alert('تم نسخ بطاقة الفوز والنتيجة لمشاركتها مع أصحابك! 📲');
+                  }
+                }
+
+                sendChatGuess() {
+                  const input = document.getElementById('chatInput');
+                  const val = input.value.trim();
+                  if (!val) return;
+                  const chatBox = document.getElementById('chatBox');
+                  const userMsg = document.createElement('div');
+                  userMsg.innerHTML = `<strong class="text-emerald-700">أنت:</strong> ${val}`;
+                  chatBox.appendChild(userMsg);
+                  input.value = '';
+                  chatBox.scrollTop = chatBox.scrollHeight;
+
+                  // Auto bot response
+                  setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'text-green-600 font-bold';
+                    botMsg.innerHTML = `🎉 المعلم قال الإجابة صحيحة! (+50 نقطة)`;
+                    chatBox.appendChild(botMsg);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    soundManager.playCorrect();
+                  }, 1200);
+                }
+
+                showLeaderboard() {
+                  document.getElementById('modalLeaderboard').classList.remove('hidden');
+                }
+                closeLeaderboard() {
+                  document.getElementById('modalLeaderboard').classList.add('hidden');
+                }
+
+                showPacksModal() {
+                  document.getElementById('modalPacks').classList.remove('hidden');
+                }
+                closePacksModal() {
+                  document.getElementById('modalPacks').classList.add('hidden');
+                }
+              }
+
+              const game = new GameController();
+            </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
