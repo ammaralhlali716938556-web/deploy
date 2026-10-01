@@ -129,9 +129,9 @@ jobs:
                     <span>مميزات محرك الذكاء الجديد:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
-                    • <strong>فهم دلالي مرن:</strong> الذكاء يفهم الأوصاف والتشبيهات والأفعال المرتبطة بالكلمة ويحتسبها فوراً.<br>
-                    • <strong>كشف دائم للدلالات:</strong> أي دلالة تفتحها بمساعدتك تبقى محفوظة ومجانية لك للأبد حتى بعد الخروج!<br>
-                    • <strong>مكافآت يومية وهدية 1000 نجمة</strong> عند التثبيت لمساعدتك في التحدي.
+                    • <strong>فهم دلالي مرن:</strong> الذكاء يفهم الكلمات والتشبيهات والكلمات المقاربة ويحتسبها فوراً.<br>
+                    • <strong>كشف دائم ومباشر للدلالات:</strong> أي دلالة تفتحها تُفعل شريط الذكاء الاصطناعي وتبقى محفوظة للأبد!<br>
+                    • <strong>تشغيل تلقائي للمايك:</strong> المايك يبدأ بالاستماع والتحليل فور دخولك المرحلة.
                   </p>
                 </div>
 
@@ -185,7 +185,7 @@ jobs:
 
                 <!-- TIMER & LIVE MIC ICON -->
                 <div class="flex items-center space-x-3 space-x-reverse my-1">
-                  <div id="micIndicator" class="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-red-400/40 animate-pulse">
+                  <div id="micIndicator" onclick="window.game.toggleMicManual()" title="انقر لتشغيل/إيقاف الميكروفون" class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95">
                     <i class="fa-solid fa-microphone"></i>
                   </div>
                   <div class="text-right">
@@ -223,16 +223,19 @@ jobs:
                   <div id="revealedHintBanner" class="hidden mb-2 p-1.5 bg-amber-50 border border-amber-300 rounded-xl text-right">
                     <div class="text-[10px] font-black text-amber-900 flex items-center space-x-1 space-x-reverse mb-0.5">
                       <span>💡</span>
-                      <span>دلالات مكشوفة لك (تحدث عنها ليقتنع الذكاء):</span>
+                      <span>دلالات مكشوفة لك (تحدث عنها أو عن كلمات تشبهها):</span>
                     </div>
                     <div id="revealedHintsContainer" class="flex flex-wrap gap-1 text-xs font-bold text-amber-950"></div>
                   </div>
 
                   <!-- TABOOS -->
                   <div class="bg-red-50 border border-red-200 rounded-xl p-2 text-right">
-                    <div class="text-red-600 font-black text-[11px] flex items-center space-x-1 space-x-reverse mb-1">
-                      <i class="fa-solid fa-ban"></i>
-                      <span>الممنوعات على لسانك:</span>
+                    <div class="flex justify-between items-center mb-1 text-red-600 font-black text-[11px]">
+                      <div class="flex items-center space-x-1 space-x-reverse">
+                        <i class="fa-solid fa-ban"></i>
+                        <span>الممنوعات على لسانك:</span>
+                      </div>
+                      <span id="playTabooCountLabel" class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">2 كلمات</span>
                     </div>
                     <div id="playTaboosContainer" class="flex flex-wrap gap-1.5 text-xs font-bold text-slate-800"></div>
                   </div>
@@ -254,7 +257,7 @@ jobs:
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
                     <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الميكروفون الآن:</span>
-                    <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">مستمع بنشاط</span>
+                    <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">الميكروفون يستمع بنشاط... 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
                     الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...
@@ -689,6 +692,7 @@ jobs:
                   this.detectedCluesSet = new Set();
                   this.detectedDomainSet = new Set();
                   this.accumulatedTranscript = '';
+                  this.accumulatedWordsCount = 0;
 
                   this.loadProgress();
                   this.initSoundState();
@@ -714,8 +718,8 @@ jobs:
                       lastDailyDate: "",
                       isFirstInstall: true,
                       soundEnabled: true,
-                      revealedCluesMap: {}, // تخزين دائم للدلالات المفتوحة لكل مرحلة
-                      completedStages: {}   // تخزين دائم للمراحل المكتملة
+                      revealedCluesMap: {},
+                      completedStages: {}
                     };
                     this.isFreshInstall = true;
                     this.saveProgress();
@@ -809,7 +813,7 @@ jobs:
                   document.getElementById('homeResumeLvl').innerText = this.progress.maxUnlocked;
                 }
 
-                // PERMANENT HINT PURCHASE SYSTEM
+                // PERMANENT HINT PURCHASE SYSTEM & IMMEDIATE CONFIDENCE UPDATE
                 buyHint() {
                   soundFx.playClick();
                   if (!this.activeStage) return;
@@ -839,7 +843,12 @@ jobs:
                   this.saveProgress();
                   soundFx.playHintReveal();
 
+                  // Activate clue directly in AI Detector & update confidence immediately!
+                  this.detectedCluesSet.add(newHint);
                   this.renderRevealedHintsUI();
+                  this.renderDetectedCluesUI();
+                  this.updateConfidence(this.accumulatedWordsCount || 0);
+
                   this.speak(`تم كشف دلالة: ${newHint}! اذكرها في شرحك!`);
                 }
 
@@ -869,6 +878,53 @@ jobs:
                     btnLabel.innerText = "الدلالات مكتملة ✓";
                   } else {
                     btnLabel.innerText = `كشف دلالة (-30 ⭐)`;
+                  }
+                }
+
+                renderDetectedCluesUI() {
+                  const cluesBox = document.getElementById('aiDetectedClues');
+                  if (!cluesBox) return;
+                  cluesBox.innerHTML = '';
+                  this.detectedCluesSet.forEach(clue => {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-emerald-500/20 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-400/40 flex items-center space-x-1 space-x-reverse';
+                    tag.innerHTML = `<span>✓</span><span>${clue}</span>`;
+                    cluesBox.appendChild(tag);
+                  });
+                }
+
+                updateConfidence(wordsCount = 0) {
+                  if (!this.activeStage) return;
+                  const totalClues = Math.max(1, this.activeStage.h.length);
+                  const cluePoints = Math.round((this.detectedCluesSet.size / totalClues) * 75);
+                  const directCluePoints = this.detectedCluesSet.size * 35;
+                  const effectiveCluePoints = Math.max(cluePoints, directCluePoints);
+
+                  const domainPoints = Math.min(25, this.detectedDomainSet.size * 10);
+                  const fluencyPoints = Math.min(20, Math.floor(wordsCount * 2));
+
+                  let totalConfidence = Math.min(100, Math.round(effectiveCluePoints + domainPoints + fluencyPoints));
+
+                  if (this.detectedCluesSet.size >= totalClues) {
+                    totalConfidence = 100;
+                  }
+
+                  const pctEl = document.getElementById('aiConfidencePct');
+                  const barEl = document.getElementById('aiConfidenceBar');
+                  const nextBtn = document.getElementById('btnNextStage');
+                  const nextLabel = document.getElementById('btnNextLabel');
+
+                  if (pctEl) pctEl.innerText = `${totalConfidence}%`;
+                  if (barEl) barEl.style.width = `${totalConfidence}%`;
+
+                  if (totalConfidence >= 75) {
+                    this.triggerAutoSuccess();
+                  } else {
+                    if (nextLabel) nextLabel.innerText = `اقتناع الذكاء: ${totalConfidence}% (واصل الشرح)`;
+                    if (nextBtn) {
+                      nextBtn.disabled = true;
+                      nextBtn.className = "btn-3d py-3.5 bg-slate-800 text-yellow-300 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-80 transition-all duration-300";
+                    }
                   }
                 }
 
@@ -934,7 +990,7 @@ jobs:
                   }
                 }
 
-                // SPEECH ENGINE INITIALIZATION
+                // SPEECH ENGINE INITIALIZATION & CONTINUOUS LISTENING
                 initVoice() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (Speech) {
@@ -944,25 +1000,58 @@ jobs:
                       this.recognition.interimResults = true;
                       this.recognition.lang = 'ar-EG';
 
-                      this.recognition.onresult = (ev) => {
-                        let currentChunk = '';
-                        for (let i = ev.resultIndex; i < ev.results.length; ++i) {
-                          currentChunk += ev.results[i][0].transcript + ' ';
-                        }
-                        this.accumulatedTranscript += ' ' + currentChunk;
-                        this.processRealtimeSpeech(this.accumulatedTranscript);
+                      this.recognition.onstart = () => {
+                        this.isVoiceActive = true;
+                        this.updateMicUI(true);
                       };
 
-                      this.recognition.onstart = () => { this.isVoiceActive = true; };
+                      this.recognition.onresult = (ev) => {
+                        let currentFinal = '';
+                        let currentInterim = '';
+                        for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+                          const res = ev.results[i];
+                          if (res.isFinal) {
+                            currentFinal += res[0].transcript + ' ';
+                          } else {
+                            currentInterim += res[0].transcript + ' ';
+                          }
+                        }
+                        if (currentFinal) {
+                          this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + currentFinal).trim();
+                        }
+                        const fullCurrentText = (this.accumulatedTranscript + ' ' + currentInterim).trim();
+                        this.processRealtimeSpeech(fullCurrentText);
+                      };
+
                       this.recognition.onend = () => {
                         this.isVoiceActive = false;
                         if (this.isPlaying && !this.isSuccessApproved) {
-                          this.safeStartVoice();
+                          setTimeout(() => {
+                            if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                              this.safeStartVoice();
+                            }
+                          }, 200);
+                        } else {
+                          this.updateMicUI(false);
                         }
                       };
+
                       this.recognition.onerror = (e) => {
-                        console.warn("Speech recognition notice:", e);
-                        this.isVoiceActive = false;
+                        console.warn("Speech recognition notice:", e.error);
+                        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                          this.isVoiceActive = false;
+                          this.updateMicUI(false);
+                          const pill = document.getElementById('aiStatusPill');
+                          if (pill) pill.innerText = "صلاحية المايك مرفوضة (اكتب بالكيبورد)";
+                          return;
+                        }
+                        if (this.isPlaying && !this.isSuccessApproved) {
+                          setTimeout(() => {
+                            if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                              this.safeStartVoice();
+                            }
+                          }, 350);
+                        }
                       };
                     } catch(err) {
                       console.warn("Voice init skipped:", err);
@@ -971,11 +1060,28 @@ jobs:
                 }
 
                 safeStartVoice() {
-                  if (!this.recognition || this.isVoiceActive) return;
+                  if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) pill.innerText = "اكتب الشرح بالكيبورد ⌨️";
+                    return;
+                  }
+                  if (!this.recognition) {
+                    this.initVoice();
+                  }
+                  if (!this.recognition) return;
+
                   try {
+                    if (this.isVoiceActive) {
+                      this.updateMicUI(true);
+                      return;
+                    }
                     this.recognition.start();
                     this.isVoiceActive = true;
-                  } catch(e) {}
+                    this.updateMicUI(true);
+                  } catch(e) {
+                    this.isVoiceActive = true;
+                    this.updateMicUI(true);
+                  }
                 }
 
                 safeStopVoice() {
@@ -983,7 +1089,38 @@ jobs:
                   try {
                     this.recognition.stop();
                     this.isVoiceActive = false;
+                    this.updateMicUI(false);
                   } catch(e) {}
+                }
+
+                toggleMicManual() {
+                  soundFx.playClick();
+                  if (this.isVoiceActive) {
+                    this.safeStopVoice();
+                  } else {
+                    this.safeStartVoice();
+                  }
+                }
+
+                updateMicUI(active) {
+                  const mic = document.getElementById('micIndicator');
+                  const pill = document.getElementById('aiStatusPill');
+                  if (mic) {
+                    if (active) {
+                      mic.className = "w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95";
+                    } else {
+                      mic.className = "w-14 h-14 rounded-full bg-slate-700 text-gray-300 flex items-center justify-center text-xl shadow-lg ring-4 ring-white/10 cursor-pointer transition active:scale-95";
+                    }
+                  }
+                  if (pill) {
+                    if (active) {
+                      pill.innerText = "الميكروفون يستمع بنشاط... 🎙️";
+                      pill.className = "text-emerald-400 font-mono text-[10px]";
+                    } else {
+                      pill.innerText = "انقر المايك للتحدث 🎙️";
+                      pill.className = "text-yellow-400 font-mono text-[10px]";
+                    }
+                  }
                 }
 
                 speak(text) {
@@ -1000,10 +1137,12 @@ jobs:
                 }
 
                 clean(t) {
-                  return (t || '').replace(/[\u064B-\u0652]/g, '')
-                          .replace(/[إأآا]/g, 'ا')
+                  return (t || '').replace(/[\u064B-\u065F\u0670]/g, '')
+                          .replace(/[ـ]/g, '')
+                          .replace(/[إأآٱ]/g, 'ا')
                           .replace(/ة/g, 'ه')
                           .replace(/ى/g, 'ي')
+                          .replace(/[ءئؤ]/g, 'ا')
                           .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()؟"']/g, ' ')
                           .toLowerCase()
                           .trim();
@@ -1017,7 +1156,10 @@ jobs:
                     s = s.substring(1);
                     if (s.startsWith('ال') && s.length > 4) s = s.substring(2);
                   }
-                  const suffixes = ['ات', 'ين', 'ون', 'ية', 'يه', 'ها', 'هم', 'كم', 'نا', 'ي', 'ه'];
+                  if ((s.startsWith('بي') || s.startsWith('بت') || s.startsWith('بن') || s.startsWith('ها')) && s.length > 4) {
+                    s = s.substring(2);
+                  }
+                  const suffixes = ['ات', 'ين', 'ون', 'ية', 'يه', 'ها', 'هم', 'كم', 'نا', 'ي', 'ه', 'ك', 'ان'];
                   for (let suf of suffixes) {
                     if (s.endsWith(suf) && s.length > suf.length + 2) {
                       s = s.substring(0, s.length - suf.length);
@@ -1027,16 +1169,118 @@ jobs:
                   return s;
                 }
 
-                matchesKeyword(spokenWord, keyword) {
-                  const cWord = this.clean(spokenWord);
-                  const cKey = this.clean(keyword);
-                  const sWord = this.stem(spokenWord);
-                  const sKey = this.stem(keyword);
+                phonetic(w) {
+                  let s = this.stem(w);
+                  return s.replace(/[ص]/g, 'س')
+                          .replace(/[ضظذ]/g, 'ز')
+                          .replace(/[ط]/g, 'ت')
+                          .replace(/[ة]/g, 'ه')
+                          .replace(/[ى]/g, 'ي')
+                          .replace(/[إأآءئؤ]/g, 'ا');
+                }
 
-                  if (cWord === cKey || sWord === sKey) return true;
-                  if (cWord.length >= 3 && cKey.length >= 3) {
-                    if (cWord.includes(cKey) || cKey.includes(cWord)) return true;
-                    if (sWord.includes(sKey) || sKey.includes(sWord)) return true;
+                levenshtein(a, b) {
+                  if (a === b) return 0;
+                  if (!a.length) return b.length;
+                  if (!b.length) return a.length;
+                  const d = [];
+                  for (let i = 0; i <= a.length; i++) d[i] = [i];
+                  for (let j = 0; j <= b.length; j++) d[0][j] = j;
+                  for (let i = 1; i <= a.length; i++) {
+                    for (let j = 1; j <= b.length; j++) {
+                      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                      d[i][j] = Math.min(
+                        d[i - 1][j] + 1,
+                        d[i][j - 1] + 1,
+                        d[i - 1][j - 1] + cost
+                      );
+                    }
+                  }
+                  return d[a.length][b.length];
+                }
+
+                similarityScore(s1, s2) {
+                  if (!s1 || !s2) return 0;
+                  if (s1 === s2) return 1;
+                  const maxLen = Math.max(s1.length, s2.length);
+                  if (maxLen === 0) return 1;
+                  const dist = this.levenshtein(s1, s2);
+                  return (maxLen - dist) / maxLen;
+                }
+
+                isSimilarWord(spoken, target) {
+                  if (!spoken || !target) return false;
+                  const cSpoken = this.clean(spoken);
+                  const cTarget = this.clean(target);
+                  if (cSpoken === cTarget) return true;
+
+                  const sSpoken = this.stem(cSpoken);
+                  const sTarget = this.stem(cTarget);
+                  if (sSpoken === sTarget) return true;
+
+                  if (sSpoken.length >= 3 && sTarget.length >= 3) {
+                    if (sSpoken.includes(sTarget) || sTarget.includes(sSpoken)) return true;
+                    if (cSpoken.includes(cTarget) || cTarget.includes(cSpoken)) return true;
+                  }
+
+                  const pSpoken = this.phonetic(sSpoken);
+                  const pTarget = this.phonetic(sTarget);
+                  if (pSpoken === pTarget) return true;
+                  if (pSpoken.length >= 3 && pTarget.length >= 3 && (pSpoken.includes(pTarget) || pTarget.includes(pSpoken))) return true;
+
+                  const maxL = Math.max(sSpoken.length, sTarget.length);
+                  if (maxL >= 3) {
+                    const dist = this.levenshtein(sSpoken, sTarget);
+                    if (maxL <= 4 && dist <= 1) return true;
+                    if (maxL >= 5 && dist <= 2) return true;
+                    if (this.similarityScore(sSpoken, sTarget) >= 0.70) return true;
+                  }
+
+                  const pMaxL = Math.max(pSpoken.length, pTarget.length);
+                  if (pMaxL >= 3) {
+                    const pDist = this.levenshtein(pSpoken, pTarget);
+                    if (pMaxL <= 4 && pDist <= 1) return true;
+                    if (pMaxL >= 5 && pDist <= 2) return true;
+                    if (this.similarityScore(pSpoken, pTarget) >= 0.70) return true;
+                  }
+
+                  return false;
+                }
+
+                matchesClue(cleanedText, words, hint) {
+                  const cHint = this.clean(hint);
+                  if (!cHint) return false;
+                  if (cleanedText.includes(cHint)) return true;
+
+                  const hintWords = cHint.split(/\s+/).filter(w => w.length > 1);
+                  if (hintWords.length === 1) {
+                    const target = hintWords[0];
+                    for (let w of words) {
+                      if (this.isSimilarWord(w, target)) return true;
+                    }
+                  } else {
+                    for (let hw of hintWords) {
+                      for (let w of words) {
+                        if (this.isSimilarWord(w, hw)) return true;
+                      }
+                    }
+                  }
+                  return false;
+                }
+
+                isWordInText(text, targetWord) {
+                  const cTarget = this.clean(targetWord);
+                  if (cTarget.length < 2) return false;
+                  const cText = this.clean(text);
+                  if (cTarget.includes(' ')) {
+                    return cText.includes(cTarget);
+                  }
+                  const words = cText.split(/\s+/);
+                  const sTarget = this.stem(cTarget);
+                  for (let w of words) {
+                    const cW = this.clean(w);
+                    const sW = this.stem(cW);
+                    if (cW === cTarget || sW === sTarget) return true;
                   }
                   return false;
                 }
@@ -1044,93 +1288,64 @@ jobs:
                 promptTextInput() {
                   const input = prompt("💬 اكتب شرحك أو وصفك للكلمة هنا ليحلله الذكاء الاصطناعي:");
                   if (input && input.trim()) {
-                    this.accumulatedTranscript += ' ' + input.trim();
+                    this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + input.trim()).trim();
                     this.processRealtimeSpeech(this.accumulatedTranscript);
                   }
                 }
 
-                // SUPER AI SEMANTIC PROCESSOR WITH DOMAIN & FLUENCY EVALUATION
+                // SUPER AI SEMANTIC PROCESSOR WITH FUZZY & SIMILAR WORD DETECTION
                 processRealtimeSpeech(rawText) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
 
                   const transcriptBox = document.getElementById('playTranscript');
-                  transcriptBox.innerText = `"${rawText.trim()}"`;
+                  if (transcriptBox) {
+                    transcriptBox.innerText = rawText.trim() ? `"${rawText.trim()}"` : 'الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...';
+                  }
 
                   const cleanedText = this.clean(rawText);
                   const words = cleanedText.split(/\s+/).filter(w => w.length > 1);
+                  this.accumulatedWordsCount = Math.max(this.accumulatedWordsCount || 0, words.length);
 
-                  // 1. فحص فوري للممنوعات أو الكلمة الأصلية
-                  if (this.clean(this.activeStage.w).length >= 2) {
-                    const cleanWord = this.clean(this.activeStage.w);
-                    if (cleanedText.includes(cleanWord)) {
-                      this.onBust(`نطقت الكلمة نفسها (${this.activeStage.w})!`);
-                      return;
-                    }
+                  // 1. فحص فوري للكلمة الأصلية والممنوعات
+                  if (this.isWordInText(cleanedText, this.activeStage.w)) {
+                    this.onBust(`نطقت الكلمة نفسها (${this.activeStage.w})!`);
+                    return;
                   }
 
                   const activeTaboos = this.activeStage.t.slice(0, this.activeWorldCfg.taboos);
                   for (let taboo of activeTaboos) {
-                    const cleanT = this.clean(taboo);
-                    if (cleanedText.includes(cleanT)) {
+                    if (this.isWordInText(cleanedText, taboo)) {
                       this.onBust(`نطقت كلمة ممنوعة (${taboo})!`);
                       return;
                     }
                   }
 
-                  // 2. تحليل الدلالات المحددة للبطاقة (Target Hints)
-                  let clueHits = 0;
+                  // 2. تحليل الدلالات المحددة للبطاقة حتى عند النطق بكلمات مقاربة أو شبيهة
                   this.activeStage.h.forEach(hint => {
-                    for (let w of words) {
-                      if (this.matchesKeyword(w, hint)) {
-                        if (!this.detectedCluesSet.has(hint)) {
-                          this.detectedCluesSet.add(hint);
-                          soundFx.playClueDetected();
-                        }
-                        break;
+                    if (!this.detectedCluesSet.has(hint)) {
+                      if (this.matchesClue(cleanedText, words, hint)) {
+                        this.detectedCluesSet.add(hint);
+                        soundFx.playClueDetected();
                       }
                     }
                   });
 
-                  // 3. تحليل مفردات التصنيف العام (Category Lexicon)
+                  // 3. تحليل مفردات التصنيف العام
                   const categoryTerms = CATEGORY_LEXICONS[this.activeStage.c] || [];
                   categoryTerms.forEach(term => {
-                    for (let w of words) {
-                      if (this.matchesKeyword(w, term)) {
-                        this.detectedDomainSet.add(term);
-                        break;
+                    if (!this.detectedDomainSet.has(term)) {
+                      for (let w of words) {
+                        if (this.isSimilarWord(w, term)) {
+                          this.detectedDomainSet.add(term);
+                          break;
+                        }
                       }
                     }
                   });
 
-                  // 4. رسم بطاقات الدلالات המكتشفة
-                  const cluesBox = document.getElementById('aiDetectedClues');
-                  cluesBox.innerHTML = '';
-                  this.detectedCluesSet.forEach(clue => {
-                    const tag = document.createElement('span');
-                    tag.className = 'bg-emerald-500/20 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-400/40 flex items-center space-x-1 space-x-reverse';
-                    tag.innerHTML = `<span>✓</span><span>${clue}</span>`;
-                    cluesBox.appendChild(tag);
-                  });
-
-                  // 5. احتساب الاقتناع بمرونة عالية
-                  const cluePoints = this.detectedCluesSet.size * 35;
-                  const domainPoints = Math.min(30, this.detectedDomainSet.size * 10);
-                  const fluencyPoints = Math.min(35, Math.floor(words.length * 4));
-                  const totalConfidence = Math.min(100, cluePoints + domainPoints + fluencyPoints);
-
-                  document.getElementById('aiConfidencePct').innerText = `${totalConfidence}%`;
-                  const bar = document.getElementById('aiConfidenceBar');
-                  bar.style.width = `${totalConfidence}%`;
-
-                  const nextBtn = document.getElementById('btnNextStage');
-                  const nextLabel = document.getElementById('btnNextLabel');
-
-                  if (totalConfidence >= 75) {
-                    this.triggerAutoSuccess();
-                  } else {
-                    nextLabel.innerText = `اقتناع الذكاء: ${totalConfidence}% (واصل الشرح)`;
-                    nextBtn.className = "btn-3d py-3.5 bg-slate-800 text-yellow-300 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-80 transition-all duration-300";
-                  }
+                  // 4. تحديث بطاقات الدلالات وشريط الاقتناع
+                  this.renderDetectedCluesUI();
+                  this.updateConfidence(this.accumulatedWordsCount);
                 }
 
                 triggerAutoSuccess() {
@@ -1200,8 +1415,10 @@ jobs:
                   this.detectedCluesSet.clear();
                   this.detectedDomainSet.clear();
                   this.accumulatedTranscript = '';
+                  this.accumulatedWordsCount = 0;
                   document.getElementById('aiConfidencePct').innerText = '0%';
                   document.getElementById('aiConfidenceBar').style.width = '0%';
+                  this.renderDetectedCluesUI();
                 }
 
                 startStage(lvl) {
@@ -1218,49 +1435,73 @@ jobs:
                     this.detectedCluesSet.clear();
                     this.detectedDomainSet.clear();
                     this.accumulatedTranscript = '';
+                    this.accumulatedWordsCount = 0;
 
                     document.getElementById('playStageNum').innerText = `#${validLvl}`;
                     document.getElementById('playWorldTag').innerText = this.activeWorldCfg.title.split(':')[1] || '';
                     document.getElementById('playCategory').innerText = this.activeStage.c;
                     document.getElementById('playWord').innerText = this.activeStage.w;
                     document.getElementById('playStarsDisplay').innerText = '⭐⭐⭐';
-                    document.getElementById('playTabooCountLabel').innerText = `ممنوع نطق ${this.activeWorldCfg.taboos} كلمات`;
+                    
+                    const tabooCountLabel = document.getElementById('playTabooCountLabel');
+                    if (tabooCountLabel) {
+                      tabooCountLabel.innerText = `${this.activeWorldCfg.taboos} كلمات ممنوعة`;
+                    }
 
-                    // عرض الدلالات المكشوفة مسبقاً لهذه المرحلة (حفظ دائم)
+                    // عرض الممنوعات بوضوح في البطاقة
+                    const taboosBox = document.getElementById('playTaboosContainer');
+                    if (taboosBox) {
+                      taboosBox.innerHTML = '';
+                      const activeTaboos = this.activeStage.t.slice(0, this.activeWorldCfg.taboos);
+                      activeTaboos.forEach(w => {
+                        const span = document.createElement('span');
+                        span.className = 'bg-white text-red-700 px-2.5 py-1 rounded-lg border border-red-300 text-xs font-black shadow-sm flex items-center space-x-1 space-x-reverse';
+                        span.innerHTML = `<i class="fa-solid fa-xmark text-[10px] text-red-500"></i><span>${w}</span>`;
+                        taboosBox.appendChild(span);
+                      });
+                    }
+
+                    // ربط الدلالات المحفوظة مسبقاً وتفعيلها في شريط الذكاء الاصطناعي
+                    const lvlKey = String(validLvl);
+                    const savedRevealed = this.progress.revealedCluesMap[lvlKey] || [];
+                    savedRevealed.forEach(h => this.detectedCluesSet.add(h));
+
                     this.renderRevealedHintsUI();
+                    this.renderDetectedCluesUI();
 
                     document.getElementById('aiConfidencePct').innerText = '0%';
                     document.getElementById('aiConfidenceBar').style.width = '0%';
-                    document.getElementById('aiDetectedClues').innerHTML = '';
-                    document.getElementById('aiStatusPill').innerText = 'يحلل الدلالات...';
+                    document.getElementById('aiStatusPill').innerText = 'الميكروفون يستمع بنشاط... 🎙️';
 
                     const nextBtn = document.getElementById('btnNextStage');
-                    nextBtn.disabled = true;
-                    nextBtn.className = "btn-3d py-3.5 bg-slate-800 text-gray-500 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-60 transition-all duration-300";
-                    document.getElementById('btnNextIcon').className = "fa-solid fa-hourglass-half";
-                    document.getElementById('btnNextLabel').innerText = "في انتظار الشرح... (0%)";
+                    if (nextBtn) {
+                      nextBtn.disabled = true;
+                      nextBtn.className = "btn-3d py-3.5 bg-slate-800 text-gray-500 rounded-2xl border-b-[4px] border-slate-950 font-black text-xs flex items-center justify-center space-x-1.5 space-x-reverse cursor-not-allowed opacity-60 transition-all duration-300";
+                    }
+                    const nextIcon = document.getElementById('btnNextIcon');
+                    if (nextIcon) nextIcon.className = "fa-solid fa-hourglass-half";
+                    const nextLabel = document.getElementById('btnNextLabel');
+                    if (nextLabel) nextLabel.innerText = "في انتظار الشرح... (0%)";
 
-                    const taboosBox = document.getElementById('playTaboosContainer');
-                    taboosBox.innerHTML = '';
-                    const activeTaboos = this.activeStage.t.slice(0, this.activeWorldCfg.taboos);
-                    activeTaboos.forEach(w => {
-                      const span = document.createElement('span');
-                      span.className = 'bg-white text-red-700 px-2 py-0.5 rounded-md border border-red-200 text-xs';
-                      span.innerText = w;
-                      taboosBox.appendChild(span);
-                    });
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox) {
+                      transcriptBox.innerText = 'الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...';
+                    }
 
-                    document.getElementById('playTranscript').innerText = 'الميكروفون يستمع بنشاط.. تحدث بصوت واضح ليحلل الذكاء كلماتك...';
-                    
                     this.showScreen('screenPlay');
                     soundFx.playStageStart();
 
+                    // احتساب الاقتناع الأولي إذا كانت هناك دلالات مفتوحة مسبقاً
+                    this.updateConfidence(0);
+
+                    // تشغيل المايك تلقائياً وبدء التحليل
                     this.safeStartVoice();
                     this.startTimer();
                   } catch(err) {
                     console.error("Critical stage start error:", err);
                     this.showScreen('screenPlay');
                     this.startTimer();
+                    this.safeStartVoice();
                   }
                 }
 
