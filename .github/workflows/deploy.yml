@@ -25,11 +25,13 @@ jobs:
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # تم استبدال الأداة المعطوبة بقبول رخص الأندرويد المثبت مسبقاً في جيت هوب
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Generate Complete Web Game with Rules & Multi-Levels
         run: |
@@ -120,7 +122,6 @@ jobs:
 
             <div id="appContainer" class="w-full max-w-[430px] h-[100dvh] sm:h-[890px] bg-gradient-to-b from-[#FF512F] via-[#F09819] to-[#FF4E50] sm:rounded-[45px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-yellow-300">
               
-              <!-- Top Bar -->
               <header class="w-full px-5 pt-4 pb-2 flex justify-between items-center z-10">
                 <div class="flex items-center space-x-2 space-x-reverse bg-black/25 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
                   <span class="gold-badge w-7 h-7 rounded-full flex items-center justify-center text-amber-900 font-black text-xs">👑</span>
@@ -148,7 +149,6 @@ jobs:
                   <h1 class="text-4xl font-black text-white mt-3 font-tajawal drop-shadow-md">قول يا معلّم!</h1>
                   <p class="text-yellow-100 text-xs font-bold mt-1">تطبيق الأندرويد الرسمي وتحدي الشلّة</p>
                   
-                  <!-- Current Selected Level Badge -->
                   <div onclick="game.showLevelsModal()" class="cursor-pointer mt-2 inline-flex items-center space-x-2 space-x-reverse bg-yellow-400/90 hover:bg-yellow-400 text-yellow-950 px-4 py-1.5 rounded-full border-2 border-white shadow font-black text-xs transition">
                     <span>المستوى المختار:</span>
                     <span id="homeLevelLabel" class="text-red-700 underline font-black">المستوى 1 (شبل الشلّة) ⚙️</span>
@@ -170,7 +170,7 @@ jobs:
                   <div class="grid grid-cols-2 gap-3">
                     <button onclick="game.showLevelsModal()" class="btn-3d btn-gloss py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl border-b-[5px] border-orange-700 text-white font-black text-sm flex flex-col items-center">
                       <span class="text-2xl mb-0.5">🎚️</span>
-                      اختيار المستوى (5 مستويات)
+                      المستويات (5 مستويات)
                     </button>
                     <button onclick="game.showRulesModal()" class="btn-3d btn-gloss py-3.5 bg-gradient-to-r from-sky-400 to-blue-600 rounded-2xl border-b-[5px] border-blue-800 text-white font-black text-sm flex flex-col items-center">
                       <span class="text-2xl mb-0.5">📜</span>
@@ -185,7 +185,7 @@ jobs:
                 </div>
 
                 <div class="text-white/80 text-[11px] font-bold">
-                  Android APK Edition • 170+ كارت وميزة الهز بالجيروسكوب
+                  Android APK Edition • مستشعر الجيروسكوب و 170+ كارت
                 </div>
               </div>
 
@@ -251,7 +251,6 @@ jobs:
                     كشري بالكبّة
                   </div>
 
-                  <!-- Taboo Words List -->
                   <div class="bg-red-50 border border-red-200 rounded-xl p-2 text-right">
                     <div class="text-red-600 font-black text-xs flex items-center space-x-1 space-x-reverse mb-1">
                       <i class="fa-solid fa-ban"></i>
@@ -307,7 +306,7 @@ jobs:
                 <div class="w-full space-y-2.5">
                   <button onclick="game.shareWinnerCard()" class="btn-3d btn-gloss w-full py-3.5 bg-gradient-to-r from-emerald-400 to-green-600 rounded-3xl border-b-[5px] border-emerald-800 text-white font-black text-base flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-share-nodes"></i>
-                    <span>مشاركة النتيجة في واتساب وإنستا</span>
+                    <span>مشاركة النتيجة في واتساب</span>
                   </button>
                   <button onclick="game.showHome()" class="btn-3d w-full py-3 bg-white text-gray-800 rounded-3xl border-b-[4px] border-gray-300 font-black text-sm">
                     العودة للقائمة الرئيسية 🔄
@@ -315,7 +314,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- ================= MODAL: FULL GAME RULES (قواعد اللعبة كاملة) ================= -->
+              <!-- MODAL: FULL RULES -->
               <div id="modalRules" class="hidden absolute inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-3">
                 <div class="w-full max-w-sm clay-card p-5 flex flex-col max-h-[88vh]">
                   <div class="flex justify-between items-center border-b pb-2 mb-3">
@@ -327,39 +326,35 @@ jobs:
                   </div>
 
                   <div class="overflow-y-auto space-y-3 text-right text-xs leading-relaxed pr-1 text-gray-800">
-                    <!-- Rule 1: The Goal -->
                     <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-                      <div class="font-black text-amber-900 text-sm mb-1">🎯 الهدف من اللعبة:</div>
-                      يقوم اللاعب (المعلّم) في كل جولة بشرح الكلمة المكتوبة في الكارت لأفراد شلّته بأسرع وقت ممكن قبل انتهاء العداد، مع الالتزام بشرط النرد وعدم نطق أي كلمة من الممنوعات.
+                      <div class="font-black text-amber-900 text-sm mb-1">🎯 فكرة اللعبة:</div>
+                      يقوم المعلّم بشرح الكلمة المكتوبة لأصحابه قبل انتهاء العداد، مع الالتزام بشرط النرد وعدم نطق أي كلمة من الممنوعات.
                     </div>
 
-                    <!-- Rule 2: The 5 Strict Taboos -->
                     <div class="bg-red-50 p-2.5 rounded-xl border border-red-200">
                       <div class="font-black text-red-700 text-sm mb-1">🚫 الممنوعات الخمسة الصارمة:</div>
                       <ul class="list-disc list-inside space-y-1 font-bold text-red-950">
                         <li><strong>ممنوع نطق أي كلمة من "ممنوعات المعلم"</strong> المكتوبة في الكارت.</li>
                         <li><strong>ممنوع الإشارة بالأصابع</strong> أو لغة الجسد المباشرة.</li>
-                        <li><strong>ممنوع القوافي</strong> (مثل: "على وزن كلمة كذا").</li>
-                        <li><strong>ممنوع الترجمة للغات أخرى</strong> (لا إنجليزي ولا فرنساوي).</li>
-                        <li><strong>ممنوع استخدام مشتقات الكلمة</strong> (لو الكلمة "كشري" ممنوع تقول "أكشره").</li>
+                        <li><strong>ممنوع القوافي</strong> ("على وزن كلمة كذا").</li>
+                        <li><strong>ممنوع الترجمة للغات أخرى</strong> (إنجليزي أو فرنساوي).</li>
+                        <li><strong>ممنوع استخدام مشتقات الكلمة</strong> (مثال: لو الكلمة كشري ممنوع تقول أكشره).</li>
                       </ul>
                     </div>
 
-                    <!-- Rule 3: 3D Dice Rules -->
                     <div class="bg-sky-50 p-2.5 rounded-xl border border-sky-200">
-                      <div class="font-black text-sky-900 text-sm mb-1">🎲 شروط النرد المجنونة وقانون "قفشتك!":</div>
-                      <p>يقوم المعلم بهز الهاتف أو ضغط النرد لتطبيق طريقة النطق الإجبارية (روبوت عاطل، صعيدي عصبي، مذيع نشرة، الخ). إذا خالف المعلم الشرط، يحق لأي لاعب أن يصرخ <strong>"قفشتك يا معلم!"</strong> ويخسر 10 نقاط فوراً!</p>
+                      <div class="font-black text-sky-900 text-sm mb-1">🎲 شروط النرد وقانون "قفشتك!":</div>
+                      <p>يقوم المعلم بهز الهاتف أو ضغط النرد لتطبيق طريقة النطق الإجبارية. إذا خالف المعلم الشرط، يحق لأي لاعب أن يصرخ <strong>"قفشتك يا معلم!"</strong> ويخسر 10 نقاط فوراً!</p>
                     </div>
 
-                    <!-- Rule 4: Scoring & Speed Bonus -->
                     <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
                       <div class="font-black text-emerald-900 text-sm mb-1">⚡ مكافأة السرعة واحتساب النقاط:</div>
                       <ul class="list-disc list-inside space-y-1 font-bold">
-                        <li>حزر في أول 15 ثانية: +50 نقطة (بونص المعلّم النفاث 🚀).</li>
-                        <li>حزر في منتصف الوقت: +35 نقطة.</li>
-                        <li>حزر في الثواني الأخيرة: +20 نقطة فقط.</li>
+                        <li>أول 15 ثانية: +50 نقطة (بونص المعلّم النفاث 🚀).</li>
+                        <li>منتصف الوقت: +35 نقطة.</li>
+                        <li>الثواني الأخيرة: +20 نقطة.</li>
                         <li>زر التخطي (Pass): خصم 5 نقاط.</li>
-                        <li>انفجار العداد (0 ثانية): 0 نقطة ويمر الهاتف للاعب التالي.</li>
+                        <li>انتهاء العداد: 0 نقطة ويمر الهاتف للاعب التالي.</li>
                       </ul>
                     </div>
                   </div>
@@ -370,7 +365,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- ================= MODAL: MULTI-LEVEL SELECTOR (المستويات الخمسة) ================= -->
+              <!-- MODAL: MULTI-LEVEL SELECTOR -->
               <div id="modalLevels" class="hidden absolute inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-3">
                 <div class="w-full max-w-sm clay-card p-5 flex flex-col max-h-[88vh]">
                   <div class="flex justify-between items-center border-b pb-2 mb-2">
@@ -382,55 +377,50 @@ jobs:
                   </div>
 
                   <div class="overflow-y-auto space-y-2 text-right pr-1">
-                    <!-- Level 1 -->
                     <div onclick="game.selectLevel(1)" class="p-2.5 rounded-2xl border-2 border-emerald-400 bg-emerald-50/70 hover:bg-emerald-100 cursor-pointer transition">
                       <div class="flex justify-between items-center">
                         <span class="font-black text-emerald-900 text-sm">المستوى 1: شبل الشلّة (مبتدئ)</span>
                         <span class="text-xs bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full">60 ثانية</span>
                       </div>
-                      <div class="text-[11px] text-gray-600 font-bold mt-1">كلمتان ممنوعتان فقط • كلمات يومية مألوفة وسهلة للشرح.</div>
+                      <div class="text-[11px] text-gray-600 font-bold mt-1">كلمتان ممنوعتان فقط • كلمات يومية مألوفة.</div>
                     </div>
 
-                    <!-- Level 2 -->
                     <div onclick="game.selectLevel(2)" class="p-2.5 rounded-2xl border-2 border-yellow-400 bg-yellow-50/70 hover:bg-yellow-100 cursor-pointer transition">
                       <div class="flex justify-between items-center">
                         <span class="font-black text-yellow-900 text-sm">المستوى 2: صبي القهوة (متوسط)</span>
                         <span class="text-xs bg-yellow-600 text-white font-black px-2 py-0.5 rounded-full">45 ثانية</span>
                       </div>
-                      <div class="text-[11px] text-gray-600 font-bold mt-1">3 كلمات ممنوعة • إيفيهات أفلام شعبية وميمز مصرية.</div>
+                      <div class="text-[11px] text-gray-600 font-bold mt-1">3 كلمات ممنوعة • إيفيهات أفلام شعبية.</div>
                     </div>
 
-                    <!-- Level 3 -->
                     <div onclick="game.selectLevel(3)" class="p-2.5 rounded-2xl border-2 border-orange-400 bg-orange-50/70 hover:bg-orange-100 cursor-pointer transition">
                       <div class="flex justify-between items-center">
                         <span class="font-black text-orange-900 text-sm">المستوى 3: حِرّيف الكار (متقدم)</span>
                         <span class="text-xs bg-orange-600 text-white font-black px-2 py-0.5 rounded-full">35 ثانية</span>
                       </div>
-                      <div class="text-[11px] text-gray-600 font-bold mt-1">4 كلمات ممنوعة دقيقة • تكتكة سريعة ومواقف غير متوقعة.</div>
+                      <div class="text-[11px] text-gray-600 font-bold mt-1">4 كلمات ممنوعة • تكتكة سريعة ومواقف غير متوقعة.</div>
                     </div>
 
-                    <!-- Level 4 -->
                     <div onclick="game.selectLevel(4)" class="p-2.5 rounded-2xl border-2 border-red-400 bg-red-50/70 hover:bg-red-100 cursor-pointer transition">
                       <div class="flex justify-between items-center">
                         <span class="font-black text-red-900 text-sm">المستوى 4: المعلّم الكبير (خبير)</span>
                         <span class="text-xs bg-red-600 text-white font-black px-2 py-0.5 rounded-full">25 ثانية</span>
                       </div>
-                      <div class="text-[11px] text-gray-600 font-bold mt-1">5 كلمات ممنوعة • شروط نرد صعبة إجبارية وتحديات دقيقة.</div>
+                      <div class="text-[11px] text-gray-600 font-bold mt-1">5 كلمات ممنوعة • شروط نرد صعبة إجبارية.</div>
                     </div>
 
-                    <!-- Level 5 -->
                     <div onclick="game.selectLevel(5)" class="p-2.5 rounded-2xl border-2 border-purple-500 bg-purple-50/70 hover:bg-purple-100 cursor-pointer transition">
                       <div class="flex justify-between items-center">
                         <span class="font-black text-purple-900 text-sm">المستوى 5: أسطورة الشلّة (المستحيل 🔥)</span>
                         <span class="text-xs bg-purple-600 text-white font-black px-2 py-0.5 rounded-full">15 ثانية</span>
                       </div>
-                      <div class="text-[11px] text-gray-600 font-bold mt-1">سرعة إعصار • 5 كلمات ممنوعة • النقاط مضاعفة (x2 Points)!</div>
+                      <div class="text-[11px] text-gray-600 font-bold mt-1">سرعة إعصار • 5 كلمات ممنوعة • نقاط مضاعفة (x3).</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- ================= MODAL: LEADERBOARD ================= -->
+              <!-- MODAL: LEADERBOARD -->
               <div id="modalLeaderboard" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                 <div class="w-full max-w-sm clay-card p-5 flex flex-col max-h-[80vh]">
                   <div class="flex justify-between items-center border-b pb-3 mb-3">
@@ -514,7 +504,6 @@ jobs:
 
               const soundManager = new SoundManager();
 
-              // Multi-Tier Level Settings
               const LEVELS_CONFIG = {
                 1: { name: "المستوى 1: شبل الشلّة", time: 60, tabooCount: 2, multiplier: 1, badge: "مبتدئ" },
                 2: { name: "المستوى 2: صبي القهوة", time: 45, tabooCount: 3, multiplier: 1.2, badge: "متوسط" },
@@ -612,7 +601,6 @@ jobs:
                   document.getElementById('cardPointsBadge').innerText = `+${pts} نقطة`;
                   this.currentPoints = pts;
 
-                  // Filter Taboo words based on Level Difficulty
                   const tabooContainer = document.getElementById('tabooWords');
                   tabooContainer.innerHTML = '';
                   const allowedTaboos = card.taboo.slice(0, cfg.tabooCount);
@@ -643,7 +631,7 @@ jobs:
                   this.timer = cfg.time;
                   const circle = document.getElementById('timerProgress');
                   const timerText = document.getElementById('timerText');
-                  const circumference = 2 * Math.PI * 48; // 301.59
+                  const circumference = 2 * Math.PI * 48;
                   circle.style.strokeDasharray = `${circumference}`;
                   circle.style.strokeDashoffset = '0';
                   circle.setAttribute('stroke', '#88d600');
