@@ -45,48 +45,370 @@ jobs:
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
-            <script src="https://cdn.tailwindcss.com"></script>
-            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
-              * { -webkit-tap-highlight-color: transparent; user-select: none; }
+              /* RESET & BASE STYLING (100% OFFLINE BULLETPROOF) */
+              * {
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+                margin: 0;
+                padding: 0;
+              }
               body {
-                font-family: 'Cairo', sans-serif;
+                font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
                 background: linear-gradient(165deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
                 min-height: 100vh;
                 margin: 0;
                 overflow-x: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #ffffff;
+                direction: rtl;
               }
+
+              /* CRITICAL: Prevents unstyled stacking on Android WebView */
+              .hidden {
+                display: none !important;
+              }
+
+              #appContainer {
+                width: 100%;
+                max-width: 440px;
+                height: 100vh;
+                height: 100dvh;
+                background-color: #020617;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+              }
+              @media (min-width: 640px) {
+                #appContainer {
+                  height: 900px;
+                  border-radius: 40px;
+                  border: 8px solid rgba(99, 102, 241, 0.3);
+                }
+              }
+
+              /* FLEX & GRID UTILITIES */
+              .flex { display: flex; }
+              .flex-1 { flex: 1 1 0%; }
+              .flex-col { flex-direction: column; }
+              .flex-wrap { flex-wrap: wrap; }
+              .items-center { align-items: center; }
+              .justify-center { justify-content: center; }
+              .justify-between { justify-content: space-between; }
+              .grid { display: grid; }
+              .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+              .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+              .grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+              .gap-1 { gap: 0.25rem; }
+              .gap-1\.5 { gap: 0.375rem; }
+              .gap-2 { gap: 0.5rem; }
+              .gap-2\.5 { gap: 0.625rem; }
+              .gap-3 { gap: 0.75rem; }
+              .content-start { align-content: flex-start; }
+
+              /* SPACING HELPERS */
+              .w-full { width: 100%; }
+              .h-full { height: 100%; }
+              .max-w-sm { max-width: 24rem; }
+              .p-1 { padding: 0.25rem; }
+              .p-1\.5 { padding: 0.375rem; }
+              .p-2 { padding: 0.5rem; }
+              .p-2\.5 { padding: 0.625rem; }
+              .p-3 { padding: 0.75rem; }
+              .p-4 { padding: 1rem; }
+              .p-5 { padding: 1.25rem; }
+              .p-6 { padding: 1.5rem; }
+              .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+              .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+              .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+              .px-4 { padding-left: 1rem; padding-right: 1rem; }
+              .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+              .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+              .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+              .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+              .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+              .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+              .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+              .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+              .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+              .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+              .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+              .pt-1 { padding-top: 0.25rem; }
+              .pt-2 { padding-top: 0.5rem; }
+              .pt-3 { padding-top: 0.75rem; }
+              .pt-4 { padding-top: 1rem; }
+              .pb-1 { padding-bottom: 0.25rem; }
+              .pb-1\.5 { padding-bottom: 0.375rem; }
+              .pb-2 { padding-bottom: 0.5rem; }
+              .pb-2\.5 { padding-bottom: 0.625rem; }
+              .pb-3 { padding-bottom: 0.75rem; }
+              .my-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+              .mb-0\.5 { margin-bottom: 0.125rem; }
+              .mb-1 { margin-bottom: 0.25rem; }
+              .mb-2 { margin-bottom: 0.5rem; }
+              .mt-1 { margin-top: 0.25rem; }
+              .mt-1\.5 { margin-top: 0.375rem; }
+              .mt-2 { margin-top: 0.5rem; }
+              .mt-3 { margin-top: 0.75rem; }
+              .-mt-0\.5 { margin-top: -0.125rem; }
+              .mx-auto { margin-left: auto; margin-right: auto; }
+
+              /* RTL SPACING */
+              .space-x-1 > :not([hidden]) ~ :not([hidden]) { margin-right: 0.25rem; margin-left: 0; }
+              .space-x-1\.5 > :not([hidden]) ~ :not([hidden]) { margin-right: 0.375rem; margin-left: 0; }
+              .space-x-2 > :not([hidden]) ~ :not([hidden]) { margin-right: 0.5rem; margin-left: 0; }
+              .space-x-3 > :not([hidden]) ~ :not([hidden]) { margin-right: 0.75rem; margin-left: 0; }
+              .space-y-1 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem; }
+              .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.375rem; }
+              .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+              .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.625rem; }
+              .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }
+
+              /* TYPOGRAPHY */
+              .text-right { text-align: right; }
+              .text-center { text-align: center; }
+              .font-black { font-weight: 900; }
+              .font-bold { font-weight: 700; }
+              .font-mono { font-family: monospace; }
+              .font-tajawal { font-family: 'Tajawal', sans-serif; }
+              .whitespace-nowrap { white-space: nowrap; }
+              .leading-tight { line-height: 1.25; }
+              .leading-relaxed { line-height: 1.625; }
+              .text-\[8px\] { font-size: 8px; }
+              .text-\[9px\] { font-size: 9px; }
+              .text-\[10px\] { font-size: 10px; }
+              .text-\[11px\] { font-size: 11px; }
+              .text-xs { font-size: 0.75rem; }
+              .text-sm { font-size: 0.875rem; }
+              .text-base { font-size: 1rem; }
+              .text-lg { font-size: 1.125rem; }
+              .text-xl { font-size: 1.25rem; }
+              .text-2xl { font-size: 1.5rem; }
+              .text-3xl { font-size: 1.875rem; }
+              .text-4xl { font-size: 2.25rem; }
+              .text-5xl { font-size: 3rem; }
+
+              /* COLORS */
+              .text-white { color: #ffffff; }
+              .text-yellow-200 { color: #fef08a; }
+              .text-yellow-300 { color: #fde047; }
+              .text-yellow-400 { color: #facc15; }
+              .text-amber-300 { color: #fcd34d; }
+              .text-amber-400 { color: #fbbf24; }
+              .text-amber-900 { color: #78350f; }
+              .text-amber-950 { color: #451a03; }
+              .text-emerald-300 { color: #6ee7b7; }
+              .text-emerald-400 { color: #34d399; }
+              .text-emerald-600 { color: #059669; }
+              .text-emerald-800 { color: #065f46; }
+              .text-cyan-300 { color: #67e8f9; }
+              .text-indigo-200 { color: #c7d2fe; }
+              .text-indigo-700 { color: #4338ca; }
+              .text-indigo-900 { color: #312e81; }
+              .text-indigo-950 { color: #1e1b4b; }
+              .text-slate-600 { color: #475569; }
+              .text-slate-700 { color: #334155; }
+              .text-slate-800 { color: #1e293b; }
+              .text-slate-900 { color: #0f172a; }
+              .text-gray-300 { color: #d1d5db; }
+              .text-gray-400 { color: #9ca3af; }
+              .text-gray-500 { color: #6b7280; }
+              .text-red-400 { color: #f87171; }
+              .text-red-500 { color: #ef4444; }
+              .text-red-600 { color: #dc2626; }
+              .text-red-700 { color: #b91c1c; }
+
+              /* BACKGROUNDS & GRADIENTS */
+              .bg-slate-950 { background-color: #020617; }
+              .bg-slate-900 { background-color: #0f172a; }
+              .bg-slate-900\/90 { background-color: rgba(15, 23, 42, 0.9); }
+              .bg-slate-900\/60 { background-color: rgba(15, 23, 42, 0.6); }
+              .bg-slate-800 { background-color: #1e293b; }
+              .bg-slate-800\/40 { background-color: rgba(30, 41, 59, 0.4); }
+              .bg-slate-700 { background-color: #334155; }
+              .bg-slate-300 { background-color: #cbd5e1; }
+              .bg-slate-200 { background-color: #e2e8f0; }
+              .bg-white { background-color: #ffffff; }
+              .bg-white\/10 { background-color: rgba(255, 255, 255, 0.1); }
+              .bg-white\/20 { background-color: rgba(255, 255, 255, 0.2); }
+              .bg-black\/60 { background-color: rgba(0, 0, 0, 0.6); }
+              .bg-black\/75 { background-color: rgba(0, 0, 0, 0.75); }
+              .bg-black\/80 { background-color: rgba(0, 0, 0, 0.8); }
+              .bg-indigo-50 { background-color: #eef2ff; }
+              .bg-indigo-100 { background-color: #e0e7ff; }
+              .bg-indigo-600 { background-color: #4f46e5; }
+              .bg-indigo-950\/60 { background-color: rgba(30, 27, 75, 0.6); }
+              .bg-indigo-950\/70 { background-color: rgba(30, 27, 75, 0.7); }
+              .bg-emerald-500 { background-color: #10b981; }
+              .bg-emerald-600 { background-color: #059669; }
+              .bg-emerald-500\/20 { background-color: rgba(16, 185, 129, 0.2); }
+              .bg-red-50 { background-color: #fef2f2; }
+              .bg-red-100 { background-color: #fee2e2; }
+              .bg-amber-50 { background-color: #fffbeb; }
+              .bg-amber-100 { background-color: #fef3c7; }
+              .bg-amber-200 { background-color: #fde68a; }
+              .bg-amber-400 { background-color: #fbbf24; }
+              .bg-gradient-to-r.from-amber-400.to-yellow-400 { background: linear-gradient(to right, #fbbf24, #facc15); }
+              .bg-gradient-to-r.from-emerald-500.to-green-600 { background: linear-gradient(to right, #10b981, #16a34a); }
+              .bg-gradient-to-r.from-indigo-600.to-violet-700 { background: linear-gradient(to right, #4f46e5, #6d28d9); }
+              .bg-gradient-to-tr.from-indigo-500.to-emerald-400 { background: linear-gradient(to top right, #6366f1, #34d399); }
+              .bg-gradient-to-tr.from-amber-400.to-yellow-200 { background: linear-gradient(to top right, #fbbf24, #fef08a); }
+              .bg-gradient-to-r.from-red-500.to-rose-600 { background: linear-gradient(to right, #ef4444, #e11d48); }
+              .bg-gradient-to-r.from-amber-400.to-emerald-500 { background: linear-gradient(to right, #fbbf24, #10b981); }
+
+              /* BORDERS & RADII */
+              .border { border-width: 1px; border-style: solid; }
+              .border-0 { border-width: 0px; }
+              .border-2 { border-width: 2px; border-style: solid; }
+              .border-4 { border-width: 4px; border-style: solid; }
+              .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+              .border-b-\[4px\] { border-bottom-width: 4px; border-bottom-style: solid; }
+              .border-b-\[5px\] { border-bottom-width: 5px; border-bottom-style: solid; }
+              .border-t { border-top-width: 1px; border-top-style: solid; }
+              .border-white\/5 { border-color: rgba(255, 255, 255, 0.05); }
+              .border-white\/10 { border-color: rgba(255, 255, 255, 0.1); }
+              .border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }
+              .border-slate-200 { border-color: #e2e8f0; }
+              .border-slate-300 { border-color: #cbd5e1; }
+              .border-slate-950 { border-color: #020617; }
+              .border-indigo-200 { border-color: #c7d2fe; }
+              .border-indigo-300 { border-color: #a5b4fc; }
+              .border-indigo-400\/40 { border-color: rgba(129, 140, 248, 0.4); }
+              .border-indigo-500\/30 { border-color: rgba(99, 102, 241, 0.3); }
+              .border-indigo-800 { border-color: #3730a3; }
+              .border-indigo-900 { border-color: #312e81; }
+              .border-emerald-400 { border-color: #34d399; }
+              .border-emerald-400\/40 { border-color: rgba(52, 211, 153, 0.4); }
+              .border-emerald-800 { border-color: #065f46; }
+              .border-amber-200 { border-color: #fde68a; }
+              .border-amber-300 { border-color: #fcd34d; }
+              .border-amber-400 { border-color: #fbbf24; }
+              .border-yellow-200 { border-color: #fef08a; }
+              .border-yellow-300 { border-color: #fde047; }
+              .border-red-200 { border-color: #fecaca; }
+              .border-red-300 { border-color: #fca5a5; }
+              .border-red-800 { border-color: #991b1b; }
+              .rounded-md { border-radius: 0.375rem; }
+              .rounded-lg { border-radius: 0.5rem; }
+              .rounded-xl { border-radius: 0.75rem; }
+              .rounded-2xl { border-radius: 1rem; }
+              .rounded-3xl { border-radius: 1.5rem; }
+              .rounded-full { border-radius: 9999px; }
+
+              /* SIZES */
+              .w-8 { width: 2rem; } .h-8 { height: 2rem; }
+              .w-9 { width: 2.25rem; } .h-9 { height: 2.25rem; }
+              .w-10 { width: 2.5rem; } .h-10 { height: 2.5rem; }
+              .w-12 { width: 3rem; } .h-12 { height: 3rem; }
+              .w-14 { width: 3.5rem; } .h-14 { height: 3.5rem; }
+              .w-16 { width: 4rem; } .h-16 { height: 4rem; }
+              .w-20 { width: 5rem; } .h-20 { height: 5rem; }
+              .w-24 { width: 6rem; } .h-24 { height: 6rem; }
+              .h-2\.5 { height: 0.625rem; }
+              .min-h-\[18px\] { min-height: 18px; }
+              .min-h-\[30px\] { min-height: 30px; }
+              .max-h-\[36px\] { max-height: 36px; }
+
+              /* SHADOWS & 3D EFFECTS */
+              .shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
+              .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25); }
+              .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+              .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); }
+              .drop-shadow { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+              .ring-4 { box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.4); }
+              .ring-white\/10 { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1); }
+              .ring-emerald-400\/40 { box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.4); }
+              .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
               .btn-3d {
                 transition: all 0.15s ease;
-                box-shadow: 0 6px 0 rgba(0,0,0,0.3), 0 10px 15px rgba(0,0,0,0.25);
+                box-shadow: 0 5px 0 rgba(0,0,0,0.35), 0 8px 12px rgba(0,0,0,0.25);
+                cursor: pointer;
               }
               .btn-3d:active:not(:disabled) {
-                transform: translateY(4px);
-                box-shadow: 0 2px 0 rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);
+                transform: translateY(3px);
+                box-shadow: 0 2px 0 rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2);
               }
+
               .clay-card {
                 background: rgba(255, 255, 255, 0.96);
                 border-radius: 24px;
                 box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
               }
+
+              /* ANIMATIONS */
               @keyframes ready-pulse {
                 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px #10b981); }
-                50% { transform: scale(1.03); filter: drop-shadow(0 0 20px #34d399); }
+                50% { transform: scale(1.02); filter: drop-shadow(0 0 18px #34d399); }
               }
-              .btn-next-ready {
-                animation: ready-pulse 1.2s infinite;
-              }
+              .btn-next-ready { animation: ready-pulse 1.2s infinite; }
+
               @keyframes gift-bounce {
                 0%, 100% { transform: translateY(0) rotate(0deg); }
                 50% { transform: translateY(-8px) rotate(4deg); }
               }
               .gift-bounce { animation: gift-bounce 2s infinite ease-in-out; }
+
+              @keyframes mic-wave {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                50% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+              }
+              .mic-recording-pulse {
+                animation: mic-wave 1.4s infinite cubic-bezier(0.4, 0, 0.6, 1);
+              }
+
+              @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+              .animate-pulse { animation: pulse 1.8s infinite; }
+              @keyframes bounce { 0%, 100% { transform: translateY(-15%); } 50% { transform: none; } }
+              .animate-bounce { animation: bounce 1s infinite; }
+
+              .cursor-pointer { cursor: pointer; }
+              .cursor-not-allowed { cursor: not-allowed; }
+              .opacity-50 { opacity: 0.5; }
+              .opacity-60 { opacity: 0.6; }
+              .opacity-80 { opacity: 0.8; }
+              .relative { position: relative; }
+              .absolute { position: absolute; }
+              .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+              .z-10 { z-index: 10; }
+              .z-20 { z-index: 20; }
+              .z-50 { z-index: 50; }
+              .overflow-hidden { overflow: hidden; }
+              .overflow-x-auto { overflow-x: auto; }
+              .overflow-y-auto { overflow-y: auto; }
+              .no-scrollbar::-webkit-scrollbar { display: none; }
+              .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+              /* ICON OFFLINE FALLBACKS */
+              .fa-volume-high::before { content: "🔊"; font-style: normal; }
+              .fa-volume-xmark::before { content: "🔇"; font-style: normal; }
+              .fa-map-location-dot::before { content: "🗺️"; font-style: normal; }
+              .fa-house::before { content: "🏠"; font-style: normal; }
+              .fa-microphone::before { content: "🎙️"; font-style: normal; }
+              .fa-keyboard::before { content: "⌨️"; font-style: normal; }
+              .fa-ban::before { content: "🚫"; font-style: normal; }
+              .fa-brain::before { content: "🧠"; font-style: normal; }
+              .fa-ear-listen::before { content: "👂"; font-style: normal; }
+              .fa-hourglass-half::before { content: "⏳"; font-style: normal; }
+              .fa-arrow-left::before { content: "←"; font-style: normal; }
+              .fa-arrow-right-from-bracket::before { content: "↩️"; font-style: normal; }
+              .fa-play::before { content: "▶️"; font-style: normal; }
+              .fa-map::before { content: "🗺️"; font-style: normal; }
+              .fa-bolt::before { content: "⚡"; font-style: normal; }
+              .fa-door-open::before { content: "🚪"; font-style: normal; }
+              .fa-xmark::before { content: "✕"; font-style: normal; }
             </style>
           </head>
           <body class="flex justify-center items-center select-none min-h-screen">
 
-            <div id="appContainer" class="w-full max-w-[440px] h-[100dvh] sm:h-[900px] bg-slate-950 sm:rounded-[40px] shadow-2xl relative flex flex-col justify-between overflow-hidden border-0 sm:border-8 border-indigo-500/30">
+            <div id="appContainer">
               
               <!-- TOP GLOBAL HEADER -->
               <header class="w-full px-4 pt-3 pb-2 flex justify-between items-center z-20 bg-slate-900/90 backdrop-blur-md border-b border-white/10">
@@ -97,7 +419,7 @@ jobs:
                     <span id="starsBalanceDisplay">1000</span>
                     <span class="text-[10px] text-amber-900 font-bold">نجمة</span>
                   </div>
-                  <span class="text-white text-xs font-bold">المرحلة: <span id="currentLevelNav" class="text-yellow-300 font-black">1</span></span>
+                  <span class="text-white text-xs font-bold">المستوى: <span id="currentLevelNav" class="text-yellow-300 font-black">1</span></span>
                 </div>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
                   <!-- SOUND TOGGLE (MUTE / UNMUTE) -->
@@ -114,62 +436,108 @@ jobs:
               </header>
 
               <!-- SCREEN 1: HOME -->
-              <div id="screenHome" class="flex-1 flex flex-col items-center justify-between px-6 py-6 z-10 text-center">
-                <div class="pt-2">
-                  <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-indigo-500 to-emerald-400 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 border-4 border-indigo-300">
-                    <span class="text-5xl">👑</span>
+              <div id="screenHome" class="flex-1 flex flex-col items-center justify-between px-4 py-4 z-10 text-center overflow-y-auto">
+                <div class="pt-1">
+                  <div class="w-20 h-20 mx-auto bg-gradient-to-tr from-indigo-500 to-emerald-400 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-2 border-4 border-indigo-300">
+                    <span class="text-4xl">👑</span>
                   </div>
-                  <h1 class="text-3xl font-black text-white mt-3 font-tajawal drop-shadow">قول يا معلّم!</h1>
-                  <p class="text-indigo-200 text-xs font-bold mt-1">تحدي الـ 200 مرحلة مع محلل الدلالات الصوتي فائق الحساسية 🎙️⚡</p>
+                  <h1 class="text-2xl font-black text-white mt-2 font-tajawal drop-shadow">قول يا معلّم!</h1>
+                  <p class="text-indigo-200 text-xs font-bold mt-0.5">تحدي الـ 200 مستوى عبر 5 عوالم مع محلل الدلالات الصوتي 🎙️⚡</p>
                 </div>
 
-                <div class="w-full clay-card p-4 text-right space-y-2">
-                  <div class="flex items-center space-x-2 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1.5">
-                    <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
-                    <span>مميزات محرك المايك فائق الحساسية:</span>
+                <!-- 5 WORLDS QUICK PICKER -->
+                <div class="w-full clay-card p-3 text-right space-y-1.5 shadow-xl">
+                  <div class="flex items-center justify-between border-b pb-1">
+                    <div class="flex items-center space-x-1 space-x-reverse text-indigo-950 font-black text-xs">
+                      <span>🗺️</span>
+                      <span>اختر أي مرحلة من الـ 5 للعب فوراً:</span>
+                    </div>
+                    <span class="text-[9px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded-full">جميعها مفتوحة ✓</span>
+                  </div>
+
+                  <div class="grid grid-cols-5 gap-1 text-center pt-1">
+                    <button onclick="window.game.startWorld(1)" class="p-1.5 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 flex flex-col items-center active:scale-95 transition">
+                      <span class="text-sm">🏡</span>
+                      <span class="text-[10px] font-black text-indigo-950">مرحلة 1</span>
+                      <span class="text-[8px] text-emerald-600 font-bold">مستوى 1</span>
+                    </button>
+                    <button onclick="window.game.startWorld(2)" class="p-1.5 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 flex flex-col items-center active:scale-95 transition">
+                      <span class="text-sm">🎬</span>
+                      <span class="text-[10px] font-black text-indigo-950">مرحلة 2</span>
+                      <span class="text-[8px] text-emerald-600 font-bold">مستوى 41</span>
+                    </button>
+                    <button onclick="window.game.startWorld(3)" class="p-1.5 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 flex flex-col items-center active:scale-95 transition">
+                      <span class="text-sm">📜</span>
+                      <span class="text-[10px] font-black text-indigo-950">مرحلة 3</span>
+                      <span class="text-[8px] text-emerald-600 font-bold">مستوى 81</span>
+                    </button>
+                    <button onclick="window.game.startWorld(4)" class="p-1.5 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 flex flex-col items-center active:scale-95 transition">
+                      <span class="text-sm">🔬</span>
+                      <span class="text-[10px] font-black text-indigo-950">مرحلة 4</span>
+                      <span class="text-[8px] text-emerald-600 font-bold">مستوى 121</span>
+                    </button>
+                    <button onclick="window.game.startWorld(5)" class="p-1.5 rounded-xl bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 flex flex-col items-center active:scale-95 transition">
+                      <span class="text-sm">👑</span>
+                      <span class="text-[10px] font-black text-indigo-950">مرحلة 5</span>
+                      <span class="text-[8px] text-emerald-600 font-bold">مستوى 161</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- MIC FEATURES CARD -->
+                <div class="w-full clay-card p-3 text-right space-y-1.5">
+                  <div class="flex items-center space-x-1.5 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1">
+                    <i class="fa-solid fa-microphone text-emerald-600 text-sm"></i>
+                    <span>نظام الصوت الجديد فائق الحساسية:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
-                    • <strong>استماع تلقائي وفوري:</strong> المايك يعمل تلقائياً بمجرد فتح المرحلة دون الحاجة لأي نقر.<br>
-                    • <strong>حساسية فائقة للصوت الضعيف:</strong> يحلل الكلمات والهمسات وتلميحاتك حتى لو كان الصوت منخفضاً.<br>
-                    • <strong>كشف سريع للدلالات:</strong> يكتشف الكلمات المطلوبة وشبيهاتها بسرعة خاطفة ويرفع شريط الذكاء مباشرة!
+                    • <strong>تحكم كامل بالمايك:</strong> اضغط على زر المايك وسيبدأ الاستماع والتحليل الفوري لكلماتك مباشرة.<br>
+                    • <strong>كتابة وتحليل سريع:</strong> ما تقوله يُكتب ويُحلل لحظة بلحظة ويرفع مؤشر الذكاء مباشرة!<br>
+                    • <strong>حرية اختيار المراحل:</strong> العب من أي مرحلة تعجبك مباشرة دون التقيد بالسابقة.
                   </p>
                 </div>
 
-                <div class="w-full space-y-3 pb-3">
-                  <button onclick="window.game.resumeGame()" class="btn-3d w-full py-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl border-b-[5px] border-emerald-800 text-white text-xl font-black flex items-center justify-center space-x-2 space-x-reverse">
+                <!-- BOTTOM ACTIONS -->
+                <div class="w-full space-y-2.5 pb-2">
+                  <button onclick="window.game.resumeGame()" class="btn-3d w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl border-b-[5px] border-emerald-800 text-white text-lg font-black flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-play"></i>
-                    <span>ابدأ اللعب (المرحلة <span id="homeResumeLvl">1</span>)</span>
+                    <span>مواصلة اللعب (مستوى <span id="homeResumeLvl">1</span>)</span>
                   </button>
-                  <button onclick="window.game.showScreen('screenMap')" class="btn-3d w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl border-b-[5px] border-indigo-900 text-white font-black text-sm flex items-center justify-center space-x-2 space-x-reverse">
+                  <button onclick="window.game.showScreen('screenMap')" class="btn-3d w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl border-b-[4px] border-indigo-900 text-white font-black text-xs flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-map"></i>
-                    <span>استعراض خريطة الـ 200 مرحلة 🗺️</span>
+                    <span>استعراض خريطة الـ 200 مستوى 🗺️</span>
                   </button>
                 </div>
               </div>
 
-              <!-- SCREEN 2: LEVEL MAP (200 STAGES) -->
+              <!-- SCREEN 2: LEVEL MAP (200 STAGES ACROSS 5 WORLDS) -->
               <div id="screenMap" class="hidden flex-1 flex flex-col z-10 overflow-hidden">
                 <div class="px-2 pt-2 pb-1 bg-slate-900/60 border-b border-white/10 flex overflow-x-auto no-scrollbar space-x-1.5 space-x-reverse text-center">
                   <button onclick="window.game.filterWorld(1)" id="tabWorld1" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-indigo-600 text-white shadow">
-                    🏡 حارة المبتدئين (1-40)
+                    🏡 مرحلة 1 (1-40)
                   </button>
                   <button onclick="window.game.filterWorld(2)" id="tabWorld2" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
-                    🎬 المشاهير والميمز (41-80)
+                    🎬 مرحلة 2 (41-80)
                   </button>
                   <button onclick="window.game.filterWorld(3)" id="tabWorld3" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
-                    📜 سوق الحِرّيفة (81-120)
+                    📜 مرحلة 3 (81-120)
                   </button>
                   <button onclick="window.game.filterWorld(4)" id="tabWorld4" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
-                    🔬 برج الخبراء (121-160)
+                    🔬 مرحلة 4 (121-160)
                   </button>
                   <button onclick="window.game.filterWorld(5)" id="tabWorld5" class="px-3 py-1.5 rounded-xl font-black text-xs whitespace-nowrap bg-white/10 text-gray-300">
-                    👑 عرش الأساطير (161-200)
+                    👑 مرحلة 5 (161-200)
                   </button>
                 </div>
 
                 <div id="worldInfoBanner" class="px-4 py-2 bg-indigo-950/70 text-right flex justify-between items-center text-xs text-indigo-200 border-b border-white/5">
-                  <span id="worldNameTitle" class="font-black text-yellow-300">عالم 1: حارة المبتدئين</span>
-                  <span id="worldRuleDesc" class="text-[11px] font-bold">الوقت: 60ث • 2 ممنوعات فقط</span>
+                  <div>
+                    <span id="worldNameTitle" class="font-black text-yellow-300 block">المرحلة 1: حارة المبتدئين</span>
+                    <span id="worldRuleDesc" class="text-[10px] font-bold text-gray-300">الوقت: 60ث • 2 ممنوعات فقط</span>
+                  </div>
+                  <button onclick="window.game.toggleUnlockAll()" id="btnToggleAllStages" class="text-[10px] font-bold text-yellow-300 bg-white/10 px-2 py-1 rounded-lg border border-yellow-300/30 hover:bg-white/20 active:scale-95 transition">
+                    🔓 فتح الكل
+                  </button>
                 </div>
 
                 <div id="stagesScrollContainer" class="flex-1 overflow-y-auto px-4 py-4 grid grid-cols-4 gap-3 text-center content-start"></div>
@@ -179,18 +547,24 @@ jobs:
               <div id="screenPlay" class="hidden flex-1 flex flex-col items-center justify-between px-4 py-2 z-10">
                 <!-- TOP STAGE INFO -->
                 <div class="w-full flex justify-between items-center bg-white/10 backdrop-blur-md rounded-2xl px-4 py-1.5 border border-white/20 text-white font-bold text-xs">
-                  <div>المرحلة: <span id="playStageNum" class="text-yellow-300 font-black">#1</span> (<span id="playWorldTag" class="text-indigo-200">حارة المبتدئين</span>)</div>
-                  <div>المحاولات السليمة: <span id="playStarsDisplay" class="text-amber-400 font-black">⭐⭐⭐</span></div>
+                  <div>المستوى: <span id="playStageNum" class="text-yellow-300 font-black">#1</span> (<span id="playWorldTag" class="text-indigo-200">حارة المبتدئين</span>)</div>
+                  <div>الفرص: <span id="playStarsDisplay" class="text-amber-400 font-black">⭐⭐⭐</span></div>
                 </div>
 
-                <!-- TIMER & LIVE MIC ICON (SUPER RESPONSIVE) -->
-                <div class="flex items-center space-x-3 space-x-reverse my-1">
-                  <div id="micIndicator" onclick="window.game.toggleMicManual()" title="انقر لتشغيل/إيقاف الميكروفون يدوياً" class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95">
-                    <i class="fa-solid fa-microphone"></i>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-[11px] text-gray-300 font-bold">الوقت المتبقي:</div>
-                    <div id="playTimerText" class="text-3xl font-black text-yellow-300 font-tajawal">60s</div>
+                <!-- TIMER & LIVE MIC ACTION CONTROLLER -->
+                <div class="flex items-center justify-between w-full px-1 my-1 gap-2">
+                  <!-- INTERACTIVE MIC TOGGLE BUTTON -->
+                  <button id="btnMicAction" onclick="window.game.toggleMicManual()" class="flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40">
+                    <div id="micIndicator" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm shadow">
+                      <i id="micIcon" class="fa-solid fa-microphone"></i>
+                    </div>
+                    <span id="micActionLabel" class="text-xs font-black">اضغط للتحدث 🎙️</span>
+                  </button>
+
+                  <!-- TIMER BOX -->
+                  <div class="bg-slate-900/80 border border-white/10 px-3 py-1.5 rounded-2xl text-center min-w-[75px] shadow">
+                    <div class="text-[9px] text-gray-400 font-bold">الوقت:</div>
+                    <div id="playTimerText" class="text-xl font-black text-yellow-300 font-tajawal leading-none">60s</div>
                   </div>
                 </div>
 
@@ -253,14 +627,14 @@ jobs:
                   </div>
                 </div>
 
-                <!-- REALTIME SPEECH MONITOR (LIVE STREAMING) -->
+                <!-- REALTIME SPEECH MONITOR (LIVE WRITING & ANALYSIS) -->
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen animate-pulse"></i> ما يسمعه الميكروفون الآن (مباشر):</span>
-                    <span id="aiStatusPill" class="text-emerald-400 font-mono text-[10px]">المايك جاهز ويستمع بنشاط... 🎙️</span>
+                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر):</span>
+                    <span id="aiStatusPill" class="text-yellow-400 font-mono text-[10px]">المايك جاهز.. اضغط للبدء 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
-                    المايك يستمع بتركيز فائق.. تحدث بحرية ليحلل الذكاء كلماتك لحظة بلحظة...
+                    في انتظارك للضغط على زر المايك أعلاه والبدء بالشرح فوراً...
                   </div>
                 </div>
 
@@ -293,8 +667,8 @@ jobs:
 
                 <div class="w-full clay-card p-4 text-right space-y-2">
                   <div class="flex justify-between items-center border-b pb-1.5 text-xs font-bold">
-                    <span class="text-slate-600">المرحلة القادمة:</span>
-                    <span id="nextLevelUnlockText" class="font-black text-indigo-700">مرحلة 2 (مفتوحة الآن 🔓)</span>
+                    <span class="text-slate-600">المستوى القادم:</span>
+                    <span id="nextLevelUnlockText" class="font-black text-indigo-700">مستوى 2 (مفتوح الآن 🔓)</span>
                   </div>
                   <div class="flex justify-between items-center text-xs font-bold">
                     <span class="text-slate-600">مكافأة الفوز:</span>
@@ -304,11 +678,11 @@ jobs:
 
                 <div class="w-full space-y-2.5 pb-2">
                   <button onclick="window.game.playNextStage()" class="btn-3d w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl border-b-[5px] border-emerald-800 text-white font-black text-base flex items-center justify-center space-x-2 space-x-reverse">
-                    <span>الانتقال للمرحلة التالية</span>
+                    <span>الانتقال للمستوى التالي</span>
                     <i class="fa-solid fa-arrow-left"></i>
                   </button>
                   <button onclick="window.game.showScreen('screenMap')" class="btn-3d w-full py-3 bg-white text-slate-800 rounded-2xl border-b-[4px] border-slate-300 font-black text-xs">
-                    العودة لخريطة المراحل 🗺️
+                    العودة لخريطة المستويات 🗺️
                   </button>
                 </div>
               </div>
@@ -316,15 +690,15 @@ jobs:
               <!-- MODAL: FIRST TIME INSTALL WELCOME (1000 STARS) -->
               <div id="modalWelcomeBonus" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
                 <div class="w-full max-w-sm clay-card p-6 flex flex-col items-center text-center space-y-3 relative overflow-hidden border-4 border-yellow-300 shadow-2xl">
-                  <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-5xl shadow-2xl gift-bounce border-2 border-white">
+                  <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-4xl shadow-2xl gift-bounce border-2 border-white">
                     👑
                   </div>
                   <h3 class="text-2xl font-black text-slate-900 font-tajawal">أهلاً بك يا معلّم!</h3>
-                  <div class="bg-amber-100 text-amber-950 font-black text-lg px-5 py-2 rounded-full border border-amber-300 shadow">
+                  <div class="bg-amber-100 text-amber-950 font-black text-base px-4 py-1.5 rounded-full border border-amber-300 shadow">
                     +1000 نجمة ذهبية مجاناً ⭐
                   </div>
                   <p class="text-xs text-slate-600 font-bold leading-relaxed">
-                    هدية تثبيت اللعبة لأول مرة في هاتفك! استخدم النجوم لكشف الكلمات الدلالية والاستمتاع بتحدي الـ 200 مرحلة.
+                    هدية تثبيت اللعبة في هاتفك! جميع المراحل الـ 5 متاحة ومفتوحة للعب فوراً. استخدم النجوم لكشف الدلالات والمساعدات!
                   </p>
                   <button onclick="window.game.closeWelcomeModal()" class="btn-3d w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black text-sm rounded-2xl border-b-[4px] border-emerald-800 shadow">
                     ابدأ المغامرة الآن 🚀
@@ -335,15 +709,15 @@ jobs:
               <!-- MODAL: DAILY REWARD (300 STARS) -->
               <div id="modalDailyReward" class="hidden absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
                 <div class="w-full max-w-sm clay-card p-6 flex flex-col items-center text-center space-y-3 relative overflow-hidden border-4 border-amber-300 shadow-2xl">
-                  <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-5xl shadow-2xl gift-bounce border-2 border-white">
+                  <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-4xl shadow-2xl gift-bounce border-2 border-white">
                     🎁
                   </div>
                   <h3 class="text-2xl font-black text-slate-900 font-tajawal">مكافأة الدخول اليومي!</h3>
-                  <div class="bg-amber-100 text-amber-950 font-black text-lg px-5 py-2 rounded-full border border-amber-300 shadow">
+                  <div class="bg-amber-100 text-amber-950 font-black text-base px-4 py-1.5 rounded-full border border-amber-300 shadow">
                     +300 نجمة ذهبية ⭐
                   </div>
                   <p class="text-xs text-slate-600 font-bold leading-relaxed">
-                    أهلاً بك مجدداً يا معلّم! تمت إضافة 300 نجمة إلى محفظتك. استخدمها في كشف الدلالات والمساعدات أثناء التحدي!
+                    أهلاً بك مجدداً يا معلّم! تمت إضافة 300 نجمة إلى محفظتك للاستمتاع بالمراحل والتحديات!
                   </p>
                   <button onclick="window.game.closeDailyRewardModal()" class="btn-3d w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black text-sm rounded-2xl border-b-[4px] border-emerald-800 shadow">
                     استلام النجوم ومتابعة اللعب 🚀
@@ -376,6 +750,57 @@ jobs:
 
             <!-- JAVASCRIPT GAME ENGINE -->
             <script>
+              // BUILT-IN FALLBACK CONFETTI (WORKS 100% OFFLINE)
+              function fireConfetti(opts = {}) {
+                if (window.confetti) {
+                  try { window.confetti(opts); return; } catch(e) {}
+                }
+                try {
+                  const canvas = document.createElement('canvas');
+                  canvas.style.position = 'fixed';
+                  canvas.style.top = '0';
+                  canvas.style.left = '0';
+                  canvas.style.width = '100vw';
+                  canvas.style.height = '100vh';
+                  canvas.style.pointerEvents = 'none';
+                  canvas.style.zIndex = '9999';
+                  document.body.appendChild(canvas);
+                  const ctx = canvas.getContext('2d');
+                  canvas.width = window.innerWidth;
+                  canvas.height = window.innerHeight;
+                  const particles = [];
+                  const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#3b82f6'];
+                  for (let i = 0; i < 60; i++) {
+                    particles.push({
+                      x: canvas.width / 2,
+                      y: canvas.height * 0.6,
+                      vx: (Math.random() - 0.5) * 12,
+                      vy: (Math.random() - 0.9) * 14,
+                      size: Math.random() * 6 + 4,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      alpha: 1
+                    });
+                  }
+                  let frame = 0;
+                  function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                      p.x += p.vx;
+                      p.y += p.vy;
+                      p.vy += 0.4;
+                      p.alpha -= 0.015;
+                      ctx.globalAlpha = Math.max(0, p.alpha);
+                      ctx.fillStyle = p.color;
+                      ctx.fillRect(p.x, p.y, p.size, p.size);
+                    });
+                    frame++;
+                    if (frame < 70) requestAnimationFrame(draw);
+                    else canvas.remove();
+                  }
+                  draw();
+                } catch(e) {}
+              }
+
               class SoundFxManager {
                 constructor() {
                   this.ctx = null;
@@ -441,7 +866,7 @@ jobs:
 
               const soundFx = new SoundFxManager();
 
-              // COMPREHENSIVE CATEGORY LEXICONS
+              // CATEGORY LEXICONS
               const CATEGORY_LEXICONS = {
                 "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه", "طماطم", "رز", "عيش", "لحمه"],
                 "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش", "كوباية", "ميه", "مايه"],
@@ -670,11 +1095,11 @@ jobs:
               ];
 
               const WORLDS_CONFIG = {
-                1: { title: "عالم 1: حارة المبتدئين", time: 60, taboos: 2, range: [1, 40], desc: "الوقت: 60ث • كلمتان ممنوعتان فقط" },
-                2: { title: "عالم 2: المشاهير والميمز", time: 45, taboos: 3, range: [41, 80], desc: "الوقت: 45ث • 3 كلمات ممنوعة" },
-                3: { title: "عالم 3: سوق الحِرّيفة", time: 35, taboos: 4, range: [81, 120], desc: "الوقت: 35ث • 4 كلمات ممنوعة" },
-                4: { title: "عالم 4: برج الخبراء", time: 25, taboos: 5, range: [121, 160], desc: "الوقت: 25ث • 5 كلمات ممنوعة" },
-                5: { title: "عالم 5: عرش الأساطير", time: 18, taboos: 5, range: [161, 200], desc: "الوقت: 18ث • 5 كلمات ممنوعة حاسمة 🔥" }
+                1: { id: 1, title: "المرحلة 1: حارة المبتدئين", time: 60, taboos: 2, range: [1, 40], desc: "الوقت: 60ث • كلمتان ممنوعتان فقط" },
+                2: { id: 2, title: "المرحلة 2: المشاهير والميمز", time: 45, taboos: 3, range: [41, 80], desc: "الوقت: 45ث • 3 كلمات ممنوعة" },
+                3: { id: 3, title: "المرحلة 3: سوق الحِرّيفة", time: 35, taboos: 4, range: [81, 120], desc: "الوقت: 35ث • 4 كلمات ممنوعة" },
+                4: { id: 4, title: "المرحلة 4: برج الخبراء", time: 25, taboos: 5, range: [121, 160], desc: "الوقت: 25ث • 5 كلمات ممنوعة" },
+                5: { id: 5, title: "المرحلة 5: عرش الأساطير", time: 18, taboos: 5, range: [161, 200], desc: "الوقت: 18ث • 5 كلمات ممنوعة حاسمة 🔥" }
               };
 
               class SuperAIGameEngine {
@@ -687,6 +1112,7 @@ jobs:
                   this.recognition = null;
                   this.isPlaying = false;
                   this.isVoiceActive = false;
+                  this.userRequestedMic = false;
                   this.isSuccessApproved = false;
                   this.currentScreen = 'screenHome';
                   this.detectedCluesSet = new Set();
@@ -706,14 +1132,15 @@ jobs:
                 }
 
                 loadProgress() {
-                  const saved = localStorage.getItem('qool_map_prog_v3');
+                  const saved = localStorage.getItem('qool_map_prog_v4');
                   if (saved) {
                     try { this.progress = JSON.parse(saved); }
                     catch(e) { this.progress = null; }
                   }
                   if (!this.progress) {
                     this.progress = {
-                      maxUnlocked: 1,
+                      worldUnlocked: { 1: 1, 2: 41, 3: 81, 4: 121, 5: 161 },
+                      allUnlocked: false,
                       stars: {},
                       starsBalance: 1000,
                       lastDailyDate: "",
@@ -725,6 +1152,14 @@ jobs:
                     this.isFreshInstall = true;
                     this.saveProgress();
                   } else {
+                    if (!this.progress.worldUnlocked) {
+                      this.progress.worldUnlocked = { 1: 1, 2: 41, 3: 81, 4: 121, 5: 161 };
+                    }
+                    if (typeof this.progress.worldUnlocked[1] !== 'number' || this.progress.worldUnlocked[1] < 1) this.progress.worldUnlocked[1] = 1;
+                    if (typeof this.progress.worldUnlocked[2] !== 'number' || this.progress.worldUnlocked[2] < 41) this.progress.worldUnlocked[2] = 41;
+                    if (typeof this.progress.worldUnlocked[3] !== 'number' || this.progress.worldUnlocked[3] < 81) this.progress.worldUnlocked[3] = 81;
+                    if (typeof this.progress.worldUnlocked[4] !== 'number' || this.progress.worldUnlocked[4] < 121) this.progress.worldUnlocked[4] = 121;
+                    if (typeof this.progress.worldUnlocked[5] !== 'number' || this.progress.worldUnlocked[5] < 161) this.progress.worldUnlocked[5] = 161;
                     if (typeof this.progress.starsBalance !== 'number') this.progress.starsBalance = 1000;
                     if (typeof this.progress.soundEnabled !== 'boolean') this.progress.soundEnabled = true;
                     if (!this.progress.revealedCluesMap) this.progress.revealedCluesMap = {};
@@ -733,7 +1168,7 @@ jobs:
                 }
 
                 saveProgress() {
-                  localStorage.setItem('qool_map_prog_v3', JSON.stringify(this.progress));
+                  localStorage.setItem('qool_map_prog_v4', JSON.stringify(this.progress));
                   this.updateHeaderUI();
                 }
 
@@ -759,7 +1194,6 @@ jobs:
                   }
                 }
 
-                // HARDWARE AUDIO AGC & NOISE CANCELLATION FOR WEAK MICROPHONES
                 primeMicrophoneHardware() {
                   if (this.hasPrimedMic) return;
                   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -767,13 +1201,13 @@ jobs:
                       audio: {
                         echoCancellation: true,
                         noiseSuppression: true,
-                        autoGainControl: true, // Amplifies low speech volume
+                        autoGainControl: true,
                         channelCount: 1
                       }
                     }).then(() => {
                       this.hasPrimedMic = true;
                     }).catch(e => {
-                      console.warn("Hardware mic prime notice:", e);
+                      console.warn("Hardware mic notice:", e);
                     });
                   }
                 }
@@ -783,7 +1217,7 @@ jobs:
                     setTimeout(() => {
                       document.getElementById('modalWelcomeBonus').classList.remove('hidden');
                       soundFx.playReward();
-                      try { confetti({ particleCount: 140, spread: 90, origin: { y: 0.5 } }); } catch(e) {}
+                      fireConfetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
                       this.speak("أهلاً بك يا معلّم! حصلت على 1000 نجمة هدية تثبيت اللعبة!");
                     }, 400);
                   } else {
@@ -806,7 +1240,7 @@ jobs:
                     setTimeout(() => {
                       document.getElementById('modalDailyReward').classList.remove('hidden');
                       soundFx.playReward();
-                      try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } }); } catch(e) {}
+                      fireConfetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
                       this.speak("مرحباً بك مجدداً يا معلّم! تمت إضافة 300 نجمة مكافأة يومية لحسابك!");
                     }, 500);
                   }
@@ -819,8 +1253,9 @@ jobs:
 
                 updateHeaderUI() {
                   document.getElementById('starsBalanceDisplay').innerText = this.progress.starsBalance;
-                  document.getElementById('currentLevelNav').innerText = this.progress.maxUnlocked;
-                  document.getElementById('homeResumeLvl').innerText = this.progress.maxUnlocked;
+                  const currentLvl = this.currentStageNum || 1;
+                  document.getElementById('currentLevelNav').innerText = currentLvl;
+                  document.getElementById('homeResumeLvl').innerText = currentLvl;
                 }
 
                 buyHint() {
@@ -836,7 +1271,7 @@ jobs:
                   const unrevealed = this.activeStage.h.filter(h => !alreadyRevealed.includes(h));
 
                   if (unrevealed.length === 0) {
-                    alert("💡 جميع الكلمات الدلالية لهذه المرحلة مفتوحة لديك مسبقاً (مفتوحة مجاناً لك!)");
+                    alert("💡 جميع الكلمات الدلالية لهذه المرحلة مكشوفة لديك بالفعل!");
                     return;
                   }
 
@@ -901,7 +1336,6 @@ jobs:
                   });
                 }
 
-                // INSTANT PROGRESS REWARD (1 Clue = 40%, 2 Clues = 80%+ SUCCESS!)
                 updateConfidence(wordsCount = 0) {
                   if (!this.activeStage) return;
                   const totalClues = Math.max(1, this.activeStage.h.length);
@@ -999,7 +1433,7 @@ jobs:
                   }
                 }
 
-                // ULTRA HIGH-SENSITIVITY SPEECH RECOGNITION WITH ZERO-LAG STREAMING
+                // ULTRA-FAST SPEECH RECOGNITION WITH USER-TRIGGERED START
                 createRecognitionInstance() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (!Speech) return;
@@ -1007,7 +1441,7 @@ jobs:
                   const rec = new Speech();
                   rec.continuous = true;
                   rec.interimResults = true;
-                  rec.maxAlternatives = 3; // Analyzes alternative guesses for weak speech
+                  rec.maxAlternatives = 3;
                   rec.lang = 'ar-EG';
 
                   rec.onstart = () => {
@@ -1019,7 +1453,7 @@ jobs:
                     this.updateMicUI(true);
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "يلتقط صوتك بنشاط عالي 🎙️⚡";
+                      pill.innerText = "يلتقط صوتك ويحلل الكلمات فوراً... 🎙️⚡";
                       pill.className = "text-emerald-300 font-mono text-[10px] animate-pulse";
                     }
                   };
@@ -1027,7 +1461,7 @@ jobs:
                   rec.onspeechstart = () => {
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "يحلل الكلمات المنطوقة فوراً... 🧠";
+                      pill.innerText = "جارٍ التحليل الصوتي المباشر... 🧠";
                       pill.className = "text-cyan-300 font-mono text-[10px]";
                     }
                   };
@@ -1047,7 +1481,6 @@ jobs:
                         interimChunk += res[0].transcript + ' ';
                       }
 
-                      // Check alternatives for low-volume / weak hearing
                       for (let a = 1; a < res.length; a++) {
                         if (res[a] && res[a].transcript) {
                           altWords.push(res[a].transcript);
@@ -1067,14 +1500,15 @@ jobs:
                     console.warn("Speech error notice:", e.error);
                     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
                       this.isVoiceActive = false;
+                      this.userRequestedMic = false;
                       this.updateMicUI(false);
                       const pill = document.getElementById('aiStatusPill');
                       if (pill) pill.innerText = "صلاحية المايك مرفوضة (استخدم الكيبورد)";
                       return;
                     }
-                    if (this.isPlaying && !this.isSuccessApproved) {
+                    if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
                       setTimeout(() => {
-                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive && this.userRequestedMic) {
                           this.safeStartVoice();
                         }
                       }, 100);
@@ -1083,10 +1517,9 @@ jobs:
 
                   rec.onend = () => {
                     this.isVoiceActive = false;
-                    // Auto-reconnect in 80ms to provide continuous listening
-                    if (this.isPlaying && !this.isSuccessApproved) {
+                    if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
                       setTimeout(() => {
-                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive) {
+                        if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive && this.userRequestedMic) {
                           this.safeStartVoice();
                         }
                       }, 80);
@@ -1121,14 +1554,14 @@ jobs:
                   } catch(err) {
                     console.warn("safeStartVoice notice:", err);
                     setTimeout(() => {
-                      if (this.isPlaying && !this.isSuccessApproved) {
+                      if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
                         try {
                           if (this.recognition) this.recognition.start();
                           this.isVoiceActive = true;
                           this.updateMicUI(true);
                         } catch(e) {}
                       }
-                    }, 150);
+                    }, 120);
                   }
                 }
 
@@ -1144,28 +1577,41 @@ jobs:
                 toggleMicManual() {
                   soundFx.playClick();
                   if (this.isVoiceActive) {
+                    this.userRequestedMic = false;
                     this.safeStopVoice();
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) pill.innerText = "تم إيقاف المايك مؤقتاً ⏸️";
                   } else {
+                    this.userRequestedMic = true;
                     this.safeStartVoice();
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox && (!this.sessionFinalTranscript || !this.sessionFinalTranscript.trim())) {
+                      transcriptBox.innerText = 'جارٍ الاستماع.. تكلّم الآن، سأحلل كلامك فوراً!';
+                    }
                   }
                 }
 
                 updateMicUI(active) {
-                  const mic = document.getElementById('micIndicator');
+                  const btn = document.getElementById('btnMicAction');
+                  const label = document.getElementById('micActionLabel');
                   const pill = document.getElementById('aiStatusPill');
-                  if (mic) {
+
+                  if (btn && label) {
                     if (active) {
-                      mic.className = "w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl shadow-lg ring-4 ring-emerald-400/40 animate-pulse cursor-pointer transition active:scale-95";
+                      btn.className = "flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white border-2 border-emerald-300 ring-4 ring-emerald-400/40 mic-recording-pulse";
+                      label.innerText = "🔴 يستمع الآن... تكلّم فوراً!";
                     } else {
-                      mic.className = "w-14 h-14 rounded-full bg-slate-700 text-gray-300 flex items-center justify-center text-xl shadow-lg ring-4 ring-white/10 cursor-pointer transition active:scale-95";
+                      btn.className = "flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40";
+                      label.innerText = "اضغط للتحدث بالمايك 🎙️";
                     }
                   }
+
                   if (pill) {
                     if (active) {
-                      pill.innerText = "المايك جاهز ويستمع بنشاط... 🎙️";
+                      pill.innerText = "المايك يستمع بنشاط ويحلل الكلمات... 🎙️⚡";
                       pill.className = "text-emerald-400 font-mono text-[10px]";
                     } else {
-                      pill.innerText = "انقر المايك للتحدث 🎙️";
+                      pill.innerText = "المايك جاهز.. اضغط للبدء 🎙️";
                       pill.className = "text-yellow-400 font-mono text-[10px]";
                     }
                   }
@@ -1334,7 +1780,6 @@ jobs:
                   }
                 }
 
-                // ULTRA-FAST REALTIME SPEECH ANALYSIS WITH WEAK-AUDIO TOLERANCE
                 processRealtimeSpeech(rawText, alternativeTranscripts = []) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
 
@@ -1346,7 +1791,6 @@ jobs:
                   const cleanedText = this.clean(rawText);
                   let words = cleanedText.split(/\s+/).filter(w => w.length > 1);
 
-                  // Include alternative hearing candidates if mic sound is soft/muffled
                   if (alternativeTranscripts && alternativeTranscripts.length > 0) {
                     for (let alt of alternativeTranscripts) {
                       const cAlt = this.clean(alt);
@@ -1357,7 +1801,7 @@ jobs:
 
                   this.accumulatedWordsCount = Math.max(this.accumulatedWordsCount || 0, words.length);
 
-                  // 1. Strict taboo verification on primary spoken text
+                  // 1. Strict taboo verification
                   if (this.isWordInText(cleanedText, this.activeStage.w)) {
                     this.onBust(`نطقت الكلمة نفسها (${this.activeStage.w})!`);
                     return;
@@ -1381,7 +1825,7 @@ jobs:
                     }
                   });
 
-                  // 3. Category domain vocabulary match
+                  // 3. Category domain match
                   const categoryTerms = CATEGORY_LEXICONS[this.activeStage.c] || [];
                   categoryTerms.forEach(term => {
                     if (!this.detectedDomainSet.has(term)) {
@@ -1394,7 +1838,7 @@ jobs:
                     }
                   });
 
-                  // 4. Instant UI update
+                  // 4. Update UI & AI radar
                   this.renderDetectedCluesUI();
                   this.updateConfidence(this.accumulatedWordsCount);
                 }
@@ -1419,7 +1863,7 @@ jobs:
 
                   soundFx.playSuccessFanfare();
                   this.speak(`أحسنت الشرح! لقد عرفت أنك تقصد ${this.activeStage.w} بدقة تامة يا معلم!`);
-                  try { confetti({ particleCount: 90, spread: 60, origin: { y: 0.7 } }); } catch(e) {}
+                  fireConfetti({ particleCount: 90, spread: 60, origin: { y: 0.7 } });
 
                   this.autoTransitionTimer = setTimeout(() => {
                     if (this.isSuccessApproved) {
@@ -1431,6 +1875,7 @@ jobs:
                 onNextClicked() {
                   soundFx.playClick();
                   if (this.autoTransitionTimer) clearTimeout(this.autoTransitionTimer);
+                  this.userRequestedMic = false;
                   this.safeStopVoice();
 
                   let stars = 3;
@@ -1445,14 +1890,19 @@ jobs:
                     this.progress.stars[this.currentStageNum] = stars;
                   }
 
-                  if (this.currentStageNum === this.progress.maxUnlocked && this.currentStageNum < 200) {
-                    this.progress.maxUnlocked++;
+                  // Unlock next level in current world
+                  const w = this.getWorldForStage(this.currentStageNum);
+                  const cfg = WORLDS_CONFIG[w];
+                  const currentWorldMax = this.progress.worldUnlocked[w] || cfg.range[0];
+                  if (this.currentStageNum >= currentWorldMax && this.currentStageNum < cfg.range[1]) {
+                    this.progress.worldUnlocked[w] = this.currentStageNum + 1;
                   }
+
                   this.saveProgress();
 
                   document.getElementById('winStarsAwarded').innerText = '⭐'.repeat(stars);
-                  document.getElementById('winStageLabel').innerText = `تم قبول شرح المرحلة ${this.currentStageNum} بذكاء خارق!`;
-                  document.getElementById('nextLevelUnlockText').innerText = `مرحلة ${Math.min(200, this.currentStageNum + 1)} مفتوحة الآن 🔓`;
+                  document.getElementById('winStageLabel').innerText = `تم قبول شرح المستوى ${this.currentStageNum} بذكاء خارق!`;
+                  document.getElementById('nextLevelUnlockText').innerText = `مستوى ${Math.min(200, this.currentStageNum + 1)} مفتوح الآن 🔓`;
 
                   this.showScreen('screenWin');
                 }
@@ -1484,6 +1934,7 @@ jobs:
                     this.busts = 0;
                     this.isPlaying = true;
                     this.isSuccessApproved = false;
+                    this.userRequestedMic = false;
                     this.detectedCluesSet.clear();
                     this.detectedDomainSet.clear();
                     this.accumulatedTranscript = '';
@@ -1514,7 +1965,7 @@ jobs:
                       });
                     }
 
-                    // Sync previously saved hints with AI Confidence Bar
+                    // Sync previously saved hints
                     const lvlKey = String(validLvl);
                     const savedRevealed = this.progress.revealedCluesMap[lvlKey] || [];
                     savedRevealed.forEach(h => this.detectedCluesSet.add(h));
@@ -1524,7 +1975,10 @@ jobs:
 
                     document.getElementById('aiConfidencePct').innerText = '0%';
                     document.getElementById('aiConfidenceBar').style.width = '0%';
-                    document.getElementById('aiStatusPill').innerText = 'المايك جاهز ويستمع بنشاط... 🎙️';
+
+                    // Set Mic to standby mode (DO NOT AUTO-START)
+                    this.safeStopVoice();
+                    this.updateMicUI(false);
 
                     const nextBtn = document.getElementById('btnNextStage');
                     if (nextBtn) {
@@ -1538,23 +1992,27 @@ jobs:
 
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox) {
-                      transcriptBox.innerText = 'المايك يستمع بتركيز فائق.. تحدث بحرية ليحلل الذكاء كلماتك لحظة بلحظة...';
+                      transcriptBox.innerText = 'في انتظارك للضغط على زر المايك أعلاه والبدء بالشرح فوراً...';
                     }
 
                     this.showScreen('screenPlay');
                     soundFx.playStageStart();
-
                     this.updateConfidence(0);
-
-                    // AUTO-START MICROPHONE IMMEDIATELY UPON STAGE ENTRY
-                    this.safeStartVoice();
                     this.startTimer();
                   } catch(err) {
-                    console.error("Critical stage start error:", err);
+                    console.error("Stage start notice:", err);
                     this.showScreen('screenPlay');
                     this.startTimer();
-                    this.safeStartVoice();
                   }
+                }
+
+                startWorld(worldNum) {
+                  soundFx.playClick();
+                  const w = Math.max(1, Math.min(5, parseInt(worldNum || 1, 10)));
+                  this.selectedWorld = w;
+                  const cfg = WORLDS_CONFIG[w];
+                  const currentUnlockedInWorld = this.progress.worldUnlocked[w] || cfg.range[0];
+                  this.startStage(currentUnlockedInWorld);
                 }
 
                 startTimer() {
@@ -1568,7 +2026,7 @@ jobs:
                     if (this.timer <= 0) {
                       clearInterval(this.timerInterval);
                       soundFx.playTabooAlarm();
-                      this.speak("انتهى وقت المرحلة ولم تقدم شرحاً كافياً!");
+                      this.speak("انتهى وقت المستوى ولم تقدم شرحاً كافياً!");
                       alert("⏳ انتهى الوقت! حاول مجدداً واذكر دلالات أدق.");
                       this.showScreen('screenMap');
                     }
@@ -1580,7 +2038,7 @@ jobs:
                   if (this.currentStageNum < 200) {
                     this.startStage(this.currentStageNum + 1);
                   } else {
-                    alert("🏆 مبروك! ختمت الـ 200 مرحلة بنجاح ساحق!");
+                    alert("🏆 مبروك! ختمت الـ 200 مستوى بنجاح ساحق يا معلم الأساطير!");
                     this.showScreen('screenMap');
                   }
                 }
@@ -1589,6 +2047,7 @@ jobs:
                   soundFx.playClick();
                   clearInterval(this.timerInterval);
                   this.isPlaying = false;
+                  this.userRequestedMic = false;
                   if (this.autoTransitionTimer) clearTimeout(this.autoTransitionTimer);
                   this.safeStopVoice();
                   this.showScreen('screenMap');
@@ -1596,7 +2055,9 @@ jobs:
 
                 resumeGame() {
                   soundFx.playClick();
-                  this.startStage(this.progress.maxUnlocked || 1);
+                  const w = this.selectedWorld || 1;
+                  const lvl = this.progress.worldUnlocked[w] || 1;
+                  this.startStage(lvl);
                 }
 
                 getWorldForStage(lvl) {
@@ -1626,6 +2087,29 @@ jobs:
                   this.renderMap();
                 }
 
+                toggleUnlockAll() {
+                  soundFx.playClick();
+                  this.progress.allUnlocked = !this.progress.allUnlocked;
+                  this.saveProgress();
+                  const btn = document.getElementById('btnToggleAllStages');
+                  if (btn) {
+                    btn.innerText = this.progress.allUnlocked ? '🔒 إعادة القفل' : '🔓 فتح الكل';
+                  }
+                  this.renderMap();
+                }
+
+                isStageUnlocked(lvl, worldNum) {
+                  if (this.progress.allUnlocked) return true;
+                  const cfg = WORLDS_CONFIG[worldNum];
+                  const firstLvlOfWorld = cfg.range[0]; // 1, 41, 81, 121, 161
+                  // The very first level of ANY stage/world is ALWAYS unlocked!
+                  if (lvl === firstLvlOfWorld) return true;
+                  if (this.progress.completedStages[String(lvl)]) return true;
+                  if (this.progress.completedStages[String(lvl - 1)]) return true;
+                  const currentWorldProgress = this.progress.worldUnlocked[worldNum] || firstLvlOfWorld;
+                  return lvl <= currentWorldProgress;
+                }
+
                 renderMap() {
                   const container = document.getElementById('stagesScrollContainer');
                   if (!container) return;
@@ -1633,16 +2117,18 @@ jobs:
                   const cfg = WORLDS_CONFIG[this.selectedWorld];
                   const [startLvl, endLvl] = cfg.range;
 
+                  const currentMaxInWorld = this.progress.worldUnlocked[this.selectedWorld] || startLvl;
+
                   for (let i = startLvl; i <= endLvl; i++) {
-                    const isUnlocked = i <= this.progress.maxUnlocked;
-                    const isCurrent = i === this.progress.maxUnlocked;
+                    const isUnlocked = this.isStageUnlocked(i, this.selectedWorld);
+                    const isCurrent = (i === currentMaxInWorld);
                     const stars = this.progress.stars[i] || 0;
                     const isCompleted = !!this.progress.completedStages[String(i)];
 
                     const btn = document.createElement('div');
                     btn.className = 'stage-node flex flex-col items-center justify-center p-2 rounded-2xl cursor-pointer relative';
 
-                    if (isCurrent) {
+                    if (isCurrent && isUnlocked) {
                       btn.classList.add('bg-emerald-500/20', 'border-2', 'border-emerald-400');
                     } else if (isUnlocked) {
                       btn.classList.add('bg-indigo-950/60', 'border', 'border-indigo-400/40', 'hover:bg-indigo-900/60');
@@ -1660,7 +2146,7 @@ jobs:
                     }
 
                     btn.innerHTML = `
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm ${isCurrent ? 'bg-emerald-500 text-white shadow-lg' : (isUnlocked ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-gray-400')}">
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm ${isCurrent && isUnlocked ? 'bg-emerald-500 text-white shadow-lg' : (isUnlocked ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-gray-400')}">
                         ${i}
                       </div>
                       ${starsHtml}
@@ -1687,19 +2173,21 @@ jobs:
                   if (id === 'screenMap') {
                     this.renderMap();
                   }
+                  this.updateHeaderUI();
                 }
 
                 showHome() {
                   soundFx.playClick();
                   clearInterval(this.timerInterval);
                   this.isPlaying = false;
+                  this.userRequestedMic = false;
                   if (this.autoTransitionTimer) clearTimeout(this.autoTransitionTimer);
                   this.safeStopVoice();
                   this.showScreen('screenHome');
                 }
               }
 
-              // EXPLICIT GLOBAL WINDOW BINDING
+              // GLOBAL WINDOW BINDING
               window.game = new SuperAIGameEngine();
             </script>
           </body>
@@ -1717,9 +2205,13 @@ jobs:
       - name: Grant Microphone & Audio Permissions to Android Manifest & Native Bridge
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
+          # Inject Android Permissions
           sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' $MANIFEST
 
-          # Inject Native Runtime Permission Request into MainActivity.java
+          # Allow cleartext traffic for local WebView bridge
+          sed -i 's/<application/<application android:usesCleartextTraffic="true"/' $MANIFEST
+
+          # Inject WebChromeClient automatic permission handling into MainActivity.java
           MAIN_ACTIVITY="android/app/src/main/java/com/qoolyam3alem/pro/MainActivity.java"
           cat << 'EOF' > $MAIN_ACTIVITY
           package com.qoolyam3alem.pro;
@@ -1727,6 +2219,8 @@ jobs:
           import android.Manifest;
           import android.content.pm.PackageManager;
           import android.os.Bundle;
+          import android.webkit.PermissionRequest;
+          import android.webkit.WebChromeClient;
           import com.getcapacitor.BridgeActivity;
 
           public class MainActivity extends BridgeActivity {
@@ -1740,9 +2234,24 @@ jobs:
                       }, 1001);
                   }
               }
+
+              @Override
+              public void onStart() {
+                  super.onStart();
+                  if (this.bridge != null && this.bridge.getWebView() != null) {
+                      this.bridge.getWebView().setWebChromeClient(new WebChromeClient() {
+                          @Override
+                          public void onPermissionRequest(final PermissionRequest request) {
+                              runOnUiThread(() -> {
+                                  request.grant(request.getResources());
+                              });
+                          }
+                      });
+                  }
+              }
           }
           EOF
-          echo "Native microphone permissions and auto-prompt configured successfully!"
+          echo "Native microphone permissions and WebChromeClient configured successfully!"
 
       - name: Build Android Debug APK with Gradle
         run: |
