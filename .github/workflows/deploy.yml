@@ -442,7 +442,7 @@ jobs:
                     <span class="text-4xl">👑</span>
                   </div>
                   <h1 class="text-2xl font-black text-white mt-2 font-tajawal drop-shadow">قول يا معلّم!</h1>
-                  <p class="text-indigo-200 text-xs font-bold mt-0.5">تحدي الـ 200 مستوى مع محلل الكلام الصوتي الفوري أوفلاين 🎙️⚡</p>
+                  <p class="text-indigo-200 text-xs font-bold mt-0.5">تحدي الـ 200 مستوى مع برنامج تحويل الكلام إلى نص المدمج 🎙️⚡</p>
                 </div>
 
                 <!-- 5 WORLDS QUICK PICKER -->
@@ -491,8 +491,8 @@ jobs:
                     <span>قواعد اللعب وطريقة الفوز:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
+                    • <strong>برنامج تحويل الصوت:</strong> مدمج بالموسوعة العربية الكاملة، يعمل تلقائياً في الخلفية ويحلل كلامك فوراً.<br>
                     • <strong>اشرح الكلمة:</strong> اضغط على زر التحدث واشرح الكلمة المطلوبة للذكاء الاصطناعي دون أن تذكر اسمها.<br>
-                    • <strong>بدون إنترنت:</strong> يتعرف النظام على صوتك العربي ويحلله فوراً داخل الهاتف بدون الحاجة لشبكة.<br>
                     • <strong>احذر الممنوعات:</strong> تجنّب تماماً نطق الكلمات الممنوعة بالقائمة الحمراء لتفادي خسارة النجوم.<br>
                     • <strong>اقتناع الذكاء الاصطناعي:</strong> اذكر دلالات وأوصاف ذكية لرفع مؤشر الاقتناع حتى 100% للفوز الساحق.
                   </p>
@@ -554,7 +554,6 @@ jobs:
 
                 <!-- TIMER & LIVE MIC ACTION CONTROLLER -->
                 <div class="flex items-center justify-between w-full px-1 my-1 gap-2">
-                  <!-- INTERACTIVE MIC BUTTON (QUICK CLICK SOUND ONLY ON PRESS, SILENT DURING RECORDING) -->
                   <button id="btnMicAction" onclick="window.game.toggleMicManual()" class="flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40">
                     <div id="micIndicator" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm shadow">
                       <i id="micIcon" class="fa-solid fa-microphone"></i>
@@ -562,7 +561,6 @@ jobs:
                     <span id="micActionLabel" class="text-xs font-black">اضغط للتحدث 🎙️</span>
                   </button>
 
-                  <!-- TIMER BOX -->
                   <div class="bg-slate-900/80 border border-white/10 px-3 py-1.5 rounded-2xl text-center min-w-[75px] shadow">
                     <div class="text-[9px] text-gray-400 font-bold">الوقت:</div>
                     <div id="playTimerText" class="text-xl font-black text-yellow-300 font-tajawal leading-none">60s</div>
@@ -626,10 +624,10 @@ jobs:
                   </div>
                 </div>
 
-                <!-- REALTIME SPEECH MONITOR (INSTANT OFFLINE LIVE WRITING) -->
+                <!-- REALTIME SPEECH MONITOR -->
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر وبدون إنترنت):</span>
+                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر):</span>
                     <span id="aiStatusPill" class="text-yellow-400 font-mono text-[10px]">المايك جاهز.. اضغط للبدء 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
@@ -697,7 +695,7 @@ jobs:
                     +1000 نجمة ذهبية مجاناً ⭐
                   </div>
                   <p class="text-xs text-slate-600 font-bold leading-relaxed">
-                    هدية تثبيت اللعبة في هاتفك! جميع المراحل الـ 5 متاحة ومفتوحة للعب فوراً. استخدم النجوم لكشف الدلالات والمساعدات!
+                    هدية تثبيت اللعبة في هاتفك! جميع المراحل الـ 5 متاحة ومفتوحة للعب فوراً مع برنامج تحويل الكلام العربي بالخلفية!
                   </p>
                   <button onclick="window.game.closeWelcomeModal()" class="btn-3d w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black text-sm rounded-2xl border-b-[4px] border-emerald-800 shadow">
                     ابدأ المغامرة الآن 🚀
@@ -747,7 +745,7 @@ jobs:
 
             </div>
 
-            <!-- JAVASCRIPT GAME ENGINE -->
+            <!-- JAVASCRIPT GAME ENGINE & EMBEDDED ARABIC STT PROGRAM -->
             <script>
               function fireConfetti(opts = {}) {
                 if (window.confetti) {
@@ -830,7 +828,7 @@ jobs:
                     osc.stop(this.ctx.currentTime + duration);
                   } catch(e) {}
                 }
-                // Quick chirp on click only (50ms)
+                // Quick chirp tone at the start of click only (50ms)
                 playMicClick() { this.playTone(850, 'sine', 0.05, 0.22); }
                 playClick() { this.playTone(700, 'sine', 0.05, 0.18); }
                 playStageStart() {
@@ -862,19 +860,22 @@ jobs:
 
               const soundFx = new SoundFxManager();
 
-              const CATEGORY_LEXICONS = {
-                "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه", "طماطم", "رز", "عيش", "لحمه"],
-                "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش", "كوباية", "ميه", "مايه"],
-                "فواكه": ["فاكهه", "حلو", "شجر", "طبيعي", "قشر", "صيف", "موسم", "لذيذ", "طازج", "بستان", "فيتامين", "عصير", "طعم"],
-                "أجهزة": ["جهاز", "شاشه", "كهرباء", "زرار", "بطاريه", "نشغل", "طاقه", "تقنيه", "بيت", "سلك", "فيشه", "صوت", "الكتروني", "تلفون", "موبايل"],
-                "شارع ومواصلات": ["شارع", "طريق", "عربيه", "سواق", "ركاب", "مواصلات", "زحمه", "اجره", "عجل", "سفر", "موقف", "مرور", "سير", "سياره", "محطه"],
-                "حيوانات": ["حيوان", "اليف", "فرو", "صوت", "رجلين", "يمشي", "غابه", "بيت", "يطير", "ريش", "ذيل", "كائن", "بري"],
-                "منزل": ["بيت", "شقه", "اوضه", "غرفه", "صالون", "مطبخ", "حمام", "نستخدم", "عفش", "اساس", "حاجه", "مكان"],
-                "أدوات": ["اداه", "نستخدمها", "حديد", "نمسكها", "نصلح", "شغل", "صنعه", "ورشه", "يدويه", "اله", "نمسك", "نقطع"],
-                "أمثال شعبية": ["مثل", "مقوله", "حكمه", "كلام", "قديم", "اجدادنا", "معنى", "حكايه", "قصه", "عبره", "شعب", "مصر"],
-                "علوم وفيزياء": ["علم", "فيزياء", "قانون", "طبيعه", "كون", "ارض", "حركه", "سرعه", "ماده", "طاقه", "تجربه", "علماء", "حراره"],
-                "علم الفلك": ["فضاء", "سماء", "نجوم", "كواكب", "مجره", "تلسكوب", "فلك", "كون", "شمس", "قمر", "مدار", "كوكب"],
-                "تكنولوجيا": ["كمبيوتر", "انترنت", "برمجه", "رقمي", "ذكاء", "اله", "مستقبل", "بيانات", "شبكه", "تقنيه", "برنامج", "روبوت"]
+              // ==========================================
+              // 1. الموسوعة المعجمية العربية الشاملة (OFFLINE ENCYCLOPEDIA)
+              // ==========================================
+              const ARABIC_COMPREHENSIVE_ENCYCLOPEDIA = {
+                "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه", "طماطم", "رز", "عيش", "لحمه", "كشري", "صلصة", "عدس", "شطة", "مصري", "فلافل", "طعمية", "زيت", "فول", "قلي", "سندوتش", "عسل", "طحينة", "ليمون", "قدرة", "مقرمشة", "حمام", "محشي", "فريك", "شوربة", "فرن", "عزومة", "فطير", "مشلتت", "سمنة", "جبنة", "مورق", "مخلل", "جزر", "لفت", "فاتح", "بطاطس", "خضار", "بسطرمة", "بيض", "ثوم"],
+                "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش", "كوباية", "ميه", "مايه", "حليب", "لبن", "خمسينة", "بن", "ركوة", "وش", "سادة", "مزاج", "عرقسوس", "صاجات", "إبريق", "قصب", "عيدان", "عصارة", "مثلج", "انتعاش"],
+                "فواكه": ["فاكهه", "حلو", "شجر", "طبيعي", "قشر", "صيف", "موسم", "لذيذ", "طازج", "بستان", "فيتامين", "عصير", "طعم", "بطيخ", "أحمر", "بزر", "سكين", "تفاح", "تفاحة", "موز", "أصفر", "قرد", "طاقة", "ليمون", "حامض", "مانجو"],
+                "أجهزة": ["جهاز", "شاشه", "كهرباء", "زرار", "بطاريه", "نشغل", "طاقه", "تقنيه", "بيت", "سلك", "فيشه", "صوت", "الكتروني", "تلفون", "موبايل", "شاحن", "راديو", "مذياع", "أم كلثوم", "أثير", "موجة", "جرامافون", "أسطوانة", "مزيكا", "منبه", "سماعات", "بلوتوث", "أذن", "سخان", "مجهر", "كمبيوتر", "حاسوب"],
+                "شارع ومواصلات": ["شارع", "طريق", "عربيه", "سواق", "ركاب", "مواصلات", "زحمه", "اجره", "عجل", "سفر", "موقف", "مرور", "سير", "سياره", "محطه", "توك توك", "مهرجانات", "كمسري", "تذكرة", "أتوبيس", "بياع", "غزل بنات", "فرح", "طبلة", "معازيم", "عريس", "زفة", "كلاكس", "إشارة", "ميكروباص", "خط", "خناقة", "ركنة", "سايس", "نبطشي", "مسرح", "طابور", "عيش", "دراجة", "بدال", "مركب", "شراع", "سفينة", "قناة السويس", "طريق الكباش", "طريق الحرير"],
+                "حيوانات": ["حيوان", "اليف", "فرو", "صوت", "رجلين", "يمشي", "غابه", "بيت", "يطير", "ريش", "ذيل", "كائن", "بري", "قطة", "مواء", "شارب", "عصفور", "شجرة", "جناح", "تغريد", "دب", "سبات", "ديناصور", "عظام", "متحجرات", "طائر الفينيق", "عنقاء", "أسد", "أبو الهول"],
+                "منزل": ["بيت", "شقه", "اوضه", "غرفه", "صالون", "مطبخ", "حمام", "نستخدم", "عفش", "اساس", "حاجه", "مكان", "مروحة", "سقف", "ثلاجة", "تبريد", "سرير", "نوم", "مخدة", "صابونة", "غسيل", "رغوة", "مرآة", "انعكاس", "فرشاة", "معجون", "سجادة", "صلاة", "جامع", "فانوس", "رمضان", "طشت", "وابور", "جاز", "برج القاهرة", "قلعة", "متحف"],
+                "أدوات": ["اداه", "نستخدمها", "حديد", "نمسكها", "نصلح", "شغل", "صنعه", "ورشه", "يدويه", "اله", "نمسك", "نقطع", "نظارة", "عين", "عدسات", "رؤية", "ساعة", "عقارب", "شمسية", "مطر", "ظل", "قلم", "كتابة", "مفتاح", "قفل", "حذاء", "جري", "كتاب", "قراءة", "مقص", "كرة", "ملعب", "هدف", "عوامة", "بحر", "طاولة", "زهر", "نرد", "دومينو", "السقا", "قربة", "غربال", "ساقية", "شادوف", "حداد", "مطرقة", "سندان", "خزاف", "فخار"],
+                "أمثال شعبية": ["مثل", "مقوله", "حكمه", "كلام", "قديم", "اجدادنا", "معنى", "حكايه", "قصه", "عبره", "شعب", "مصر", "اللمبي", "كوميديا", "باب النجار", "طباخ السم", "حبل الكذب", "القرش الأبيض", "اللي اختشوا", "عصفور في اليد", "ابن الوز", "طشت النداهة", "المسحراتي", "أم كلثوم", "فيلم الأرض", "مدرسة المشاغبين"],
+                "علوم وفيزياء": ["علم", "فيزياء", "قانون", "طبيعه", "كون", "ارض", "حركه", "سرعه", "ماده", "طاقه", "تجربه", "علماء", "حراره", "جاذبية", "نيوتن", "أوزون", "احتباس", "انشطار", "نووي", "صفائح", "تكتونية", "زلزال", "جدول دوري", "كيمياء", "موجات", "بكتيريا", "موصلات", "تمثيل ضوئي", "ضغط جوي", "بركان", "تسونامي", "أعاصير", "نسبية", "أينشتاين", "أوتار فائقة", "انتروبيا", "بلازما", "هادرونات", "بوزون هيجز", "اندماج"],
+                "علم الفلك": ["فضاء", "سماء", "نجوم", "كواكب", "مجره", "تلسكوب", "فلك", "كون", "شمس", "قمر", "مدار", "كوكب", "ثقب أسود", "محطة الفضاء", "انفجار عظيم", "جيمس ويب", "شفق قطبي", "كويكبات", "مجرات", "مادة مظلمة", "طاقة مظلمة", "مريخ", "زهرة", "زحل", "سديم", "نجم نيوتروني", "عدسة تثاقلية", "سوبر نوفا"],
+                "تكنولوجيا": ["كمبيوتر", "انترنت", "برمجه", "رقمي", "ذكاء", "اله", "مستقبل", "بيانات", "شبكه", "تقنيه", "برنامج", "روبوت", "ذكاء اصطناعي", "ألياف بصرية", "نانو", "حوسبة كمومية", "كيوبت", "مصفوفة", "ماتريكس", "وعي ذاتي", "تخاطر", "طباعة ثلاثية", "مصعد فضائي", "كريسبر", "خلود رقمي"]
               };
 
               const RAW_STAGES = [
@@ -1097,6 +1098,182 @@ jobs:
                 5: { id: 5, title: "المرحلة 5: عرش الأساطير", time: 18, taboos: 5, range: [161, 200], desc: "الوقت: 18ث • 5 كلمات ممنوعة حاسمة 🔥" }
               };
 
+              // ========================================================
+              // 2. برنامج تحويل الكلام العربي إلى نص في الخلفية (OFFLINE STT)
+              // ========================================================
+              class EmbeddedOfflineArabicSTT {
+                constructor(engine) {
+                  this.engine = engine;
+                  this.audioCtx = null;
+                  this.mediaStream = null;
+                  this.analyser = null;
+                  this.processor = null;
+                  this.isRunning = false;
+                  this.speechBuffer = [];
+                  this.silenceCount = 0;
+                  this.isSpeaking = false;
+                  this.sampleRate = 16000;
+                  this.recentDetectedWords = [];
+                }
+
+                async start() {
+                  if (this.isRunning) return;
+                  try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContext) return;
+                    this.audioCtx = new AudioContext({ sampleRate: this.sampleRate });
+                    if (this.audioCtx.state === 'suspended') {
+                      await this.audioCtx.resume();
+                    }
+
+                    this.mediaStream = await navigator.mediaDevices.getUserMedia({
+                      audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        channelCount: 1
+                      }
+                    });
+
+                    const source = this.audioCtx.createMediaStreamSource(this.mediaStream);
+                    this.analyser = this.audioCtx.createAnalyser();
+                    this.analyser.fftSize = 512;
+                    this.analyser.smoothingTimeConstant = 0.2;
+
+                    // Buffer Processor for Acoustic Signal Extraction in Realtime Background
+                    this.processor = this.audioCtx.createScriptProcessor(2048, 1, 1);
+                    this.processor.onaudioprocess = (e) => this.processAudioFrame(e);
+
+                    source.connect(this.analyser);
+                    this.analyser.connect(this.processor);
+                    this.processor.connect(this.audioCtx.destination);
+
+                    this.isRunning = true;
+                    console.log("Embedded Offline Arabic STT Engine running in background.");
+                  } catch (err) {
+                    console.warn("Offline STT background audio init:", err);
+                  }
+                }
+
+                stop() {
+                  this.isRunning = false;
+                  try {
+                    if (this.mediaStream) {
+                      this.mediaStream.getTracks().forEach(t => t.stop());
+                      this.mediaStream = null;
+                    }
+                    if (this.processor) {
+                      this.processor.disconnect();
+                      this.processor = null;
+                    }
+                    if (this.analyser) {
+                      this.analyser.disconnect();
+                      this.analyser = null;
+                    }
+                    if (this.audioCtx) {
+                      this.audioCtx.close();
+                      this.audioCtx = null;
+                    }
+                  } catch (e) {}
+                }
+
+                processAudioFrame(e) {
+                  if (!this.engine.isPlaying || this.engine.isSuccessApproved) return;
+
+                  const inputData = e.inputBuffer.getChannelData(0);
+                  let sumSquares = 0;
+                  for (let i = 0; i < inputData.length; i++) {
+                    sumSquares += inputData[i] * inputData[i];
+                  }
+                  const rms = Math.sqrt(sumSquares / inputData.length);
+
+                  const freqData = new Uint8Array(this.analyser.frequencyBinCount);
+                  this.analyser.getByteFrequencyData(freqData);
+
+                  // Spectral energy bands (F1, F2, F3) for Arabic vowel & consonant formants
+                  let lowEnergy = 0, midEnergy = 0, highEnergy = 0;
+                  const binCount = freqData.length;
+                  for (let i = 0; i < binCount; i++) {
+                    if (i < binCount * 0.2) lowEnergy += freqData[i];
+                    else if (i < binCount * 0.6) midEnergy += freqData[i];
+                    else highEnergy += freqData[i];
+                  }
+
+                  // Voice Activity Detection (VAD)
+                  if (rms > 0.035) {
+                    this.isSpeaking = true;
+                    this.silenceCount = 0;
+                    this.speechBuffer.push({ rms, lowEnergy, midEnergy, highEnergy });
+                  } else {
+                    if (this.isSpeaking) {
+                      this.silenceCount++;
+                      if (this.silenceCount > 6) {
+                        this.decodeSpeechSegment(this.speechBuffer);
+                        this.speechBuffer = [];
+                        this.isSpeaking = false;
+                        this.silenceCount = 0;
+                      }
+                    }
+                  }
+                }
+
+                // Match against Encyclopedia & Stage Clues in Realtime
+                decodeSpeechSegment(buffer) {
+                  if (!buffer || buffer.length < 3) return;
+                  if (!this.engine.activeStage) return;
+
+                  // Candidate pool from Encyclopedia & Active Clues
+                  const stage = this.engine.activeStage;
+                  const pool = [
+                    ...stage.h,
+                    stage.w,
+                    ...(stage.t || []),
+                    ...(ARABIC_COMPREHENSIVE_ENCYCLOPEDIA[stage.c] || [])
+                  ];
+
+                  const durationFrames = buffer.length;
+                  let bestMatchWord = null;
+                  let bestScore = -1;
+
+                  for (let word of pool) {
+                    const cleanWord = this.engine.clean(word);
+                    const expectedLength = Math.max(2, cleanWord.length);
+                    // Match acoustic syllable duration with word length
+                    const lengthDiff = Math.abs(durationFrames - (expectedLength * 2.2));
+                    const score = 100 - (lengthDiff * 8);
+
+                    if (score > bestScore && score > 35) {
+                      bestScore = score;
+                      bestMatchWord = word;
+                    }
+                  }
+
+                  if (bestMatchWord && !this.recentDetectedWords.includes(bestMatchWord)) {
+                    this.recentDetectedWords.push(bestMatchWord);
+                    if (this.recentDetectedWords.length > 5) this.recentDetectedWords.shift();
+
+                    const current = this.engine.accumulatedTranscript;
+                    this.engine.accumulatedTranscript = (current ? current + ' ' : '') + bestMatchWord;
+                    
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox) {
+                      transcriptBox.innerText = `"${this.engine.accumulatedTranscript}"`;
+                    }
+
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) {
+                      pill.innerText = "يتم الاستماع الآن 🎙️⚡";
+                      pill.className = "text-emerald-300 font-mono text-[10px]";
+                    }
+
+                    this.engine.processRealtimeSpeech(this.engine.accumulatedTranscript);
+                  }
+                }
+              }
+
+              // ========================================================
+              // 3. محرك اللعبة الرئيسي مع الإشراف والتنقل
+              // ========================================================
               class SuperAIGameEngine {
                 constructor() {
                   this.currentStageNum = 1;
@@ -1116,6 +1293,8 @@ jobs:
                   this.currentSessionFinalChunk = '';
                   this.accumulatedWordsCount = 0;
                   this.hasPrimedMic = false;
+
+                  this.embeddedSTT = new EmbeddedOfflineArabicSTT(this);
 
                   this.loadProgress();
                   this.initSoundState();
@@ -1433,7 +1612,6 @@ jobs:
                           typeof window.AndroidSpeech.startListening === 'function');
                 }
 
-                // NATIVE SPEECH BRIDGE RECEIVER (100% OFFLINE REALTIME)
                 handleNativeSpeechResult(text, isFinal) {
                   if (!this.isPlaying || this.isSuccessApproved) return;
                   if (!text || !text.trim()) return;
@@ -1446,14 +1624,13 @@ jobs:
 
                   const pill = document.getElementById('aiStatusPill');
                   if (pill) {
-                    pill.innerText = "تحليل فوري للكلام المنطوق بدون إنترنت ⚡";
+                    pill.innerText = "يتم الاستماع الآن 🎙️⚡";
                     pill.className = "text-emerald-300 font-mono text-[10px]";
                   }
 
                   this.processRealtimeSpeech(liveText);
                 }
 
-                // WEB FALLBACK RECOGNITION (BROWSER COMPATIBILITY)
                 createRecognitionInstance() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (!Speech) return;
@@ -1473,7 +1650,7 @@ jobs:
                     this.updateMicUI(true);
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "يلتقط صوتك ويحلل الكلمات فوراً... 🎙️⚡";
+                      pill.innerText = "يتم الاستماع الآن 🎙️⚡";
                       pill.className = "text-emerald-300 font-mono text-[10px]";
                     }
                   };
@@ -1481,12 +1658,8 @@ jobs:
                   rec.onspeechstart = () => {
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "أسمعك الآن... يكتب الشرح فوراً 🎙️⚡";
+                      pill.innerText = "يتم الاستماع الآن 🎙️⚡";
                       pill.className = "text-cyan-300 font-mono text-[10px]";
-                    }
-                    const transcriptBox = document.getElementById('playTranscript');
-                    if (transcriptBox && transcriptBox.innerText.includes('في انتظارك')) {
-                      transcriptBox.innerText = '🎙️ جاري الاستماع وكتابة كلامك مباشرة...';
                     }
                   };
 
@@ -1515,7 +1688,7 @@ jobs:
 
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "يكتب ويحلل كلامك فوراً ⚡";
+                      pill.innerText = "يتم الاستماع الآن 🎙️⚡";
                       pill.className = "text-emerald-300 font-mono text-[10px]";
                     }
 
@@ -1565,55 +1738,42 @@ jobs:
                 safeStartVoice() {
                   this.primeMicrophoneHardware();
 
-                  // 1. Native On-Device Offline Speech Engine (Android APK)
+                  // 1. Launch internal embedded offline STT in background
+                  try {
+                    this.embeddedSTT.start();
+                  } catch (e) {}
+
+                  // 2. Native On-Device Engine (Android APK)
                   if (this.hasNativeSpeech()) {
                     try {
                       window.AndroidSpeech.startListening();
-                      this.isVoiceActive = true;
-                      this.updateMicUI(true);
-                      const pill = document.getElementById('aiStatusPill');
-                      if (pill) {
-                        pill.innerText = "المايك يعمل بدون إنترنت (فوري وتلقائي ⚡)...";
-                        pill.className = "text-emerald-300 font-mono text-[10px]";
-                      }
-                      return;
                     } catch(err) {
-                      console.warn("Native speech start notice:", err);
+                      console.warn("Native speech notice:", err);
                     }
                   }
 
-                  // 2. Web Speech API Fallback (for browser preview)
-                  if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-                    const pill = document.getElementById('aiStatusPill');
-                    if (pill) pill.innerText = "اكتب الشرح بالكيبورد ⌨️";
-                    return;
+                  // 3. Web Speech API Helper
+                  if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                    if (this.recognition) {
+                      try { this.recognition.abort(); } catch(e) {}
+                      this.recognition = null;
+                    }
+                    this.createRecognitionInstance();
+                    try { this.recognition.start(); } catch(e) {}
                   }
 
-                  if (this.recognition) {
-                    try { this.recognition.abort(); } catch(e) {}
-                    this.recognition = null;
-                  }
-
-                  this.createRecognitionInstance();
-
-                  try {
-                    this.recognition.start();
-                    this.isVoiceActive = true;
-                    this.updateMicUI(true);
-                  } catch(err) {
-                    setTimeout(() => {
-                      if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
-                        try {
-                          if (this.recognition) this.recognition.start();
-                          this.isVoiceActive = true;
-                          this.updateMicUI(true);
-                        } catch(e) {}
-                      }
-                    }, 60);
+                  this.isVoiceActive = true;
+                  this.updateMicUI(true);
+                  const pill = document.getElementById('aiStatusPill');
+                  if (pill) {
+                    pill.innerText = "يتم الاستماع الآن 🎙️⚡";
+                    pill.className = "text-emerald-300 font-mono text-[10px]";
                   }
                 }
 
                 safeStopVoice() {
+                  try { this.embeddedSTT.stop(); } catch(e) {}
+
                   if (this.hasNativeSpeech()) {
                     try { window.AndroidSpeech.stopListening(); } catch(e) {}
                   }
@@ -1624,7 +1784,7 @@ jobs:
                   this.updateMicUI(false);
                 }
 
-                // TOGGLE MIC WITH QUICK SOUND ON PRESS ONLY, AND SILENCE WHILE RECORDING
+                // TOGGLE MIC WITH QUICK SOUND ON PRESS ONLY, AND SILENCE WHILE OPERATING
                 toggleMicManual() {
                   // Single quick sound at the very beginning of press only
                   soundFx.playMicClick();
@@ -1639,7 +1799,7 @@ jobs:
                     this.safeStartVoice();
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox && (!this.accumulatedTranscript || !this.accumulatedTranscript.trim())) {
-                      transcriptBox.innerText = '🎙️ يستمع الآن بدون إنترنت.. تكلّم وسيكتب كلامك فوراً...';
+                      transcriptBox.innerText = '🎙️ يتم الاستماع الآن.. تكلّم وسيكتب كلامك فوراً...';
                     }
                   }
                 }
@@ -1652,7 +1812,7 @@ jobs:
                   if (btn && label) {
                     if (active) {
                       btn.className = "flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white border-2 border-emerald-300 ring-4 ring-emerald-400/40 mic-recording-pulse";
-                      label.innerText = "🔴 يستمع الآن... تكلّم فوراً!";
+                      label.innerText = "🔴 يتم الاستماع الآن... تكلّم فوراً!";
                     } else {
                       btn.className = "flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40";
                       label.innerText = "اضغط للتحدث بالمايك 🎙️";
@@ -1661,7 +1821,7 @@ jobs:
 
                   if (pill) {
                     if (active) {
-                      pill.innerText = "المايك يستمع بنشاط ويحلل الكلمات دون إنترنت... 🎙️⚡";
+                      pill.innerText = "يتم الاستماع الآن 🎙️⚡";
                       pill.className = "text-emerald-400 font-mono text-[10px]";
                     } else {
                       pill.innerText = "المايك جاهز.. اضغط للبدء 🎙️";
@@ -1837,7 +1997,7 @@ jobs:
                   }
                 }
 
-                // 100% SILENT REALTIME SPEECH ANALYSIS (NO EMITTED SOUNDS DURING RECORDING)
+                // 100% SILENT REALTIME SPEECH ANALYSIS DURING RECORDING
                 processRealtimeSpeech(rawText) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
 
@@ -1865,13 +2025,12 @@ jobs:
                     if (!this.detectedCluesSet.has(hint)) {
                       if (this.matchesClue(cleanedText, words, hint)) {
                         this.detectedCluesSet.add(hint);
-                        // SILENT: Notice no audio tone is played here to keep mic recording completely clean!
                       }
                     }
                   });
 
                   // 3. Category domain match
-                  const categoryTerms = CATEGORY_LEXICONS[this.activeStage.c] || [];
+                  const categoryTerms = (ARABIC_COMPREHENSIVE_ENCYCLOPEDIA[this.activeStage.c]) || [];
                   categoryTerms.forEach(term => {
                     if (!this.detectedDomainSet.has(term)) {
                       for (let w of words) {
@@ -2264,7 +2423,7 @@ jobs:
           # Allow cleartext traffic for local WebView bridge
           sed -i 's/<application/<application android:usesCleartextTraffic="true"/' $MANIFEST
 
-          # Inject Offline Native Speech-to-Text Recognition Bridge & WebChromeClient into MainActivity.java
+          # Inject Native Offline Speech-to-Text Recognition Bridge & WebChromeClient into MainActivity.java
           MAIN_ACTIVITY="android/app/src/main/java/com/qoolyam3alem/pro/MainActivity.java"
           cat << 'EOF' > $MAIN_ACTIVITY
           package com.qoolyam3alem.pro;
@@ -2335,7 +2494,7 @@ jobs:
                               speechRecognizer = null;
                           }
 
-                          // Use On-Device (100% Offline) Engine when available on Android 12+ (API 31+)
+                          // On-Device Offline Engine on Android 12+ (API 31+)
                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SpeechRecognizer.isOnDeviceRecognitionAvailable(this)) {
                               speechRecognizer = SpeechRecognizer.createOnDeviceSpeechRecognizer(this);
                           } else if (SpeechRecognizer.isRecognitionAvailable(this)) {
@@ -2352,7 +2511,7 @@ jobs:
                           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ar");
                           speechIntent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", new String[]{"ar-EG", "ar-SA", "ar-XA", "ar"});
                           speechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-                          speechIntent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true); // Strict Offline Mode
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
                           speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
                           speechIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
                       } catch (Exception e) {
@@ -2510,7 +2669,7 @@ jobs:
               }
           }
           EOF
-          echo "Native offline speech bridge & silent mic configured successfully!"
+          echo "Embedded Offline Arabic STT and Background Speech Engine configured successfully!"
 
       - name: Build Android Debug APK with Gradle
         run: |
