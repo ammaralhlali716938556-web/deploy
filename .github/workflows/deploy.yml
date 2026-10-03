@@ -68,7 +68,6 @@ jobs:
                 direction: rtl;
               }
 
-              /* CRITICAL: Prevents unstyled stacking on Android WebView */
               .hidden {
                 display: none !important;
               }
@@ -356,12 +355,14 @@ jobs:
               }
               .gift-bounce { animation: gift-bounce 2s infinite ease-in-out; }
 
+              /* SMOOTH SILENT MIC PULSE */
               @keyframes mic-wave {
-                0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-                50% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
+                50% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+                100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
               }
               .mic-recording-pulse {
-                animation: mic-wave 1.4s infinite cubic-bezier(0.4, 0, 0.6, 1);
+                animation: mic-wave 1.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
               }
 
               @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
@@ -422,7 +423,6 @@ jobs:
                   <span class="text-white text-xs font-bold">المستوى: <span id="currentLevelNav" class="text-yellow-300 font-black">1</span></span>
                 </div>
                 <div class="flex items-center space-x-1.5 space-x-reverse">
-                  <!-- SOUND TOGGLE (MUTE / UNMUTE) -->
                   <button id="btnSoundToggle" onclick="window.game.toggleSound()" title="تشغيل / كتم الصوت" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition">
                     <i id="soundIcon" class="fa-solid fa-volume-high text-emerald-400"></i>
                   </button>
@@ -484,16 +484,17 @@ jobs:
                   </div>
                 </div>
 
-                <!-- MIC FEATURES CARD -->
-                <div class="w-full clay-card p-3 text-right space-y-1.5">
+                <!-- GAME RULES CARD (قواعد اللعب وطريقة الفوز) -->
+                <div class="w-full clay-card p-3 text-right space-y-1.5 shadow-xl">
                   <div class="flex items-center space-x-1.5 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1">
-                    <i class="fa-solid fa-microphone text-emerald-600 text-sm"></i>
-                    <span>نظام الصوت الجديد فائق الحساسية:</span>
+                    <span class="text-sm">📜</span>
+                    <span>قواعد اللعب وطريقة الفوز:</span>
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
-                    • <strong>تحكم كامل بالمايك:</strong> اضغط على زر المايك وسيبدأ الاستماع والتحليل الفوري لكلماتك مباشرة.<br>
-                    • <strong>كتابة وتحليل سريع:</strong> ما تقوله يُكتب ويُحلل لحظة بلحظة ويرفع مؤشر الذكاء مباشرة!<br>
-                    • <strong>حرية اختيار المراحل:</strong> العب من أي مرحلة تعجبك مباشرة دون التقيد بالسابقة.
+                    • <strong>اشرح الكلمة:</strong> اضغط على زر التحدث واشرح الكلمة المطلوبة للذكاء الاصطناعي دون أن تذكر اسمها.<br>
+                    • <strong>احذر الممنوعات:</strong> تجنّب تماماً نطق الكلمات الممنوعة بالقائمة الحمراء لتفادي خسارة النجوم.<br>
+                    • <strong>اقتناع الذكاء الاصطناعي:</strong> اذكر دلالات وأوصاف ذكية لرفع مؤشر الاقتناع حتى 100% للفوز الساحق.<br>
+                    • <strong>المساعدات والكيبورد:</strong> يمكنك كشف الدلالات بالنجوم (💡) أو كتابة الشرح يدوياً بالكيبورد (⌨️) بأي وقت.
                   </p>
                 </div>
 
@@ -553,7 +554,7 @@ jobs:
 
                 <!-- TIMER & LIVE MIC ACTION CONTROLLER -->
                 <div class="flex items-center justify-between w-full px-1 my-1 gap-2">
-                  <!-- INTERACTIVE MIC TOGGLE BUTTON -->
+                  <!-- INTERACTIVE MIC BUTTON (PULSING ONLY, SILENT ON CLICK) -->
                   <button id="btnMicAction" onclick="window.game.toggleMicManual()" class="flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40">
                     <div id="micIndicator" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm shadow">
                       <i id="micIcon" class="fa-solid fa-microphone"></i>
@@ -576,12 +577,10 @@ jobs:
                     </span>
 
                     <div class="flex items-center space-x-1.5 space-x-reverse">
-                      <!-- QUICK TEXT INPUT FALLBACK BUTTON -->
                       <button onclick="window.game.promptTextInput()" title="كتابة الشرح بالكيبورد" class="p-1 px-2 bg-slate-200 text-slate-800 font-black text-[11px] rounded-xl border border-slate-300 hover:bg-slate-300 active:scale-95 transition">
                         <i class="fa-solid fa-keyboard"></i>
                       </button>
 
-                      <!-- HINT PURCHASE BUTTON -->
                       <button id="btnBuyHint" onclick="window.game.buyHint()" class="btn-3d py-1 px-2.5 bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 font-black text-[11px] rounded-xl flex items-center space-x-1 space-x-reverse border border-amber-200 shadow active:scale-95 transition">
                         <span>💡</span>
                         <span id="hintBtnLabel">كشف دلالة (-30 ⭐)</span>
@@ -593,7 +592,7 @@ jobs:
                     كشري
                   </div>
 
-                  <!-- PERMANENTLY REVEALED HINTS BANNER -->
+                  <!-- REVEALED HINTS BANNER -->
                   <div id="revealedHintBanner" class="hidden mb-2 p-1.5 bg-amber-50 border border-amber-300 rounded-xl text-right">
                     <div class="text-[10px] font-black text-amber-900 flex items-center space-x-1 space-x-reverse mb-0.5">
                       <span>💡</span>
@@ -627,10 +626,10 @@ jobs:
                   </div>
                 </div>
 
-                <!-- REALTIME SPEECH MONITOR (LIVE WRITING & ANALYSIS) -->
+                <!-- REALTIME SPEECH MONITOR (INSTANT LIVE WRITING) -->
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر):</span>
+                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر وفوري):</span>
                     <span id="aiStatusPill" class="text-yellow-400 font-mono text-[10px]">المايك جاهز.. اضغط للبدء 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
@@ -687,7 +686,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- MODAL: FIRST TIME INSTALL WELCOME (1000 STARS) -->
+              <!-- MODAL: FIRST TIME INSTALL WELCOME -->
               <div id="modalWelcomeBonus" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
                 <div class="w-full max-w-sm clay-card p-6 flex flex-col items-center text-center space-y-3 relative overflow-hidden border-4 border-yellow-300 shadow-2xl">
                   <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-4xl shadow-2xl gift-bounce border-2 border-white">
@@ -706,7 +705,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- MODAL: DAILY REWARD (300 STARS) -->
+              <!-- MODAL: DAILY REWARD -->
               <div id="modalDailyReward" class="hidden absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
                 <div class="w-full max-w-sm clay-card p-6 flex flex-col items-center text-center space-y-3 relative overflow-hidden border-4 border-amber-300 shadow-2xl">
                   <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-3xl flex items-center justify-center text-4xl shadow-2xl gift-bounce border-2 border-white">
@@ -750,7 +749,6 @@ jobs:
 
             <!-- JAVASCRIPT GAME ENGINE -->
             <script>
-              // BUILT-IN FALLBACK CONFETTI (WORKS 100% OFFLINE)
               function fireConfetti(opts = {}) {
                 if (window.confetti) {
                   try { window.confetti(opts); return; } catch(e) {}
@@ -866,7 +864,6 @@ jobs:
 
               const soundFx = new SoundFxManager();
 
-              // CATEGORY LEXICONS
               const CATEGORY_LEXICONS = {
                 "أكلات شعبية": ["اكل", "اكله", "طعام", "وجبه", "طبخ", "مطعم", "لذيذ", "سخن", "حار", "شبع", "فطار", "غدا", "عشا", "بلدي", "مصر", "طاسه", "حله", "طبق", "شوكه", "معلقه", "طماطم", "رز", "عيش", "لحمه"],
                 "مشروبات": ["شرب", "مشروب", "كوب", "عصير", "سخن", "ساقع", "شاي", "قهوه", "كبايه", "نعناع", "سكر", "فنجان", "بارد", "ثلج", "ري", "عطش", "كوباية", "ميه", "مايه"],
@@ -1118,7 +1115,7 @@ jobs:
                   this.detectedCluesSet = new Set();
                   this.detectedDomainSet = new Set();
                   this.accumulatedTranscript = '';
-                  this.sessionFinalTranscript = '';
+                  this.currentSessionFinalChunk = '';
                   this.accumulatedWordsCount = 0;
                   this.hasPrimedMic = false;
 
@@ -1433,7 +1430,7 @@ jobs:
                   }
                 }
 
-                // ULTRA-FAST SPEECH RECOGNITION WITH USER-TRIGGERED START
+                // ULTRA-FAST REALTIME SPEECH RECOGNITION (INSTANT WRITING)
                 createRecognitionInstance() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (!Speech) return;
@@ -1441,7 +1438,7 @@ jobs:
                   const rec = new Speech();
                   rec.continuous = true;
                   rec.interimResults = true;
-                  rec.maxAlternatives = 3;
+                  rec.maxAlternatives = 1;
                   rec.lang = 'ar-EG';
 
                   rec.onstart = () => {
@@ -1461,39 +1458,50 @@ jobs:
                   rec.onspeechstart = () => {
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
-                      pill.innerText = "جارٍ التحليل الصوتي المباشر... 🧠";
-                      pill.className = "text-cyan-300 font-mono text-[10px]";
+                      pill.innerText = "أسمعك الآن... يكتب الشرح فوراً 🎙️⚡";
+                      pill.className = "text-cyan-300 font-mono text-[10px] animate-pulse";
+                    }
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox && transcriptBox.innerText.includes('في انتظارك')) {
+                      transcriptBox.innerText = '🎙️ جاري الاستماع وكتابة كلامك مباشرة...';
                     }
                   };
 
+                  // ZERO-LATENCY INSTANT WRITING & ANALYSIS
                   rec.onresult = (ev) => {
                     if (!this.isPlaying || this.isSuccessApproved) return;
 
-                    let interimChunk = '';
-                    let finalChunk = '';
-                    let altWords = [];
+                    let sessionFinal = '';
+                    let sessionInterim = '';
 
-                    for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+                    for (let i = 0; i < ev.results.length; ++i) {
                       const res = ev.results[i];
                       if (res.isFinal) {
-                        finalChunk += res[0].transcript + ' ';
+                        sessionFinal += res[0].transcript + ' ';
                       } else {
-                        interimChunk += res[0].transcript + ' ';
-                      }
-
-                      for (let a = 1; a < res.length; a++) {
-                        if (res[a] && res[a].transcript) {
-                          altWords.push(res[a].transcript);
-                        }
+                        sessionInterim += res[0].transcript + ' ';
                       }
                     }
 
-                    if (finalChunk) {
-                      this.sessionFinalTranscript = (this.sessionFinalTranscript + ' ' + finalChunk).trim();
+                    this.currentSessionFinalChunk = sessionFinal;
+                    const liveText = ((this.accumulatedTranscript ? this.accumulatedTranscript + ' ' : '') + sessionFinal + sessionInterim).trim();
+
+                    // 1. INSTANTANEOUS TEXT DISPLAY
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox && liveText) {
+                      transcriptBox.innerText = `"${liveText}"`;
                     }
 
-                    const currentLiveSpeech = (this.sessionFinalTranscript + ' ' + interimChunk).trim();
-                    this.processRealtimeSpeech(currentLiveSpeech, altWords);
+                    const pill = document.getElementById('aiStatusPill');
+                    if (pill) {
+                      pill.innerText = "يكتب ويحلل كلامك فوراً ⚡";
+                      pill.className = "text-emerald-300 font-mono text-[10px]";
+                    }
+
+                    // 2. IMMEDIATE SEMANTIC VERIFICATION
+                    if (liveText) {
+                      this.processRealtimeSpeech(liveText);
+                    }
                   };
 
                   rec.onerror = (e) => {
@@ -1511,18 +1519,22 @@ jobs:
                         if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive && this.userRequestedMic) {
                           this.safeStartVoice();
                         }
-                      }, 100);
+                      }, 50);
                     }
                   };
 
                   rec.onend = () => {
+                    if (this.currentSessionFinalChunk) {
+                      this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + this.currentSessionFinalChunk).trim();
+                      this.currentSessionFinalChunk = '';
+                    }
                     this.isVoiceActive = false;
                     if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
                       setTimeout(() => {
                         if (this.isPlaying && !this.isSuccessApproved && !this.isVoiceActive && this.userRequestedMic) {
                           this.safeStartVoice();
                         }
-                      }, 80);
+                      }, 40);
                     } else {
                       this.updateMicUI(false);
                     }
@@ -1561,7 +1573,7 @@ jobs:
                           this.updateMicUI(true);
                         } catch(e) {}
                       }
-                    }, 120);
+                    }, 60);
                   }
                 }
 
@@ -1574,8 +1586,8 @@ jobs:
                   } catch(e) {}
                 }
 
+                // SILENT TOGGLE (NO SOUND, ONLY PULSING)
                 toggleMicManual() {
-                  soundFx.playClick();
                   if (this.isVoiceActive) {
                     this.userRequestedMic = false;
                     this.safeStopVoice();
@@ -1585,8 +1597,8 @@ jobs:
                     this.userRequestedMic = true;
                     this.safeStartVoice();
                     const transcriptBox = document.getElementById('playTranscript');
-                    if (transcriptBox && (!this.sessionFinalTranscript || !this.sessionFinalTranscript.trim())) {
-                      transcriptBox.innerText = 'جارٍ الاستماع.. تكلّم الآن، سأحلل كلامك فوراً!';
+                    if (transcriptBox && (!this.accumulatedTranscript || !this.accumulatedTranscript.trim())) {
+                      transcriptBox.innerText = '🎙️ يستمع الآن.. تكلّم فوراً وسيكتب كلامك هنا...';
                     }
                   }
                 }
@@ -1775,29 +1787,20 @@ jobs:
                 promptTextInput() {
                   const input = prompt("💬 اكتب شرحك أو وصفك للكلمة هنا ليحلله الذكاء الاصطناعي:");
                   if (input && input.trim()) {
-                    this.sessionFinalTranscript = (this.sessionFinalTranscript + ' ' + input.trim()).trim();
-                    this.processRealtimeSpeech(this.sessionFinalTranscript, []);
+                    this.accumulatedTranscript = (this.accumulatedTranscript + ' ' + input.trim()).trim();
+                    const transcriptBox = document.getElementById('playTranscript');
+                    if (transcriptBox) {
+                      transcriptBox.innerText = `"${this.accumulatedTranscript}"`;
+                    }
+                    this.processRealtimeSpeech(this.accumulatedTranscript);
                   }
                 }
 
-                processRealtimeSpeech(rawText, alternativeTranscripts = []) {
+                processRealtimeSpeech(rawText) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
-
-                  const transcriptBox = document.getElementById('playTranscript');
-                  if (transcriptBox && rawText.trim()) {
-                    transcriptBox.innerText = `"${rawText.trim()}"`;
-                  }
 
                   const cleanedText = this.clean(rawText);
                   let words = cleanedText.split(/\s+/).filter(w => w.length > 1);
-
-                  if (alternativeTranscripts && alternativeTranscripts.length > 0) {
-                    for (let alt of alternativeTranscripts) {
-                      const cAlt = this.clean(alt);
-                      const altW = cAlt.split(/\s+/).filter(w => w.length > 1);
-                      words = words.concat(altW);
-                    }
-                  }
 
                   this.accumulatedWordsCount = Math.max(this.accumulatedWordsCount || 0, words.length);
 
@@ -1815,7 +1818,7 @@ jobs:
                     }
                   }
 
-                  // 2. High-speed target clues match
+                  // 2. Target clues match
                   this.activeStage.h.forEach(hint => {
                     if (!this.detectedCluesSet.has(hint)) {
                       if (this.matchesClue(cleanedText, words, hint)) {
@@ -1890,7 +1893,6 @@ jobs:
                     this.progress.stars[this.currentStageNum] = stars;
                   }
 
-                  // Unlock next level in current world
                   const w = this.getWorldForStage(this.currentStageNum);
                   const cfg = WORLDS_CONFIG[w];
                   const currentWorldMax = this.progress.worldUnlocked[w] || cfg.range[0];
@@ -1916,7 +1918,7 @@ jobs:
                   this.detectedCluesSet.clear();
                   this.detectedDomainSet.clear();
                   this.accumulatedTranscript = '';
-                  this.sessionFinalTranscript = '';
+                  this.currentSessionFinalChunk = '';
                   this.accumulatedWordsCount = 0;
                   document.getElementById('aiConfidencePct').innerText = '0%';
                   document.getElementById('aiConfidenceBar').style.width = '0%';
@@ -1938,7 +1940,7 @@ jobs:
                     this.detectedCluesSet.clear();
                     this.detectedDomainSet.clear();
                     this.accumulatedTranscript = '';
-                    this.sessionFinalTranscript = '';
+                    this.currentSessionFinalChunk = '';
                     this.accumulatedWordsCount = 0;
 
                     document.getElementById('playStageNum').innerText = `#${validLvl}`;
@@ -1952,7 +1954,6 @@ jobs:
                       tabooCountLabel.innerText = `${this.activeWorldCfg.taboos} كلمات ممنوعة`;
                     }
 
-                    // Populate Taboos
                     const taboosBox = document.getElementById('playTaboosContainer');
                     if (taboosBox) {
                       taboosBox.innerHTML = '';
@@ -1965,7 +1966,6 @@ jobs:
                       });
                     }
 
-                    // Sync previously saved hints
                     const lvlKey = String(validLvl);
                     const savedRevealed = this.progress.revealedCluesMap[lvlKey] || [];
                     savedRevealed.forEach(h => this.detectedCluesSet.add(h));
@@ -1976,7 +1976,6 @@ jobs:
                     document.getElementById('aiConfidencePct').innerText = '0%';
                     document.getElementById('aiConfidenceBar').style.width = '0%';
 
-                    // Set Mic to standby mode (DO NOT AUTO-START)
                     this.safeStopVoice();
                     this.updateMicUI(false);
 
@@ -2101,8 +2100,7 @@ jobs:
                 isStageUnlocked(lvl, worldNum) {
                   if (this.progress.allUnlocked) return true;
                   const cfg = WORLDS_CONFIG[worldNum];
-                  const firstLvlOfWorld = cfg.range[0]; // 1, 41, 81, 121, 161
-                  // The very first level of ANY stage/world is ALWAYS unlocked!
+                  const firstLvlOfWorld = cfg.range[0];
                   if (lvl === firstLvlOfWorld) return true;
                   if (this.progress.completedStages[String(lvl)]) return true;
                   if (this.progress.completedStages[String(lvl - 1)]) return true;
