@@ -442,7 +442,7 @@ jobs:
                     <span class="text-4xl">👑</span>
                   </div>
                   <h1 class="text-2xl font-black text-white mt-2 font-tajawal drop-shadow">قول يا معلّم!</h1>
-                  <p class="text-indigo-200 text-xs font-bold mt-0.5">تحدي الـ 200 مستوى عبر 5 عوالم مع محلل الدلالات الصوتي 🎙️⚡</p>
+                  <p class="text-indigo-200 text-xs font-bold mt-0.5">تحدي الـ 200 مستوى مع محلل الكلام الصوتي الفوري أوفلاين 🎙️⚡</p>
                 </div>
 
                 <!-- 5 WORLDS QUICK PICKER -->
@@ -484,7 +484,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- GAME RULES CARD (قواعد اللعب وطريقة الفوز) -->
+                <!-- GAME RULES CARD -->
                 <div class="w-full clay-card p-3 text-right space-y-1.5 shadow-xl">
                   <div class="flex items-center space-x-1.5 space-x-reverse text-indigo-950 font-black text-xs border-b pb-1">
                     <span class="text-sm">📜</span>
@@ -492,9 +492,9 @@ jobs:
                   </div>
                   <p class="text-[11px] text-slate-700 leading-relaxed font-bold">
                     • <strong>اشرح الكلمة:</strong> اضغط على زر التحدث واشرح الكلمة المطلوبة للذكاء الاصطناعي دون أن تذكر اسمها.<br>
+                    • <strong>بدون إنترنت:</strong> يتعرف النظام على صوتك العربي ويحلله فوراً داخل الهاتف بدون الحاجة لشبكة.<br>
                     • <strong>احذر الممنوعات:</strong> تجنّب تماماً نطق الكلمات الممنوعة بالقائمة الحمراء لتفادي خسارة النجوم.<br>
-                    • <strong>اقتناع الذكاء الاصطناعي:</strong> اذكر دلالات وأوصاف ذكية لرفع مؤشر الاقتناع حتى 100% للفوز الساحق.<br>
-                    • <strong>المساعدات والكيبورد:</strong> يمكنك كشف الدلالات بالنجوم (💡) أو كتابة الشرح يدوياً بالكيبورد (⌨️) بأي وقت.
+                    • <strong>اقتناع الذكاء الاصطناعي:</strong> اذكر دلالات وأوصاف ذكية لرفع مؤشر الاقتناع حتى 100% للفوز الساحق.
                   </p>
                 </div>
 
@@ -554,7 +554,7 @@ jobs:
 
                 <!-- TIMER & LIVE MIC ACTION CONTROLLER -->
                 <div class="flex items-center justify-between w-full px-1 my-1 gap-2">
-                  <!-- INTERACTIVE MIC BUTTON (PULSING ONLY, SILENT ON CLICK) -->
+                  <!-- INTERACTIVE MIC BUTTON (QUICK CLICK SOUND ONLY ON PRESS, SILENT DURING RECORDING) -->
                   <button id="btnMicAction" onclick="window.game.toggleMicManual()" class="flex-1 py-2.5 px-3 rounded-2xl flex items-center justify-center space-x-2 space-x-reverse transition-all duration-200 cursor-pointer shadow-lg bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40">
                     <div id="micIndicator" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm shadow">
                       <i id="micIcon" class="fa-solid fa-microphone"></i>
@@ -626,10 +626,10 @@ jobs:
                   </div>
                 </div>
 
-                <!-- REALTIME SPEECH MONITOR (INSTANT LIVE WRITING) -->
+                <!-- REALTIME SPEECH MONITOR (INSTANT OFFLINE LIVE WRITING) -->
                 <div class="w-full bg-black/60 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 text-right">
                   <div class="flex justify-between items-center text-[11px] text-yellow-300 font-bold mb-1">
-                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر وفوري):</span>
+                    <span><i class="fa-solid fa-ear-listen"></i> ما يسمعه الميكروفون الآن (مباشر وبدون إنترنت):</span>
                     <span id="aiStatusPill" class="text-yellow-400 font-mono text-[10px]">المايك جاهز.. اضغط للبدء 🎙️</span>
                   </div>
                   <div id="playTranscript" class="text-xs font-bold text-white min-h-[30px] max-h-[36px] overflow-hidden leading-tight">
@@ -830,6 +830,8 @@ jobs:
                     osc.stop(this.ctx.currentTime + duration);
                   } catch(e) {}
                 }
+                // Quick chirp on click only (50ms)
+                playMicClick() { this.playTone(850, 'sine', 0.05, 0.22); }
                 playClick() { this.playTone(700, 'sine', 0.05, 0.18); }
                 playStageStart() {
                   this.playTone(440, 'triangle', 0.1, 0.2);
@@ -839,10 +841,6 @@ jobs:
                 playHintReveal() {
                   this.playTone(987.77, 'sine', 0.08, 0.25);
                   setTimeout(() => this.playTone(1318.51, 'sine', 0.25, 0.3), 70);
-                }
-                playClueDetected() {
-                  this.playTone(600, 'sine', 0.08, 0.2);
-                  setTimeout(() => this.playTone(800, 'sine', 0.15, 0.25), 60);
                 }
                 playTabooAlarm() {
                   this.playTone(180, 'sawtooth', 0.35, 0.35);
@@ -1430,7 +1428,32 @@ jobs:
                   }
                 }
 
-                // ULTRA-FAST REALTIME SPEECH RECOGNITION (INSTANT WRITING)
+                hasNativeSpeech() {
+                  return (typeof window.AndroidSpeech !== 'undefined' && 
+                          typeof window.AndroidSpeech.startListening === 'function');
+                }
+
+                // NATIVE SPEECH BRIDGE RECEIVER (100% OFFLINE REALTIME)
+                handleNativeSpeechResult(text, isFinal) {
+                  if (!this.isPlaying || this.isSuccessApproved) return;
+                  if (!text || !text.trim()) return;
+
+                  const liveText = text.trim();
+                  const transcriptBox = document.getElementById('playTranscript');
+                  if (transcriptBox) {
+                    transcriptBox.innerText = `"${liveText}"`;
+                  }
+
+                  const pill = document.getElementById('aiStatusPill');
+                  if (pill) {
+                    pill.innerText = "تحليل فوري للكلام المنطوق بدون إنترنت ⚡";
+                    pill.className = "text-emerald-300 font-mono text-[10px]";
+                  }
+
+                  this.processRealtimeSpeech(liveText);
+                }
+
+                // WEB FALLBACK RECOGNITION (BROWSER COMPATIBILITY)
                 createRecognitionInstance() {
                   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
                   if (!Speech) return;
@@ -1451,7 +1474,7 @@ jobs:
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
                       pill.innerText = "يلتقط صوتك ويحلل الكلمات فوراً... 🎙️⚡";
-                      pill.className = "text-emerald-300 font-mono text-[10px] animate-pulse";
+                      pill.className = "text-emerald-300 font-mono text-[10px]";
                     }
                   };
 
@@ -1459,7 +1482,7 @@ jobs:
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) {
                       pill.innerText = "أسمعك الآن... يكتب الشرح فوراً 🎙️⚡";
-                      pill.className = "text-cyan-300 font-mono text-[10px] animate-pulse";
+                      pill.className = "text-cyan-300 font-mono text-[10px]";
                     }
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox && transcriptBox.innerText.includes('في انتظارك')) {
@@ -1467,7 +1490,6 @@ jobs:
                     }
                   };
 
-                  // ZERO-LATENCY INSTANT WRITING & ANALYSIS
                   rec.onresult = (ev) => {
                     if (!this.isPlaying || this.isSuccessApproved) return;
 
@@ -1486,7 +1508,6 @@ jobs:
                     this.currentSessionFinalChunk = sessionFinal;
                     const liveText = ((this.accumulatedTranscript ? this.accumulatedTranscript + ' ' : '') + sessionFinal + sessionInterim).trim();
 
-                    // 1. INSTANTANEOUS TEXT DISPLAY
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox && liveText) {
                       transcriptBox.innerText = `"${liveText}"`;
@@ -1498,14 +1519,12 @@ jobs:
                       pill.className = "text-emerald-300 font-mono text-[10px]";
                     }
 
-                    // 2. IMMEDIATE SEMANTIC VERIFICATION
                     if (liveText) {
                       this.processRealtimeSpeech(liveText);
                     }
                   };
 
                   rec.onerror = (e) => {
-                    console.warn("Speech error notice:", e.error);
                     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
                       this.isVoiceActive = false;
                       this.userRequestedMic = false;
@@ -1544,13 +1563,31 @@ jobs:
                 }
 
                 safeStartVoice() {
+                  this.primeMicrophoneHardware();
+
+                  // 1. Native On-Device Offline Speech Engine (Android APK)
+                  if (this.hasNativeSpeech()) {
+                    try {
+                      window.AndroidSpeech.startListening();
+                      this.isVoiceActive = true;
+                      this.updateMicUI(true);
+                      const pill = document.getElementById('aiStatusPill');
+                      if (pill) {
+                        pill.innerText = "المايك يعمل بدون إنترنت (فوري وتلقائي ⚡)...";
+                        pill.className = "text-emerald-300 font-mono text-[10px]";
+                      }
+                      return;
+                    } catch(err) {
+                      console.warn("Native speech start notice:", err);
+                    }
+                  }
+
+                  // 2. Web Speech API Fallback (for browser preview)
                   if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
                     const pill = document.getElementById('aiStatusPill');
                     if (pill) pill.innerText = "اكتب الشرح بالكيبورد ⌨️";
                     return;
                   }
-
-                  this.primeMicrophoneHardware();
 
                   if (this.recognition) {
                     try { this.recognition.abort(); } catch(e) {}
@@ -1564,7 +1601,6 @@ jobs:
                     this.isVoiceActive = true;
                     this.updateMicUI(true);
                   } catch(err) {
-                    console.warn("safeStartVoice notice:", err);
                     setTimeout(() => {
                       if (this.isPlaying && !this.isSuccessApproved && this.userRequestedMic) {
                         try {
@@ -1578,16 +1614,21 @@ jobs:
                 }
 
                 safeStopVoice() {
-                  if (!this.recognition) return;
-                  try {
-                    this.recognition.abort();
-                    this.isVoiceActive = false;
-                    this.updateMicUI(false);
-                  } catch(e) {}
+                  if (this.hasNativeSpeech()) {
+                    try { window.AndroidSpeech.stopListening(); } catch(e) {}
+                  }
+                  if (this.recognition) {
+                    try { this.recognition.abort(); } catch(e) {}
+                  }
+                  this.isVoiceActive = false;
+                  this.updateMicUI(false);
                 }
 
-                // SILENT TOGGLE (NO SOUND, ONLY PULSING)
+                // TOGGLE MIC WITH QUICK SOUND ON PRESS ONLY, AND SILENCE WHILE RECORDING
                 toggleMicManual() {
+                  // Single quick sound at the very beginning of press only
+                  soundFx.playMicClick();
+
                   if (this.isVoiceActive) {
                     this.userRequestedMic = false;
                     this.safeStopVoice();
@@ -1598,7 +1639,7 @@ jobs:
                     this.safeStartVoice();
                     const transcriptBox = document.getElementById('playTranscript');
                     if (transcriptBox && (!this.accumulatedTranscript || !this.accumulatedTranscript.trim())) {
-                      transcriptBox.innerText = '🎙️ يستمع الآن.. تكلّم فوراً وسيكتب كلامك هنا...';
+                      transcriptBox.innerText = '🎙️ يستمع الآن بدون إنترنت.. تكلّم وسيكتب كلامك فوراً...';
                     }
                   }
                 }
@@ -1620,7 +1661,7 @@ jobs:
 
                   if (pill) {
                     if (active) {
-                      pill.innerText = "المايك يستمع بنشاط ويحلل الكلمات... 🎙️⚡";
+                      pill.innerText = "المايك يستمع بنشاط ويحلل الكلمات دون إنترنت... 🎙️⚡";
                       pill.className = "text-emerald-400 font-mono text-[10px]";
                     } else {
                       pill.innerText = "المايك جاهز.. اضغط للبدء 🎙️";
@@ -1796,6 +1837,7 @@ jobs:
                   }
                 }
 
+                // 100% SILENT REALTIME SPEECH ANALYSIS (NO EMITTED SOUNDS DURING RECORDING)
                 processRealtimeSpeech(rawText) {
                   if (!this.isPlaying || this.isSuccessApproved || !this.activeStage) return;
 
@@ -1818,12 +1860,12 @@ jobs:
                     }
                   }
 
-                  // 2. Target clues match
+                  // 2. Target clues match (SILENT - NO NOISE WHILE RECORDING)
                   this.activeStage.h.forEach(hint => {
                     if (!this.detectedCluesSet.has(hint)) {
                       if (this.matchesClue(cleanedText, words, hint)) {
                         this.detectedCluesSet.add(hint);
-                        soundFx.playClueDetected();
+                        // SILENT: Notice no audio tone is played here to keep mic recording completely clean!
                       }
                     }
                   });
@@ -1841,7 +1883,7 @@ jobs:
                     }
                   });
 
-                  // 4. Update UI & AI radar
+                  // 4. Update UI & AI radar silently
                   this.renderDetectedCluesUI();
                   this.updateConfidence(this.accumulatedWordsCount);
                 }
@@ -1850,6 +1892,8 @@ jobs:
                   if (this.isSuccessApproved) return;
                   this.isSuccessApproved = true;
                   clearInterval(this.timerInterval);
+                  this.userRequestedMic = false;
+                  this.safeStopVoice();
 
                   const nextBtn = document.getElementById('btnNextStage');
                   const nextLabel = document.getElementById('btnNextLabel');
@@ -2187,6 +2231,13 @@ jobs:
 
               // GLOBAL WINDOW BINDING
               window.game = new SuperAIGameEngine();
+
+              // NATIVE EVENT LISTENERS
+              window.onNativeSpeechResult = function(text, isFinal) {
+                if (window.game) {
+                  window.game.handleNativeSpeechResult(text, isFinal);
+                }
+              };
             </script>
           </body>
           </html>
@@ -2203,28 +2254,52 @@ jobs:
       - name: Grant Microphone & Audio Permissions to Android Manifest & Native Bridge
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
+          
           # Inject Android Permissions
           sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' $MANIFEST
+
+          # Inject Queries for Android 11+ Speech Recognition Service Visibility
+          sed -i '/<\/manifest>/i \    <queries>\n        <intent>\n            <action android:name="android.speech.RecognitionService" />\n        </intent>\n    </queries>' $MANIFEST
 
           # Allow cleartext traffic for local WebView bridge
           sed -i 's/<application/<application android:usesCleartextTraffic="true"/' $MANIFEST
 
-          # Inject WebChromeClient automatic permission handling into MainActivity.java
+          # Inject Offline Native Speech-to-Text Recognition Bridge & WebChromeClient into MainActivity.java
           MAIN_ACTIVITY="android/app/src/main/java/com/qoolyam3alem/pro/MainActivity.java"
           cat << 'EOF' > $MAIN_ACTIVITY
           package com.qoolyam3alem.pro;
 
           import android.Manifest;
+          import android.content.Context;
+          import android.content.Intent;
           import android.content.pm.PackageManager;
+          import android.media.AudioManager;
+          import android.os.Build;
           import android.os.Bundle;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.speech.RecognitionListener;
+          import android.speech.RecognizerIntent;
+          import android.speech.SpeechRecognizer;
+          import android.webkit.JavascriptInterface;
           import android.webkit.PermissionRequest;
           import android.webkit.WebChromeClient;
+          import android.webkit.WebView;
           import com.getcapacitor.BridgeActivity;
+          import java.util.ArrayList;
 
           public class MainActivity extends BridgeActivity {
+              private SpeechRecognizer speechRecognizer;
+              private Intent speechIntent;
+              private AudioManager audioManager;
+              private boolean isListening = false;
+              private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
               @Override
               public void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
+                  audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
                   if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                       requestPermissions(new String[]{
                           Manifest.permission.RECORD_AUDIO,
@@ -2237,7 +2312,8 @@ jobs:
               public void onStart() {
                   super.onStart();
                   if (this.bridge != null && this.bridge.getWebView() != null) {
-                      this.bridge.getWebView().setWebChromeClient(new WebChromeClient() {
+                      WebView webView = this.bridge.getWebView();
+                      webView.setWebChromeClient(new WebChromeClient() {
                           @Override
                           public void onPermissionRequest(final PermissionRequest request) {
                               runOnUiThread(() -> {
@@ -2245,11 +2321,196 @@ jobs:
                               });
                           }
                       });
+                      // Bind Native Offline Speech Bridge to JavaScript
+                      webView.addJavascriptInterface(new NativeSpeechBridge(), "AndroidSpeech");
                   }
+                  initSpeechRecognizer();
+              }
+
+              private void initSpeechRecognizer() {
+                  mainHandler.post(() -> {
+                      try {
+                          if (speechRecognizer != null) {
+                              try { speechRecognizer.destroy(); } catch (Exception ignored) {}
+                              speechRecognizer = null;
+                          }
+
+                          // Use On-Device (100% Offline) Engine when available on Android 12+ (API 31+)
+                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SpeechRecognizer.isOnDeviceRecognitionAvailable(this)) {
+                              speechRecognizer = SpeechRecognizer.createOnDeviceSpeechRecognizer(this);
+                          } else if (SpeechRecognizer.isRecognitionAvailable(this)) {
+                              speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+                          }
+
+                          if (speechRecognizer != null) {
+                              speechRecognizer.setRecognitionListener(new SpeechRecognitionListener());
+                          }
+
+                          speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ar");
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ar");
+                          speechIntent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", new String[]{"ar-EG", "ar-SA", "ar-XA", "ar"});
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true); // Strict Offline Mode
+                          speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+                          speechIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
+                      } catch (Exception e) {
+                          e.printStackTrace();
+                      }
+                  });
+              }
+
+              // Mute system notification/beep while microphone is listening
+              private void muteSystemBeep(boolean mute) {
+                  try {
+                      if (audioManager != null) {
+                          if (mute) {
+                              audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_MUTE, 0);
+                              audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM, AudioManager.ADJUST_MUTE, 0);
+                          } else {
+                              audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, 0);
+                              audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM, AudioManager.ADJUST_UNMUTE, 0);
+                          }
+                      }
+                  } catch (Exception ignored) {}
+              }
+
+              private void startSpeech() {
+                  isListening = true;
+                  muteSystemBeep(true);
+                  try {
+                      if (speechRecognizer == null) {
+                          initSpeechRecognizer();
+                      }
+                      if (speechRecognizer != null && speechIntent != null) {
+                          speechRecognizer.startListening(speechIntent);
+                      }
+                  } catch (Exception e) {
+                      e.printStackTrace();
+                  }
+              }
+
+              private void stopSpeech() {
+                  isListening = false;
+                  try {
+                      if (speechRecognizer != null) {
+                          speechRecognizer.stopListening();
+                          speechRecognizer.cancel();
+                      }
+                  } catch (Exception ignored) {}
+                  muteSystemBeep(false);
+              }
+
+              private void sendTextToJS(String text, boolean isFinal) {
+                  if (this.bridge != null && this.bridge.getWebView() != null) {
+                      String escaped = text.replace("\\", "\\\\")
+                                           .replace("'", "\\'")
+                                           .replace("\"", "\\\"")
+                                           .replace("\n", " ")
+                                           .replace("\r", "");
+                      bridge.getWebView().post(() -> {
+                          bridge.getWebView().evaluateJavascript(
+                              "if(window.onNativeSpeechResult){window.onNativeSpeechResult('" + escaped + "', " + isFinal + ");}",
+                              null
+                          );
+                      });
+                  }
+              }
+
+              private class SpeechRecognitionListener implements RecognitionListener {
+                  @Override
+                  public void onReadyForSpeech(Bundle params) {}
+
+                  @Override
+                  public void onBeginningOfSpeech() {}
+
+                  @Override
+                  public void onRmsChanged(float rmsdB) {}
+
+                  @Override
+                  public void onBufferReceived(byte[] buffer) {}
+
+                  @Override
+                  public void onEndOfSpeech() {}
+
+                  @Override
+                  public void onError(int error) {
+                      if (isListening) {
+                          mainHandler.postDelayed(() -> {
+                              if (isListening && speechRecognizer != null && speechIntent != null) {
+                                  try {
+                                      speechRecognizer.startListening(speechIntent);
+                                  } catch (Exception ignored) {}
+                              }
+                          }, 80);
+                      }
+                  }
+
+                  @Override
+                  public void onResults(Bundle results) {
+                      if (results != null) {
+                          ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                          if (matches != null && !matches.isEmpty()) {
+                              sendTextToJS(matches.get(0), true);
+                          }
+                      }
+                      if (isListening) {
+                          mainHandler.postDelayed(() -> {
+                              if (isListening && speechRecognizer != null && speechIntent != null) {
+                                  try {
+                                      speechRecognizer.startListening(speechIntent);
+                                  } catch (Exception ignored) {}
+                              }
+                          }, 50);
+                      }
+                  }
+
+                  @Override
+                  public void onPartialResults(Bundle partialResults) {
+                      if (partialResults != null) {
+                          ArrayList<String> matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                          if (matches != null && !matches.isEmpty()) {
+                              sendTextToJS(matches.get(0), false);
+                          }
+                      }
+                  }
+
+                  @Override
+                  public void onEvent(int eventType, Bundle params) {}
+              }
+
+              public class NativeSpeechBridge {
+                  @JavascriptInterface
+                  public void startListening() {
+                      mainHandler.post(() -> startSpeech());
+                  }
+
+                  @JavascriptInterface
+                  public void stopListening() {
+                      mainHandler.post(() -> stopSpeech());
+                  }
+
+                  @JavascriptInterface
+                  public boolean isAvailable() {
+                      return SpeechRecognizer.isRecognitionAvailable(MainActivity.this);
+                  }
+              }
+
+              @Override
+              public void onDestroy() {
+                  stopSpeech();
+                  if (speechRecognizer != null) {
+                      try {
+                          speechRecognizer.destroy();
+                      } catch (Exception ignored) {}
+                      speechRecognizer = null;
+                  }
+                  super.onDestroy();
               }
           }
           EOF
-          echo "Native microphone permissions and WebChromeClient configured successfully!"
+          echo "Native offline speech bridge & silent mic configured successfully!"
 
       - name: Build Android Debug APK with Gradle
         run: |
